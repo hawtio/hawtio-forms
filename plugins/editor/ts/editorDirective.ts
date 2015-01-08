@@ -1,4 +1,5 @@
 /// <reference path="editorPlugin.ts"/>
+/// <reference path="CodeEditor.ts"/>
 /**
  * @module HawtioEditor
  */
@@ -30,7 +31,7 @@ module HawtioEditor {
         $scope.doc = null;
         $scope.options = [];
 
-        observe($scope, $attrs, 'name', 'editor');
+        UI.observe($scope, $attrs, 'name', 'editor');
 
         $scope.applyOptions = () => {
           if ($scope.codeMirror) {
@@ -84,7 +85,7 @@ module HawtioEditor {
           });
         }
 
-        var config = Object.extended($attrs).clone();
+        var config = _.cloneDeep($attrs);
 
         delete config['$$element']
         delete config['$attr'];

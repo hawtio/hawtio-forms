@@ -1,5 +1,7 @@
 
 
+/// <reference path="codemirror.d.ts"/>
+/// <reference path="codemirror-additional.d.ts"/>
 /**
  * Module that contains several helper functions related to hawtio's code editor
  *
@@ -155,6 +157,7 @@ var HawtioEditor;
 })(HawtioEditor || (HawtioEditor = {}));
 
 /// <reference path="editorPlugin.ts"/>
+/// <reference path="CodeEditor.ts"/>
 /**
  * @module HawtioEditor
  */
@@ -178,7 +181,7 @@ var HawtioEditor;
                 $scope.codeMirror = null;
                 $scope.doc = null;
                 $scope.options = [];
-                observe($scope, $attrs, 'name', 'editor');
+                UI.observe($scope, $attrs, 'name', 'editor');
                 $scope.applyOptions = function () {
                     if ($scope.codeMirror) {
                         $scope.options.each(function (option) {
@@ -224,7 +227,7 @@ var HawtioEditor;
                         }
                     });
                 }
-                var config = Object.extended($attrs).clone();
+                var config = _.cloneDeep($attrs);
                 delete config['$$element'];
                 delete config['$attr'];
                 delete config['class'];
