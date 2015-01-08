@@ -1,5 +1,6 @@
 
 
+/// <reference path="../../includes.ts"/>
 /// <reference path="codemirror.d.ts"/>
 /// <reference path="codemirror-additional.d.ts"/>
 /**
@@ -2274,6 +2275,9 @@ var Forms;
     });
     Forms._module.directive('hawtioReset', function () {
         return new Forms.ResetForm();
+    });
+    Forms._module.run(function () {
+        Forms.log.debug("loaded");
     });
     /*
     _module.run(["helpRegistry", (helpRegistry) => {

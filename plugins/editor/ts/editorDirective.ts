@@ -12,21 +12,16 @@ module HawtioEditor {
   export function Editor($parse) {
 
     return {
-
       restrict: 'A',
       replace: true,
-
       templateUrl: UrlHelpers.join(templatePath, "editor.html"),
-
       scope: {
         text: '=hawtioEditor',
         mode:  '=',
         outputEditor: '@',
         name: '@'
       },
-
       controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
-        
         $scope.codeMirror = null;
         $scope.doc = null;
         $scope.options = [];
@@ -75,7 +70,6 @@ module HawtioEditor {
       }],
 
       link: ($scope, $element, $attrs) => {
-
         if ('dirty' in $attrs) {
           $scope.dirtyTarget = $attrs['dirty'];
           $scope.$watch("$parent['" + $scope.dirtyTarget + "']", (newValue, oldValue) => {
@@ -84,9 +78,7 @@ module HawtioEditor {
             }
           });
         }
-
         var config = _.cloneDeep($attrs);
-
         delete config['$$element']
         delete config['$attr'];
         delete config['class'];
@@ -94,7 +86,6 @@ module HawtioEditor {
         delete config['mode'];
         delete config['dirty'];
         delete config['outputEditor'];
-
         if ('onChange' in $attrs) {
           var onChange = $attrs['onChange'];
           delete config['onChange'];
@@ -107,14 +98,12 @@ module HawtioEditor {
             }
           });
         }
-
         angular.forEach(config, function(value, key) {
           $scope.options.push({
             key: key,
             'value': value
           });
         });
-
         $scope.$watch('mode', () => {
           if ($scope.mode) {
             if (!$scope.codeMirror) {
@@ -127,7 +116,6 @@ module HawtioEditor {
             }
           }
         });
-
         $scope.$watch('dirty', (newValue, oldValue) => {
           if ($scope.dirty && !$scope.doc.isClean()) {
             $scope.doc.markClean();
@@ -136,13 +124,11 @@ module HawtioEditor {
             $scope.$parent[$scope.dirtyTarget] = $scope.dirty;
           }
         });
-
         $scope.$watch(() => { return $element.is(':visible'); }, (newValue, oldValue) => {
           if (newValue !== oldValue && $scope.codeMirror) {
               $scope.codeMirror.refresh();
           }
         });
-
         $scope.$watch('text', function() {
           if (!$scope.codeMirror) {
 

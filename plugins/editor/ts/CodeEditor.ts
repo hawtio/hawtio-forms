@@ -1,3 +1,4 @@
+/// <reference path="../../includes.ts"/>
 /// <reference path="codemirror.d.ts"/>
 /// <reference path="codemirror-additional.d.ts"/>
 /**

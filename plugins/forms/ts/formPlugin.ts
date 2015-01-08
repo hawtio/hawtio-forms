@@ -72,7 +72,9 @@ module Forms {
     return new Forms.ResetForm();
   });
 
-
+  _module.run(() => {
+    log.debug("loaded");
+  });
 
   /*
   _module.run(["helpRegistry", (helpRegistry) => {
