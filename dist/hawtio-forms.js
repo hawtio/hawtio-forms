@@ -1,8 +1,6 @@
 
 
 /// <reference path="../../includes.ts"/>
-/// <reference path="codemirror.d.ts"/>
-/// <reference path="codemirror-additional.d.ts"/>
 /**
  * Module that contains several helper functions related to hawtio's code editor
  *
