@@ -3,9 +3,6 @@
 /// <reference path="d.ts/editor/ts/editorGlobals.d.ts"/>
 /// <reference path="d.ts/editor/ts/editorPlugin.d.ts"/>
 /// <reference path="d.ts/editor/ts/editorDirective.d.ts"/>
-/// <reference path="d.ts/example/ts/exampleGlobals.d.ts"/>
-/// <reference path="d.ts/example/ts/examplePlugin.d.ts"/>
-/// <reference path="d.ts/example/ts/page1.d.ts"/>
 /// <reference path="d.ts/forms/ts/formHelpers.d.ts"/>
 /// <reference path="d.ts/forms/ts/mappingRegistry.d.ts"/>
 /// <reference path="d.ts/forms/ts/baseDirectives.d.ts"/>

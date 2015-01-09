@@ -302,40 +302,6 @@ var HawtioEditor;
 })(HawtioEditor || (HawtioEditor = {}));
 
 /// <reference path="../../includes.ts"/>
-var Example;
-(function (Example) {
-    Example.pluginName = "hawtio-assembly";
-    Example.log = Logger.get(Example.pluginName);
-    Example.templatePath = "plugins/example/html";
-})(Example || (Example = {}));
-
-/// <reference path="../../includes.ts"/>
-/// <reference path="exampleGlobals.ts"/>
-var Example;
-(function (Example) {
-    Example._module = angular.module(Example.pluginName, []);
-    var tab = undefined;
-    Example._module.config(['$locationProvider', '$routeProvider', 'HawtioNavBuilderProvider', function ($locationProvider, $routeProvider, builder) {
-        tab = builder.create().id(Example.pluginName).title(function () { return "Example"; }).href(function () { return "/example"; }).subPath("Page 1", "page1", builder.join(Example.templatePath, 'page1.html')).build();
-        builder.configureRouting($routeProvider, tab);
-        $locationProvider.html5Mode(true);
-    }]);
-    Example._module.run(['HawtioNav', function (HawtioNav) {
-        HawtioNav.add(tab);
-        Example.log.debug("loaded");
-    }]);
-    hawtioPluginLoader.addModule(Example.pluginName);
-})(Example || (Example = {}));
-
-/// <reference path="examplePlugin.ts"/>
-var Example;
-(function (Example) {
-    Example.Page1Controller = Example._module.controller("Example.Page1Controller", ['$scope', function ($scope) {
-        $scope.target = "World!";
-    }]);
-})(Example || (Example = {}));
-
-/// <reference path="../../includes.ts"/>
 /**
  * @module Forms
  */
@@ -2615,7 +2581,6 @@ var Forms;
 })(Forms || (Forms = {}));
 
 angular.module("hawtio-forms-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("plugins/editor/html/editor.html","<div class=\"editor-autoresize\">\n  <textarea name=\"{{name}}\" ng-model=\"text\"></textarea>\n</div>\n");
-$templateCache.put("plugins/example/html/page1.html","<div class=\"row\">\n  <div class=\"col-md-12\" ng-controller=\"Example.Page1Controller\">\n    <h1>Page 1</h1>\n    <p>Hello {{target}}</p>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/formGrid.html","<div>\n\n  <script type=\"text/ng-template\" id=\"heroUnitTemplate.html\">\n    <div class=\"hero-unit\">\n      <h5>No Items Added</h5>\n      <p><a href=\"\" ng-click=\"addThing()\">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"headerCellTemplate.html\">\n    <th>{{label}}</th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"emptyHeaderCellTemplate.html\">\n    <th></th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"deleteRowTemplate.html\">\n    <td ng-click=\"removeThing({{index}})\" class=\"align-center\">\n      <i class=\"icon-remove red mouse-pointer\"></i>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellNumberTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\" min=\"{{min}}\" max=\"{{max}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n\n  <div ng-show=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12 nodata\">\n    </div>\n  </div>\n  <div ng-hide=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12\">\n      <h3 ng-show=\"configuration.heading\">{{getHeading()}}</h3>\n      <table class=\"table table-striped\">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click=\"addThing()\" class=\"centered mouse-pointer\">\n      <i class=\"icon-plus green\"></i><span ng-show=\"configuration.rowName\"> Add {{configuration.rowName.titleize()}}</span>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/test.html","<div ng-controller=\'Forms.FormTestController\'>\n\n  <div class=\"row-fluid\">\n    <h3>Basic form</h3>\n    <p>Here\'s a basic form generated from some JSON schema</p>\n\n    <p>Here\'s some example JSON schema definition</p>\n    <div hawtio-editor=\"basicFormEx1Schema\" mode=\"javascript\"></div>\n    <button class=\'btn\' ng-click=\"updateSchema()\"><i class=\"icon-save\"></i> Update form</button>\n\n    <p>You can define an entity object to have default values filled in</p>\n    <div hawtio-editor=\"basicFormEx1EntityString\" mode=\"javascript\"></div>\n    <button class=\'btn\' ng-click=\"updateEntity()\"><i class=\"icon-save\"></i> Update form</button>\n\n    <p>And here is the code for the form</p>\n    <div hawtio-editor=\"basicFormEx1\" mode=\"html\"></div>\n\n    <p>The resulting form</p>\n    <div class=\"directive-example\">\n      <div compile=\"basicFormEx1\"></div>\n    </div>\n\n    <h3>Form related controls</h3>\n    <p>There\'s also directives to take care of resetting or submitting a form</p>\n\n    <p></p>\n    <p>Clearing a form is done using the hawtio-reset directive</p>\n    <div hawtio-editor=\"hawtioResetEx\" mode=\"html\"></div>\n    <p>Click the button below to clear the above form</p>\n    <div class=\"directive-example\">\n      <div compile=\"hawtioResetEx\"></div>\n    </div>\n\n    <p>And to submit a form use hawtio-submit</p>\n\n    <div hawtio-editor=\"hawtioSubmitEx\" mode=\"html\"></div>\n    <div class=\"directive-example\">\n      <div compile=\"hawtioSubmitEx\"></div>\n    </div>\n\n    <p>Fill in the form and click the submit button above to see what the form produces</p>\n    <div hawtio-editor=\"basicFormEx1Result\" mode=\"javascript\"></div>\n    <p></p>\n    <p></p>\n    <p></p>\n    <p></p>\n  </div>\n\n  <!--\n\n  <h3>Form Testing</h3>\n\n  <div>\n    <div class=\"control-group\">\n      <a class=\'btn\' ng-href=\"\" hawtio-submit=\'form-with-inline-arguments\'><i class=\"icon-save\"></i> Save</a>\n      <a class=\'btn\' ng-href=\"\" hawtio-reset=\'form-with-inline-arguments\'><i class=\"icon-refresh\"></i> Clear</a>\n    </div>\n    Form with inline arguments\n    <div simple-form name=\'form-with-inline-arguments\' action=\'#/forms/test\' method=\'post\' data=\'setVMOption\' entity=\'cheese\' onSubmit=\"derp()\"></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Read Only Form with config object\n    <div class=\"row-fluid\">\n      <button class=\"btn\" ng-click=\"toggleEdit()\">Edit</button>\n    </div>\n    <div simple-form data=\'setVMOption\' entity=\'cheese\' mode=\'view\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Form with config object\n    <div simple-form=\'config\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    form with inline json config\n    <div simple-form name=\'form-with-inline-json-config\' action=\'#/forms/test\' method=\'post\' showTypes=\'false\' json=\'\n    {\n      \"properties\": {\n        \"key\": { \"description\": \"Argument key\", \"type\": \"java.lang.String\" },\n        \"value\": { \"description\": \"Argument value\", \"type\": \"java.lang.String\" },\n        \"longArg\": { \"description\": \"Long argument\", \"type\": \"Long\" },\n        \"intArg\": { \"description\": \"Int argument\", \"type\": \"Integer\" }},\n       \"description\": \"Show some stuff in a form from JSON\",\n       \"type\": \"java.lang.String\"\n    }\'></div>\n  </div>\n\n  -->\n</div>\n");
