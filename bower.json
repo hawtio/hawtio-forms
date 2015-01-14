@@ -20,7 +20,7 @@
     "hawtio-core": "~2.0.0",
     "hawtio-core-navigation": "~2.0.0",
     "hawtio-utilities": "~2.0.0",
-    "codemirror": "~4.10.0"
+    "hawtio-ui": "*"
   },
   "devDependencies": {
     "bootstrap": "~3.3.1",

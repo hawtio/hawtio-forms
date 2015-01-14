@@ -1,8 +1,4 @@
 /// <reference path="d.ts/includes.d.ts"/>
-/// <reference path="d.ts/editor/ts/CodeEditor.d.ts"/>
-/// <reference path="d.ts/editor/ts/editorGlobals.d.ts"/>
-/// <reference path="d.ts/editor/ts/editorPlugin.d.ts"/>
-/// <reference path="d.ts/editor/ts/editorDirective.d.ts"/>
 /// <reference path="d.ts/forms/ts/formHelpers.d.ts"/>
 /// <reference path="d.ts/forms/ts/mappingRegistry.d.ts"/>
 /// <reference path="d.ts/forms/ts/baseDirectives.d.ts"/>

@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 2.0.3
+* Move editor to hawtio-ui, add hawtio-ui as dependency
+
 #### 2.0.2
 * Remove example plugin
 
