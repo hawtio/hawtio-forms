@@ -33,7 +33,7 @@ declare module Forms {
      * Type for the FormConfiguration's 'tabs' attribute
      */
     interface FormTabs {
-        [name: string]: string[];
+        [name: string]: Array<string>;
     }
     /**
      * Factory method to create a FormTabs object
@@ -66,13 +66,13 @@ declare module Forms {
     }
     interface FormGridRowConfiguration extends FormConfiguration {
         properties: FormGridProperties;
-        columnOrder: string[];
+        columnOrder: Array<string>;
     }
     interface FormGridConfiguration {
         heading?: boolean;
         rowName?: string;
         rowSchema: FormGridRowConfiguration;
-        rows: any[];
+        rows: Array<any>;
         onAdd: () => any;
         noDataTemplate: string;
     }

@@ -34,7 +34,7 @@ declare module Forms {
         replace: boolean;
         transclude: boolean;
         private attributeName;
-        link: (scope: any, element: any, attrs: any) => any;
+        link: (scope, element, attrs) => any;
         constructor($compile: any);
         private doLink(scope, element, attrs);
         private getAddButton(config);

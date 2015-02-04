@@ -1,4 +1,4 @@
-
+/// <reference path="../libs/hawtio-ui/defs.d.ts"/>
 
 /// <reference path="../../includes.ts"/>
 /**
@@ -216,7 +216,7 @@ var Forms;
     }
     Forms.getControlGroup = getControlGroup;
     function getLabel(config, arg, label) {
-        return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+        return angular.element('<label class="' + config.labelclass + '">' + label + '</label>');
     }
     Forms.getLabel = getLabel;
     function getControlDiv(config) {
@@ -404,7 +404,7 @@ var Forms;
         // lets try use standard widgets first...
         var type = Forms.resolveTypeNameAlias(propTypeName, schema);
         if (!type) {
-            return '<input type="text"/>';
+            return '<input type="text" class="form-group"/>';
         }
         var custom = Core.pathGet(property, ["formTemplate"]);
         if (custom) {
@@ -499,7 +499,7 @@ var Forms;
                         Core.pathSet(scope, modelName, numberValue);
                     }
                 };
-                return '<input type="number"/>';
+                return '<input type="number" class="form-input"/>';
             case "array":
             case "java.lang.array":
             case "java.lang.iterable":
@@ -521,16 +521,16 @@ var Forms;
                         Core.pathSet(scope, modelName, true);
                     }
                 };
-                return '<input type="checkbox"/>';
+                return '<input type="checkbox" class="form-input"/>';
             case "password":
-                return '<input type="password"/>';
+                return '<input type="password" class="form-input"/>';
             case "hidden":
-                return '<input type="hidden"/>';
+                return '<input type="hidden" class="form-input"/>';
             case "map":
                 return null;
             default:
                 // lets check if this name is an alias to a definition in the schema
-                return '<input type="text"/>';
+                return '<input type="text" class="form-input"/>';
         }
     }
     Forms.createStandardWidgetMarkup = createStandardWidgetMarkup;
@@ -1169,9 +1169,9 @@ var Forms;
             this.properties = [];
             this.action = '';
             this.formclass = 'hawtio-form form-horizontal no-bottom-margin';
-            this.controlgroupclass = 'control-group';
-            this.controlclass = 'controls';
-            this.labelclass = 'control-label';
+            this.controlgroupclass = 'form-group';
+            this.controlclass = 'col-sm-10';
+            this.labelclass = 'col-sm-2 control-label';
             this.showtypes = 'false';
             this.onsubmit = 'onSubmit';
         }

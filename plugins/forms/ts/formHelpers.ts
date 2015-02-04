@@ -215,7 +215,7 @@ module Forms {
   }
 
   export function getLabel(config, arg, label) {
-    return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+    return angular.element('<label class="' + config.labelclass + '">' + label + '</label>');
   }
 
   export function getControlDiv(config) {

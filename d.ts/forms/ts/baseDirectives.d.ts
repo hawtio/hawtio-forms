@@ -48,7 +48,7 @@ declare module Forms {
         replace: boolean;
         transclude: boolean;
         private attributeName;
-        link: (scope: any, element: any, attrs: any) => any;
+        link: (scope, element, attrs) => any;
         constructor($compile: any);
         doLink(scope: any, element: any, attrs: any): void;
         getControlGroup(config1: any, config2: any, id: any): any;

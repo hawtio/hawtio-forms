@@ -2,7 +2,7 @@ declare module Forms {
     class ResetForm {
         restrict: string;
         scope: boolean;
-        link: (scope: any, element: any, attrs: any) => any;
+        link: (scope, element, attrs) => any;
         constructor();
         private doLink(scope, element, attrs);
     }

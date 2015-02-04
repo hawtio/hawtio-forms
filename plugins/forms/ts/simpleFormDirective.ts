@@ -31,9 +31,9 @@ module Forms {
     public action = '';
 
     public formclass = 'hawtio-form form-horizontal no-bottom-margin';
-    public controlgroupclass = 'control-group';
-    public controlclass = 'controls';
-    public labelclass = 'control-label';
+    public controlgroupclass = 'form-group';
+    public controlclass = 'col-sm-10';
+    public labelclass = 'col-sm-2 control-label';
 
     public showtypes = 'false';
 
