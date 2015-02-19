@@ -11,4 +11,3 @@
 /// <reference path="d.ts/forms/ts/formInterfaces.d.ts"/>
 /// <reference path="d.ts/forms/ts/formGrid.d.ts"/>
 /// <reference path="d.ts/forms/ts/formMapDirective.d.ts"/>
-/// <reference path="d.ts/forms/ts/test.d.ts"/>
