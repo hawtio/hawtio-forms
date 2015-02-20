@@ -1,0 +1,60 @@
+<div>
+  <script type="text/ng-template" id="standard-input.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">{{entity.label || entity.description || name}}</label>
+      <div class="col-sm-10">
+        <input type="" class="form-control" placeholder="{{entity.placeholder}}" ng-model="{{model}}">
+        <p class="help-block" ng-show="description" ng-bind="description"></p>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="select.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="col-sm-10">
+        <select class="form-control"></select>
+        <p class="help-block" ng-show="description" ng-bind="description"></p>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="static-text.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="col-sm-10">
+        <p class="form-control-static"></p>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="checkbox-input.html">
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox">
+          </label>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="radio-top-level.html">
+    <div class="radio">
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="radio-group-member.html">
+    <label>
+      <input type="radio" name="" value="">
+    </label>
+  </script>
+
+  <script type="text/ng-template" id="form-main.html">
+    <form>
+      <fieldset>
+      </fieldset>
+    </form>
+  </script>
+</div>

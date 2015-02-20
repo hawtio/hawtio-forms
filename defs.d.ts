@@ -16,3 +16,4 @@
 /// <reference path="d.ts/forms2/ts/forms2Plugin.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Directive.d.ts"/>
 /// <reference path="d.ts/forms2/ts/schemaRegistry.d.ts"/>
+/// <reference path="d.ts/forms2/ts/typeRegistry.d.ts"/>

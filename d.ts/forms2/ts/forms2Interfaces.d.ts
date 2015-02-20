@@ -13,6 +13,7 @@ declare module HawtioForms {
         hidden?: boolean;
         'input-attributes'?: AttributeMap;
         'control-group-attributes'?: AttributeMap;
+        'label-attributes'?: AttributeMap;
         formTemplate?: string;
     }
     /**
@@ -35,18 +36,33 @@ declare module HawtioForms {
         EDIT = 1,
     }
     /**
+     * Enum for the overall form style
+     */
+    enum FormStyle {
+        STANDARD = 0,
+        INLINE = 1,
+        HORIZONTAL = 2,
+    }
+    /**
      * Interface that describes the configuration object for hawtio forms
      */
     interface FormConfiguration {
         id?: string;
         type?: string;
         mode?: FormMode;
+        style?: FormStyle;
         disableHumanizeLabel?: boolean;
         ignorePrefixInLabel?: boolean;
         properties: FormProperties;
         tabs?: FormTabs;
     }
     function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
+    interface ControlMappingRegistry {
+        addMapping(name: string, controlType: string): any;
+        getMapping(name: string): string;
+        removeMapping(name: string): string;
+        iterate(iter: (controlType: string, name: string) => void): any;
+    }
     interface SchemaRegistry {
         addSchema(name: string, schema: FormConfiguration): any;
         getSchema(name: string): FormConfiguration;

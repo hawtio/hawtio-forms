@@ -17,6 +17,7 @@ module HawtioForms {
     hidden?: boolean;
     'input-attributes'?: AttributeMap;
     'control-group-attributes'?: AttributeMap;
+    'label-attributes'?: AttributeMap;
     formTemplate?: string;
   }
 
@@ -43,12 +44,22 @@ module HawtioForms {
   }
 
   /**
+   * Enum for the overall form style
+   */
+  export enum FormStyle {
+    STANDARD,
+    INLINE,
+    HORIZONTAL
+  }
+
+  /**
    * Interface that describes the configuration object for hawtio forms
    */
   export interface FormConfiguration {
     id?: string;
     type?: string;
     mode?: FormMode;
+    style?: FormStyle;
     disableHumanizeLabel?: boolean
     ignorePrefixInLabel?: boolean
     properties: FormProperties;
@@ -58,9 +69,17 @@ module HawtioForms {
   export function createFormConfiguration(options?: FormConfiguration):FormConfiguration {
     var answer = options || { properties: {} };
     _.defaults(answer, {
-      mode: FormMode.EDIT,
+      style: FormStyle.HORIZONTAL,
+      mode: FormMode.EDIT
     });
     return answer;
+  }
+
+  export interface ControlMappingRegistry {
+    addMapping(name: string, controlType: string);
+    getMapping(name: string):string;
+    removeMapping(name: string):string;
+    iterate(iter:(controlType:string, name:string) => void);
   }
 
   export interface SchemaRegistry {

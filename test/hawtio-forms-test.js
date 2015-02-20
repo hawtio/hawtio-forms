@@ -39,11 +39,26 @@ var HawtioFormsTests;
       "properties": {
         "key": {
           "description": "Argument key",
-          "type": "java.lang.String"
+          "label": "The Argument",
+          "type": "java.lang.String",
+          "label-attriubtes": {
+
+          },
+          "input-attributes": {
+
+          },
+          "control-group-attributes": {
+            "ng-show": "entity.booleanArg == true"
+          }
         },
         "value": {
           "description": "Argument Value",
-          "type": "java.lang.String"
+          "label": "The Value",
+          "type": "java.lang.String",
+          "tooltip": "This is the tooltip"
+        },
+        "templatedThing": {
+          "formTemplate": "<p>Hi!</p>"
         },
         "longArg": {
           "description": "Long argument",
@@ -53,7 +68,8 @@ var HawtioFormsTests;
         },
         "intArg": {
           "description": "Int argument",
-          "type": "Integer"
+          "type": "Integer",
+          "hidden": "true"
         },
         "objectArg": {
           "description": "some object",
@@ -72,8 +88,13 @@ var HawtioFormsTests;
         "Tab Three": ["booleanArg"]
       }
     };
+    $scope.entity = {};
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('entity', _.debounce(function() {
+      $scope.entityStr = angular.toJson($scope.entity, true);
+      Core.$apply($scope);
+    }, 500), true);
     $scope.$watch('configStr', _.debounce(function() {
       try {
         $scope.config = angular.fromJson($scope.configStr);
