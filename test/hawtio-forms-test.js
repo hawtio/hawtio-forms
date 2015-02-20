@@ -2,25 +2,86 @@
 var HawtioFormsTests;
 (function(HawtioFormsTests) {
   var pluginName = HawtioFormsTests.pluginName = 'hawtio-forms-tests';
-  HawtioFormsTests.templatePath = 'test';
+  var tp = HawtioFormsTests.templatePath = 'test';
   var log = HawtioFormsTests.log = Logger.get(pluginName);
   var _module = HawtioFormsTests._module = angular.module(HawtioFormsTests.pluginName, []);
   var tab = null;
+  var tab2 = null;
 
   _module.config(['$routeProvider', 'HawtioNavBuilderProvider', function($routeProvider, builder) {
     tab = builder.create()
-            .id(HawtioFormsTests.pluginName)
-            .title( function() { return "Test"; } )
+            .id(pluginName)
+            .title( function() { return "Forms"; } )
             .href( function () { return "/forms"; })
-            .subPath("Simple Form", "simple_form", builder.join(HawtioFormsTests.templatePath, "test.html"), 1)
-            .subPath("Form Table", "form_table", builder.join(HawtioFormsTests.templatePath, "testTable.html"), 1)
-            .subPath("Wizard", "form_wizard", builder.join(HawtioFormsTests.templatePath, "wizard.html"), 1)
+            .subPath("Simple Form", "simple_form", builder.join(tp, "test.html"), 1)
+            .subPath("Form Table", "form_table", builder.join(tp, "testTable.html"), 2)
+            .subPath("Wizard", "form_wizard", builder.join(tp, "wizard.html"), 3)
             .build();
+
+    tab2 = builder.create()
+              .id(pluginName + '-form2')
+              .title( function() { return "Forms2"; } )
+              .href( function() { return "/forms2"; } )
+              .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 1)
+              .build();
+
     builder.configureRouting($routeProvider, tab);        
+    builder.configureRouting($routeProvider, tab2);        
   }]);
 
   _module.run(["HawtioNav", function(nav) {
     nav.add(tab);
+    nav.add(tab2);
+  }]);
+
+  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", function($scope, $templateCache) {
+    $scope.config = {
+      "properties": {
+        "key": {
+          "description": "Argument key",
+          "type": "java.lang.String"
+        },
+        "value": {
+          "description": "Argument Value",
+          "type": "java.lang.String"
+        },
+        "longArg": {
+          "description": "Long argument",
+          "type": "Long",
+          "minimum": "5",
+          "maximum": "10"
+        },
+        "intArg": {
+          "description": "Int argument",
+          "type": "Integer"
+        },
+        "objectArg": {
+          "description": "some object",
+          "type": "object"
+        },
+        "booleanArg": {
+          "description": "Some boolean value",
+          "type": "java.lang.Boolean"
+        }
+      },
+      "description": "Show some stuff in a form",
+      "type": "java.lang.String",
+      "tabs": {
+        "Tab One": ["key", "value"],
+        "Tab Two": ["*"],
+        "Tab Three": ["booleanArg"]
+      }
+    };
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
   }]);
 
   HawtioFormsTests.WizardController = _module.controller("HawtioFormsTests.WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {

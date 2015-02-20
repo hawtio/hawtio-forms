@@ -11,3 +11,8 @@
 /// <reference path="d.ts/forms/ts/formInterfaces.d.ts"/>
 /// <reference path="d.ts/forms/ts/formGrid.d.ts"/>
 /// <reference path="d.ts/forms/ts/formMapDirective.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Interfaces.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Helpers.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Plugin.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Directive.d.ts"/>
+/// <reference path="d.ts/forms2/ts/schemaRegistry.d.ts"/>

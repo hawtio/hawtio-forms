@@ -9,12 +9,6 @@ module Forms {
 
   export var _module = angular.module(Forms.pluginName, []);
 
-  _module.config(["$routeProvider", ($routeProvider) => {
-    $routeProvider.
-      when('/forms/test', {templateUrl: UrlHelpers.join(templateUrl, 'test.html')}).
-      when('/forms/testTable', {templateUrl: UrlHelpers.join(templateUrl, 'testTable.html')});
-  }]);
-
   _module.directive('simpleForm', ["$compile", ($compile) => {
     return new Forms.SimpleForm($compile);
   }]);

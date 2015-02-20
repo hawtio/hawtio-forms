@@ -1893,9 +1893,6 @@ var Forms;
 var Forms;
 (function (Forms) {
     Forms._module = angular.module(Forms.pluginName, []);
-    Forms._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/forms/test', { templateUrl: UrlHelpers.join(Forms.templateUrl, 'test.html') }).when('/forms/testTable', { templateUrl: UrlHelpers.join(Forms.templateUrl, 'testTable.html') });
-    }]);
     Forms._module.directive('simpleForm', ["$compile", function ($compile) {
         return new Forms.SimpleForm($compile);
     }]);
@@ -2173,6 +2170,94 @@ var Forms;
         };
     }]);
 })(Forms || (Forms = {}));
+
+/// <reference path="../../includes.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
+    /**
+     * Enum for form mode attribute
+     */
+    (function (FormMode) {
+        FormMode[FormMode["VIEW"] = 0] = "VIEW";
+        FormMode[FormMode["EDIT"] = 1] = "EDIT";
+    })(HawtioForms.FormMode || (HawtioForms.FormMode = {}));
+    var FormMode = HawtioForms.FormMode;
+    function createFormConfiguration(options) {
+        var answer = options || { properties: {} };
+        _.defaults(answer, {
+            mode: 1 /* EDIT */,
+        });
+        return answer;
+    }
+    HawtioForms.createFormConfiguration = createFormConfiguration;
+})(HawtioForms || (HawtioForms = {}));
+
+/// <reference path="../../includes.ts"/>
+/// <reference path="forms2Interfaces.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
+    HawtioForms.pluginName = "hawtio-forms2";
+    HawtioForms.log = Logger.get(HawtioForms.pluginName);
+})(HawtioForms || (HawtioForms = {}));
+
+/// <reference path="forms2Helpers.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
+    HawtioForms._module = angular.module(HawtioForms.pluginName, []);
+    HawtioForms._module.run(function () {
+        HawtioForms.log.debug("loaded");
+    });
+    hawtioPluginLoader.addModule(HawtioForms.pluginName);
+})(HawtioForms || (HawtioForms = {}));
+
+/// <reference path="forms2Plugin.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
+    var directiveName = 'hawtioForm';
+    HawtioForms._module.directive(directiveName, [function () {
+        return {
+            restrict: 'A',
+            scope: {
+                config: '=' + directiveName,
+                entity: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.config = HawtioForms.createFormConfiguration(scope.config);
+                HawtioForms.log.debug("form configuration: ", scope.config);
+            }
+        };
+    }]);
+})(HawtioForms || (HawtioForms = {}));
+
+/// <reference path="forms2Plugin.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
+    HawtioForms._module.factory("SchemaRegistry", function () {
+        var schemaMap = {};
+        return {
+            addSchema: function (name, schema) {
+                schemaMap[name] = schema;
+            },
+            getSchema: function (name) {
+                return schemaMap[name];
+            },
+            cloneSchema: function (name) {
+                return _.clone(schemaMap[name], true);
+            },
+            removeSchema: function (name) {
+                var answer = undefined;
+                if (name in schemaMap) {
+                    answer = schemaMap[name];
+                    delete schemaMap[name];
+                }
+                return answer;
+            },
+            iterate: function (iter) {
+                _.forIn(schemaMap, iter);
+            }
+        };
+    });
+})(HawtioForms || (HawtioForms = {}));
 
 angular.module("hawtio-forms-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("plugins/forms/html/formGrid.html","<div>\n\n  <script type=\"text/ng-template\" id=\"heroUnitTemplate.html\">\n    <div class=\"hero-unit\">\n      <h5>No Items Added</h5>\n      <p><a href=\"\" ng-click=\"addThing()\">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"headerCellTemplate.html\">\n    <th>{{label}}</th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"emptyHeaderCellTemplate.html\">\n    <th></th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"deleteRowTemplate.html\">\n    <td ng-click=\"removeThing({{index}})\" class=\"align-center\">\n      <i class=\"icon-remove red mouse-pointer\"></i>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellNumberTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\" min=\"{{min}}\" max=\"{{max}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n\n  <div ng-show=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12 nodata\">\n    </div>\n  </div>\n  <div ng-hide=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12\">\n      <h3 ng-show=\"configuration.heading\">{{getHeading()}}</h3>\n      <table class=\"table table-striped\">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click=\"addThing()\" class=\"centered mouse-pointer\">\n      <i class=\"icon-plus green\"></i><span ng-show=\"configuration.rowName\"> Add {{configuration.rowName.titleize()}}</span>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-templates");
