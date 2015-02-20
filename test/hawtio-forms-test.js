@@ -1,8 +1,9 @@
 
 var HawtioFormsTests;
 (function(HawtioFormsTests) {
-  HawtioFormsTests.pluginName = 'hawtio-forms-tests';
+  var pluginName = HawtioFormsTests.pluginName = 'hawtio-forms-tests';
   HawtioFormsTests.templatePath = 'test';
+  var log = HawtioFormsTests.log = Logger.get(pluginName);
   var _module = HawtioFormsTests._module = angular.module(HawtioFormsTests.pluginName, []);
   var tab = null;
 
@@ -13,12 +14,64 @@ var HawtioFormsTests;
             .href( function () { return "/forms"; })
             .subPath("Simple Form", "simple_form", builder.join(HawtioFormsTests.templatePath, "test.html"), 1)
             .subPath("Form Table", "form_table", builder.join(HawtioFormsTests.templatePath, "testTable.html"), 1)
+            .subPath("Wizard", "form_wizard", builder.join(HawtioFormsTests.templatePath, "wizard.html"), 1)
             .build();
     builder.configureRouting($routeProvider, tab);        
   }]);
 
   _module.run(["HawtioNav", function(nav) {
     nav.add(tab);
+  }]);
+
+  HawtioFormsTests.WizardController = _module.controller("HawtioFormsTests.WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
+    $scope.wizardConfig = {
+      "properties": {
+        "key": {
+          "description": "Argument key",
+          "type": "java.lang.String"
+        },
+        "value": {
+          "description": "Argument Value",
+          "type": "java.lang.String"
+        },
+        "longArg": {
+          "description": "Long argument",
+          "type": "Long",
+          "minimum": "5",
+          "maximum": "10"
+        },
+        "intArg": {
+          "description": "Int argument",
+          "type": "Integer"
+        },
+        "objectArg": {
+          "description": "some object",
+          "type": "object"
+        },
+        "booleanArg": {
+          "description": "Some boolean value",
+          "type": "java.lang.Boolean"
+        }
+      },
+      "description": "My awesome wizard!",
+      "type": "java.lang.String",
+      "wizard": {
+        "Page One": ["key", "value"],
+        "Page Two": ["*"],
+        "Page Three": ["booleanArg"]
+      }
+    };
+    $scope.wizardConfigStr = angular.toJson($scope.wizardConfig, true);
+    $scope.wizardMarkup = $templateCache.get("wizardMarkup.html");
+    $scope.$watch('wizardConfigStr', _.debounce(function() {
+      try {
+        $scope.wizardConfig = angular.fromJson($scope.wizardConfigStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+
   }]);
 
   HawtioFormsTests.FormTestController = _module.controller("Forms.FormTestController", ["$scope", function ($scope) {
@@ -47,8 +100,46 @@ var HawtioFormsTests;
     $scope.fromObject = function (str) {
       return angular.toJson($scope[str], true);
     };
-    //TODO - I totally did this backwards :-/
-    $scope.basicFormEx1Schema = '' + '{\n' + '   "properties": {\n' + '     "key": {\n' + '       "description": "Argument key",\n' + '       "type": "java.lang.String"\n' + '     },\n' + '     "value": {\n' + '       "description": "Argument Value",\n' + '       "type": "java.lang.String"\n' + '     },\n' + '     "longArg": {\n' + '       "description": "Long argument",\n' + '       "type": "Long",\n' + '       "minimum": "5",\n' + '       "maximum": "10"\n' + '     },\n' + '     "intArg": {\n' + '       "description": "Int argument",\n' + '       "type": "Integer"\n' + '     },\n' + '     "objectArg": {\n' + '       "description": "some object",\n' + '       "type": "object"\n' + '     },\n' + '     "booleanArg": {\n' + '       "description": "Some boolean value",\n' + '       "type": "java.lang.Boolean"\n' + '     }\n' + '   },\n' + '   "description": "Show some stuff in a form",\n' + '   "type": "java.lang.String",\n' + '   "tabs": {\n' + '     "Tab One": ["key", "value"],\n' + '     "Tab Two": ["*"],\n' + '     "Tab Three": ["booleanArg"]\n' + '   }\n' + '}';
+    
+    $scope.basicFormEx1Config ={
+      "properties": {
+        "key": {
+          "description": "Argument key",
+          "type": "java.lang.String"
+        },
+        "value": {
+          "description": "Argument Value",
+          "type": "java.lang.String"
+        },
+        "longArg": {
+          "description": "Long argument",
+          "type": "Long",
+          "minimum": "5",
+          "maximum": "10"
+        },
+        "intArg": {
+          "description": "Int argument",
+          "type": "Integer"
+        },
+        "objectArg": {
+          "description": "some object",
+          "type": "object"
+        },
+        "booleanArg": {
+          "description": "Some boolean value",
+          "type": "java.lang.Boolean"
+        }
+      },
+      "description": "Show some stuff in a form",
+      "type": "java.lang.String",
+      "tabs": {
+        "Tab One": ["key", "value"],
+        "Tab Two": ["*"],
+        "Tab Three": ["booleanArg"]
+      }
+    };
+
+    $scope.basicFormEx1Schema = angular.toJson($scope.basicFormEx1Config, true);
     $scope.basicFormEx1SchemaObject = $scope.toObject($scope.basicFormEx1Schema);
     $scope.updateSchema = function () {
       $scope.basicFormEx1SchemaObject = $scope.toObject($scope.basicFormEx1Schema);
