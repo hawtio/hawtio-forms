@@ -11,6 +11,7 @@ declare module HawtioForms {
         tooltip?: string;
         label?: string;
         hidden?: boolean;
+        enum?: any;
         'input-attributes'?: AttributeMap;
         'control-group-attributes'?: AttributeMap;
         'label-attributes'?: AttributeMap;

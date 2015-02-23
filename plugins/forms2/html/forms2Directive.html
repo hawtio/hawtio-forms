@@ -1,7 +1,7 @@
 <div>
   <script type="text/ng-template" id="standard-input.html">
     <div class="form-group">
-      <label class="control-label">{{control.label || name}}</label>
+      <label class="control-label">{{control.label || maybeHumanize(name)}}</label>
       <input type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}">
       <p class="help-block">{{control.description}}</p>
     </div>
@@ -9,7 +9,7 @@
 
   <script type="text/ng-template" id="standard-horizontal-input.html">
     <div class="form-group">
-      <label class="col-sm-2 control-label">{{control.label || name}}</label>
+      <label class="col-sm-2 control-label">{{control.label || maybeHumanize(name)}}</label>
       <div class="col-sm-10">
         <input type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}">
         <p class="help-block">{{control.description}}</p>
@@ -18,18 +18,26 @@
   </script>
 
   <script type="text/ng-template" id="hidden.html">
-    <div class="form-group">
+    <div class="form-group" ng-hide="true">
       <input type="hidden" ng-model="{{model}}">
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="select-horizontal.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">{{control.label || maybeHumanize(name)}}</label>
+      <div class="col-sm-10">
+        <select class="form-control" ng-model="{{model}}"></select>
+        <p class="help-block">{{control.description}}</p>
+      </div>
     </div>
   </script>
 
   <script type="text/ng-template" id="select.html">
     <div class="form-group">
-      <label class="col-sm-2 control-label"></label>
-      <div class="col-sm-10">
-        <select class="form-control"></select>
-        <p class="help-block">{{control.description}}</p>
-      </div>
+      <label class="control-label">{{control.label || maybeHumanize(name)}}</label>
+      <select class="form-control" ng-model="{{model}}"></select>
+      <p class="help-block">{{control.description}}</p>
     </div>
   </script>
 
@@ -50,15 +58,26 @@
   </script>
 
 
-  <script type="text/ng-template" id="checkbox-input.html">
+  <script type="text/ng-template" id="checkbox-horizontal.html">
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="{{model}}"> {{control.label || name}}
+            <input type="checkbox" ng-model="{{model}}"> {{control.label || maybeHumanize(name)}}
           </label>
           <p class="help-block">{{control.description}}</p>
         </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="checkbox.html">
+    <div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="{{model}}"> {{control.label || maybeHumanize(name)}}
+        </label>
+        <p class="help-block">{{control.description}}</p>
       </div>
     </div>
   </script>

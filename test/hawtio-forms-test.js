@@ -37,6 +37,7 @@ var HawtioFormsTests;
   HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", function($scope, $templateCache) {
     $scope.config = {
       "style": HawtioForms.FormStyle.HORIZONTAL,
+      "disableHumanizeLabel": false,
       "properties": {
         "key": {
           "label": "The Argument",
@@ -53,6 +54,21 @@ var HawtioFormsTests;
             "ng-show": "entity.booleanArg == true"
           }
         },
+        scheme: {
+          type: "java.lang.String",
+          tooltip: "HTTP or HTTPS",
+          enum: ["http", "https"],
+          default: "http",
+        },
+        "ObjectSelect": {
+          type: "java.lang.String",
+          enum: {
+            "label1": "value1",
+            "label2": "value2",
+            "label3": "value3"
+          },
+          default: "value3"
+        },
         "value": {
           "description": "Enter the argument value",
           "label": "The Value",
@@ -65,10 +81,16 @@ var HawtioFormsTests;
         },
         "staticText": {
           "type": "static",
-          "description": "This is some static text"
+          "description": "This is some static text, use this type to add a description in your form that's properly formatted"
         },
         "templatedThing": {
-          "formTemplate": "<p>Hi!</p>"
+          "formTemplate": "<p class=\"alert alert-info\">Hi, I'm a custom template and I like warm hugs!</p>"
+        },
+        "passwordField": {
+          "type": "password",
+          "input-attributes": {
+            placeholder: "Password..."
+          }
         },
         "longArg": {
           "description": "Long argument",
