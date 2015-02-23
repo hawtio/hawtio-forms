@@ -36,26 +36,36 @@ var HawtioFormsTests;
 
   HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", function($scope, $templateCache) {
     $scope.config = {
+      "style": HawtioForms.FormStyle.HORIZONTAL,
       "properties": {
         "key": {
-          "description": "Argument key",
           "label": "The Argument",
           "type": "java.lang.String",
-          "label-attriubtes": {
+          "description": "Enter the argument key",
+          "label-attributes": {
 
           },
           "input-attributes": {
-
+            "value": "This is an initial value",
+            "placeholder": "Enter in some value"
           },
           "control-group-attributes": {
             "ng-show": "entity.booleanArg == true"
           }
         },
         "value": {
-          "description": "Argument Value",
+          "description": "Enter the argument value",
           "label": "The Value",
           "type": "java.lang.String",
-          "tooltip": "This is the tooltip"
+          "tooltip": "This is the tooltip",
+          "input-attributes": {
+            "placeholder": "Hello World!",
+            "value": "This is also an initial value"
+          }
+        },
+        "staticText": {
+          "type": "static",
+          "description": "This is some static text"
         },
         "templatedThing": {
           "formTemplate": "<p>Hi!</p>"
@@ -63,20 +73,28 @@ var HawtioFormsTests;
         "longArg": {
           "description": "Long argument",
           "type": "Long",
-          "minimum": "5",
-          "maximum": "10"
+          "label-attributes": {
+            "style": "color: red"
+          },
+          "input-attributes": {
+            "min": "5",
+            "max": "10"
+          }
         },
         "intArg": {
           "description": "Int argument",
           "type": "Integer",
-          "hidden": "true"
+          "hidden": true,
+          "input-attributes": {
+            "value": 5
+          }
         },
         "objectArg": {
           "description": "some object",
           "type": "object"
         },
         "booleanArg": {
-          "description": "Some boolean value",
+          "description": "Toggles whether or not you want to enter the argument key",
           "type": "java.lang.Boolean"
         }
       },
@@ -88,11 +106,11 @@ var HawtioFormsTests;
         "Tab Three": ["booleanArg"]
       }
     };
-    $scope.entity = {};
+    $scope.model = {};
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
-    $scope.$watch('entity', _.debounce(function() {
-      $scope.entityStr = angular.toJson($scope.entity, true);
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
       Core.$apply($scope);
     }, 500), true);
     $scope.$watch('configStr', _.debounce(function() {

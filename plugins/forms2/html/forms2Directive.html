@@ -1,11 +1,25 @@
 <div>
   <script type="text/ng-template" id="standard-input.html">
     <div class="form-group">
-      <label class="col-sm-2 control-label">{{entity.label || entity.description || name}}</label>
+      <label class="control-label">{{control.label || name}}</label>
+      <input type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}">
+      <p class="help-block">{{control.description}}</p>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="standard-horizontal-input.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">{{control.label || name}}</label>
       <div class="col-sm-10">
-        <input type="" class="form-control" placeholder="{{entity.placeholder}}" ng-model="{{model}}">
-        <p class="help-block" ng-show="description" ng-bind="description"></p>
+        <input type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}">
+        <p class="help-block">{{control.description}}</p>
       </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="hidden.html">
+    <div class="form-group">
+      <input type="hidden" ng-model="{{model}}">
     </div>
   </script>
 
@@ -14,27 +28,36 @@
       <label class="col-sm-2 control-label"></label>
       <div class="col-sm-10">
         <select class="form-control"></select>
-        <p class="help-block" ng-show="description" ng-bind="description"></p>
+        <p class="help-block">{{control.description}}</p>
       </div>
     </div>
   </script>
 
   <script type="text/ng-template" id="static-text.html">
     <div class="form-group">
-      <label class="col-sm-2 control-label"></label>
+      <label class="control-label">{{control.label}}</label>
+      <p class="form-control-static">{{control.description}}</p>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="static-horizontal-text.html">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">{{control.label}}</label>
       <div class="col-sm-10">
-        <p class="form-control-static"></p>
+        <p class="form-control-static">{{control.description}}</p>
       </div>
     </div>
   </script>
+
 
   <script type="text/ng-template" id="checkbox-input.html">
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox">
+            <input type="checkbox" ng-model="{{model}}"> {{control.label || name}}
           </label>
+          <p class="help-block">{{control.description}}</p>
         </div>
       </div>
     </div>
@@ -51,8 +74,20 @@
     </label>
   </script>
 
-  <script type="text/ng-template" id="form-main.html">
+  <script type="text/ng-template" id="form-standard.html">
     <form>
+      <fieldset>
+      </fieldset>
+    </form>
+  </script>
+  <script type="text/ng-template" id="form-inline.html">
+    <form class="form-inline">
+      <fieldset>
+      </fieldset>
+    </form>
+  </script>
+  <script type="text/ng-template" id="form-horizontal.html">
+    <form class="form-horizontal">
       <fieldset>
       </fieldset>
     </form>
