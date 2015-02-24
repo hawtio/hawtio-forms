@@ -2349,9 +2349,15 @@ var HawtioForms;
                     return getSelectTemplate(config, name, control);
                 case 'checkbox':
                     return getCheckboxTemplate(config, control);
-                default:
-                    return undefined;
             }
+            // log.debug("No mapping found for control: ", control);
+            // look in the schema registry
+            var schema = schemas.getSchema(control.type);
+            // log.debug("Schema: ", schema);
+            if (schema) {
+                return getObjectTemplate(config, name, _.extend(control, schema));
+            }
+            return undefined;
         }
         function getTemplate(config, name, control) {
             if ('formTemplate' in control) {
@@ -2386,8 +2392,8 @@ var HawtioForms;
                     }
                     var entity = scope.entity;
                     var config = scope.config;
-                    HawtioForms.log.debug("Config: ", config);
-                    HawtioForms.log.debug("Entity: ", entity);
+                    // log.debug("Config: ", config);
+                    // log.debug("Entity: ", entity);
                     postInterpolateActions = {};
                     element.empty();
                     var form = angular.element(getFormMain(config));
@@ -2421,7 +2427,7 @@ var HawtioForms;
                                     });
                                     template = el.prop('outerHTML');
                                 }
-                                HawtioForms.log.debug("template: ", template);
+                                // log.debug("template: ", template);
                                 parent.append(template);
                             }
                         });
@@ -2481,7 +2487,11 @@ var HawtioForms;
                 controlMap[name.toLowerCase()] = controlType;
             },
             getMapping: function (name) {
-                return controlMap[name.toLowerCase()];
+                var answer = controlMap[name.toLowerCase()];
+                if (!answer) {
+                    return name;
+                }
+                return answer;
             },
             removeMapping: function (name) {
                 var answer = undefined;

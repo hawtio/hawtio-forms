@@ -34,12 +34,24 @@ var HawtioFormsTests;
     nav.add(tab2);
   }]);
 
-  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", function($scope, $templateCache) {
+  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+    schemas.addSchema('testObject', {
+      "description": "Object from registry",
+      properties: {
+        "Attr1": {
+          "type": "number",
+          "label": "Attribute 1"
+        }
+      }
+    });
     $scope.config = {
       "style": HawtioForms.FormStyle.HORIZONTAL,
       "disableHumanizeLabel": false,
       hideLegend: true,
       "properties": {
+        "fromSchemaRegistry": {
+          "type": "testObject"
+        },
         "key": {
           "label": "The Argument",
           "type": "java.lang.String",

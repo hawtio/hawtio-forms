@@ -8,7 +8,11 @@ module HawtioForms {
         controlMap[name.toLowerCase()] = controlType;
       },
       getMapping: (name:string):string => {
-        return controlMap[name.toLowerCase()];
+        var answer = controlMap[name.toLowerCase()];
+        if (!answer) {
+          return name;
+        }
+        return answer;
       },
       removeMapping: (name:string):string => {
         var answer = undefined;
