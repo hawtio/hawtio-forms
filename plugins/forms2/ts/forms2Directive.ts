@@ -97,10 +97,23 @@ module HawtioForms {
       }
     }
 
+    function getObjectTemplate(config:FormConfiguration, name: string, control:FormElement):string {
+      addPostInterpolateAction(name, (el) => {
+        el.find('.inline-object').attr({
+          'hawtio-form-2': 'config.properties.' + name,
+          'entity': 'entity.' + name
+        });
+      });
+      return $templateCache.get('object.html');
+    }
+
     function lookupTemplate(config:FormConfiguration, name:string, control:FormElement):string {
       var controlType = mappings.getMapping(control.type);
       if ('enum' in control) {
         controlType = 'select';
+      }
+      if ('properties' in control) {
+        controlType = 'object';
       }
       if (control.hidden) {
         controlType = 'hidden';
@@ -114,6 +127,8 @@ module HawtioForms {
           return getStandardTemplate(config, control, 'text');
         case 'static':
           return getStaticTextTemplate(config);
+        case 'object':
+          return getObjectTemplate(config, name, control);
         case 'hidden':
           control.hidden = true;
           return applyElementConfig(config, control, $templateCache.get('hidden.html'));

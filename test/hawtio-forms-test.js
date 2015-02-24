@@ -38,6 +38,7 @@ var HawtioFormsTests;
     $scope.config = {
       "style": HawtioForms.FormStyle.HORIZONTAL,
       "disableHumanizeLabel": false,
+      hideLegend: true,
       "properties": {
         "key": {
           "label": "The Argument",
@@ -59,6 +60,23 @@ var HawtioFormsTests;
           tooltip: "HTTP or HTTPS",
           enum: ["http", "https"],
           default: "http",
+        },
+        nestedObject: {
+          style: HawtioForms.FormStyle.HORIZONTAL,
+          label: "A Nested Object",
+          type: 'object',
+          properties: {
+            'Attribute1': {
+              type: 'text',
+              'label-attributes': {
+                'style': 'color: green'
+              }
+            },
+            'Attribute2': {
+              type: 'java.lang.Integer',
+              label: 'A Number'
+            } 
+          }
         },
         "ObjectSelect": {
           type: "java.lang.String",
@@ -120,7 +138,7 @@ var HawtioFormsTests;
           "type": "java.lang.Boolean"
         }
       },
-      "description": "Show some stuff in a form",
+      "description": "This is my awesome form",
       "type": "java.lang.String",
       "tabs": {
         "Tab One": ["key", "value"],

@@ -23,6 +23,14 @@
     </div>
   </script>
 
+  <script type="text/ng-template" id="object.html">
+    <div class="row">
+      <div class="clearfix col-md-12">
+        <div class="inline-object"></div>
+      </div>
+    </div>
+  </script>
+
   <script type="text/ng-template" id="select-horizontal.html">
     <div class="form-group">
       <label class="col-sm-2 control-label">{{control.label || maybeHumanize(name)}}</label>
@@ -96,18 +104,21 @@
   <script type="text/ng-template" id="form-standard.html">
     <form>
       <fieldset>
+        <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>
       </fieldset>
     </form>
   </script>
   <script type="text/ng-template" id="form-inline.html">
     <form class="form-inline">
       <fieldset>
+        <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>
       </fieldset>
     </form>
   </script>
   <script type="text/ng-template" id="form-horizontal.html">
     <form class="form-horizontal">
       <fieldset>
+        <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>
       </fieldset>
     </form>
   </script>
