@@ -11,6 +11,7 @@ var HawtioFormsTests;
   _module.config(['$routeProvider', 'HawtioNavBuilderProvider', function($routeProvider, builder) {
     tab = builder.create()
             .id(pluginName)
+            .rank(1)
             .title( function() { return "Forms"; } )
             .href( function () { return "/forms"; })
             .subPath("Simple Form", "simple_form", builder.join(tp, "test.html"), 1)
@@ -20,18 +21,23 @@ var HawtioFormsTests;
 
     tab2 = builder.create()
               .id(pluginName + '-form2')
+              .rank(2)
               .title( function() { return "Forms2"; } )
               .href( function() { return "/forms2"; } )
               .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 1)
+              .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 2)
               .build();
 
     builder.configureRouting($routeProvider, tab);        
     builder.configureRouting($routeProvider, tab2);        
   }]);
 
-  _module.run(["HawtioNav", function(nav) {
+  _module.run(["HawtioNav", "SchemaRegistry", function(nav, schemas) {
     nav.add(tab);
     nav.add(tab2);
+
+    schemas.addSchema('kubernetes', Kubernetes.schema);
+
   }]);
 
   HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
