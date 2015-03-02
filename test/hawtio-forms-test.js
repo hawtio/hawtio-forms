@@ -35,9 +35,29 @@ var HawtioFormsTests;
   _module.run(["HawtioNav", "SchemaRegistry", function(nav, schemas) {
     nav.add(tab);
     nav.add(tab2);
-
     schemas.addSchema('kubernetes', Kubernetes.schema);
+  }]);
 
+  HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+
+    $scope.config = schemas.cloneSchema("kubernetes_base_Container");
+
+    $scope.model = {};
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  
   }]);
 
   HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
