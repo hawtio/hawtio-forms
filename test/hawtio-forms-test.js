@@ -40,7 +40,7 @@ var HawtioFormsTests;
 
   HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
 
-    $scope.config = schemas.cloneSchema("kubernetes_base_Container");
+    $scope.config = schemas.cloneSchema("os_build_BuildConfig");
 
     $scope.model = {};
     $scope.configStr = angular.toJson($scope.config, true);

@@ -15,7 +15,9 @@ module HawtioForms {
     tooltip?: string;
     label?: string;
     hidden?: boolean;
+    javaType?: string;
     enum?: any;
+    items?: any;
     'input-attributes'?: AttributeMap;
     'control-group-attributes'?: AttributeMap;
     'label-attributes'?: AttributeMap;
@@ -50,7 +52,8 @@ module HawtioForms {
   export enum FormStyle {
     STANDARD,
     INLINE,
-    HORIZONTAL
+    HORIZONTAL,
+    UNWRAPPED
   }
 
   /**

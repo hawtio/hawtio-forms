@@ -11,7 +11,9 @@ declare module HawtioForms {
         tooltip?: string;
         label?: string;
         hidden?: boolean;
+        javaType?: string;
         enum?: any;
+        items?: any;
         'input-attributes'?: AttributeMap;
         'control-group-attributes'?: AttributeMap;
         'label-attributes'?: AttributeMap;
@@ -43,6 +45,7 @@ declare module HawtioForms {
         STANDARD = 0,
         INLINE = 1,
         HORIZONTAL = 2,
+        UNWRAPPED = 3,
     }
     /**
      * Interface that describes the configuration object for hawtio forms

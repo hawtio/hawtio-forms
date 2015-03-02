@@ -4,14 +4,14 @@ module HawtioForms {
     var schemaMap = {};
     var registry = <SchemaRegistry> {
       addSchema: (name: string, schema: any):void => {
-        log.debug("Adding schema: ", name, " schema: ", schema);
+        // log.debug("Adding schema: ", name, " schema: ", schema);
         schemaMap[name] = schema;
         if (schema.javaType) {
-          log.debug("Adding schema by Java type: ", schema.javaType, " value: ", schema);
+          // log.debug("Adding schema by Java type: ", schema.javaType, " value: ", schema);
           schemaMap[schema.javaType] = schema;
         }
         if (schema.definitions) {
-          log.debug("Found definitions in schema: ", name);
+          // log.debug("Found definitions in schema: ", name);
           _.forIn(schema.definitions, (value, key) => {
             registry.addSchema(key, value);
           });
