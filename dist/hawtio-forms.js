@@ -2171,6 +2171,11 @@ var Forms;
     }]);
 })(Forms || (Forms = {}));
 
+var HawtioForms;
+(function (HawtioForms) {
+    var directiveName = "hawtioForms2Array";
+})(HawtioForms || (HawtioForms = {}));
+
 /// <reference path="../../includes.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2210,6 +2215,185 @@ var HawtioForms;
     HawtioForms.pluginName = 'hawtio-forms2';
     HawtioForms.templatePath = 'plugins/forms2/html';
     HawtioForms.log = Logger.get(HawtioForms.pluginName);
+    function addPostInterpolateAction(context, name, func) {
+        if (!(name in context.postInterpolateActions)) {
+            context.postInterpolateActions[name] = [];
+        }
+        context.postInterpolateActions[name].push(func);
+    }
+    HawtioForms.addPostInterpolateAction = addPostInterpolateAction;
+    function getFormMain(context, config) {
+        switch (config.style) {
+            case 0 /* STANDARD */:
+                return context.$templateCache.get('form-standard.html');
+            case 1 /* INLINE */:
+                return context.$templateCache.get('form-inline.html');
+            case 3 /* UNWRAPPED */:
+                return context.$templateCache.get('form-unwrapped.html');
+            default:
+                return context.$templateCache.get('form-horizontal.html');
+        }
+    }
+    HawtioForms.getFormMain = getFormMain;
+    function getStandardTemplate(context, config, control, type) {
+        var template = undefined;
+        switch (config.style) {
+            case 2 /* HORIZONTAL */:
+                template = context.$templateCache.get('standard-horizontal-input.html');
+                break;
+            default:
+                template = context.$templateCache.get('standard-input.html');
+        }
+        return applyElementConfig(context, config, control, template, type);
+    }
+    HawtioForms.getStandardTemplate = getStandardTemplate;
+    function applyElementConfig(context, config, control, template, type) {
+        var el = angular.element(template);
+        if ('tooltip' in control) {
+            el.attr({ title: control.tooltip });
+        }
+        if ('control-group-attributes' in control) {
+            el.attr(control['control-group-attributes']);
+        }
+        if ('label-attributes' in control) {
+            el.find('label').attr(control['label-attributes']);
+        }
+        var input = el.find('input');
+        if (type) {
+            input.attr({ type: type });
+        }
+        if ('input-attributes' in control) {
+            input.attr(control['input-attributes']);
+        }
+        return el.prop('outerHTML');
+    }
+    HawtioForms.applyElementConfig = applyElementConfig;
+    function getStaticTextTemplate(context, config) {
+        switch (config.style) {
+            case 2 /* HORIZONTAL */:
+                return context.$templateCache.get('static-horizontal-text.html');
+            default:
+                return context.$templateCache.get('static-text.html');
+        }
+    }
+    HawtioForms.getStaticTextTemplate = getStaticTextTemplate;
+    function getSelectTemplate(context, config, name, control) {
+        var template = undefined;
+        switch (config.style) {
+            case 2 /* HORIZONTAL */:
+                template = context.$templateCache.get('select-horizontal.html');
+                break;
+            default:
+                template = context.$templateCache.get('select.html');
+        }
+        addPostInterpolateAction(context, name, function (el) {
+            var select = el.find('select');
+            var propName = 'config.properties[\'' + name + '\'].enum';
+            if (_.isArray(control.enum)) {
+                select.attr({ 'ng-options': 'label for label in ' + propName });
+            }
+            else {
+                select.attr({ 'ng-options': 'label for (label, value) in ' + propName });
+            }
+        });
+        return applyElementConfig(context, config, control, template);
+    }
+    HawtioForms.getSelectTemplate = getSelectTemplate;
+    function getCheckboxTemplate(context, config, control) {
+        switch (config.style) {
+            case 2 /* HORIZONTAL */:
+                return context.$templateCache.get('checkbox-horizontal.html');
+            default:
+                return context.$templateCache.get('checkbox.html');
+        }
+    }
+    HawtioForms.getCheckboxTemplate = getCheckboxTemplate;
+    function getObjectTemplate(context, config, name, control) {
+        var configName = 'config.properties.' + name;
+        if ('javaType' in control) {
+            configName = control.javaType;
+        }
+        addPostInterpolateAction(context, name, function (el) {
+            el.find('.inline-object').attr({
+                'hawtio-form-2': configName,
+                'entity': 'entity.' + name,
+                'no-wrap': 'true',
+                'label': control.label || context.maybeHumanize(name)
+            });
+        });
+        return context.$templateCache.get('object.html');
+    }
+    HawtioForms.getObjectTemplate = getObjectTemplate;
+    function getArrayTemplate(context, config, name, control) {
+        if (control.items) {
+            if (!('javaType' in control.items)) {
+                HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.type, " control: ", control);
+            }
+            else {
+                HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
+            }
+        }
+        return context.$templateCache.get('array.html');
+    }
+    HawtioForms.getArrayTemplate = getArrayTemplate;
+    ;
+    function lookupTemplate(context, config, name, control) {
+        var controlType = context.mappings.getMapping(control.type);
+        if ('enum' in control) {
+            controlType = 'select';
+        }
+        if ('properties' in control) {
+            controlType = 'object';
+        }
+        if (control.hidden) {
+            controlType = 'hidden';
+        }
+        // coerce this for now...
+        if (control.type === 'object' && control.javaType && _.startsWith(control.javaType, 'java.util.Map')) {
+            controlType = 'map';
+        }
+        if (controlType) {
+            switch (controlType) {
+                case 'array':
+                    return getArrayTemplate(context, config, name, control);
+                case 'number':
+                    return getStandardTemplate(context, config, control, 'number');
+                case 'password':
+                    return getStandardTemplate(context, config, control, 'password');
+                case 'text':
+                    return getStandardTemplate(context, config, control, 'text');
+                case 'static':
+                    return getStaticTextTemplate(context, config);
+                case 'object':
+                    return getObjectTemplate(context, config, name, control);
+                case 'hidden':
+                    control.hidden = true;
+                    return applyElementConfig(context, config, control, context.$templateCache.get('hidden.html'));
+                case 'select':
+                    return getSelectTemplate(context, config, name, control);
+                case 'checkbox':
+                    return getCheckboxTemplate(context, config, control);
+            }
+        }
+        // log.debug("No mapping found for control: ", control);
+        var type = control.javaType || control.type;
+        // log.debug("controlType: ", type);
+        // look in the schema registry
+        var schema = context.schemas.getSchema(type);
+        // log.debug("Schema: ", schema);
+        if (schema) {
+            return getObjectTemplate(context, config, name, _.extend(control, schema));
+        }
+        return undefined;
+    }
+    HawtioForms.lookupTemplate = lookupTemplate;
+    function getTemplate(context, config, name, control) {
+        if ('formTemplate' in control) {
+            return control.formTemplate;
+        }
+        return lookupTemplate(context, config, name, control);
+    }
+    HawtioForms.getTemplate = getTemplate;
 })(HawtioForms || (HawtioForms = {}));
 
 /// <reference path="forms2Helpers.ts"/>
@@ -2227,174 +2411,6 @@ var HawtioForms;
 (function (HawtioForms) {
     var directiveName = 'hawtioForm2';
     HawtioForms._module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', function ($compile, $templateCache, $interpolate, schemas, mappings) {
-        function addPostInterpolateAction(context, name, func) {
-            if (!(name in context.postInterpolateActions)) {
-                context.postInterpolateActions[name] = [];
-            }
-            context.postInterpolateActions[name].push(func);
-        }
-        function getFormMain(config) {
-            switch (config.style) {
-                case 0 /* STANDARD */:
-                    return $templateCache.get('form-standard.html');
-                case 1 /* INLINE */:
-                    return $templateCache.get('form-inline.html');
-                case 3 /* UNWRAPPED */:
-                    return $templateCache.get('form-unwrapped.html');
-                default:
-                    return $templateCache.get('form-horizontal.html');
-            }
-        }
-        function getStandardTemplate(context, config, control, type) {
-            var template = undefined;
-            switch (config.style) {
-                case 2 /* HORIZONTAL */:
-                    template = $templateCache.get('standard-horizontal-input.html');
-                    break;
-                default:
-                    template = $templateCache.get('standard-input.html');
-            }
-            return applyElementConfig(context, config, control, template, type);
-        }
-        function applyElementConfig(context, config, control, template, type) {
-            var el = angular.element(template);
-            if ('tooltip' in control) {
-                el.attr({ title: control.tooltip });
-            }
-            if ('control-group-attributes' in control) {
-                el.attr(control['control-group-attributes']);
-            }
-            if ('label-attributes' in control) {
-                el.find('label').attr(control['label-attributes']);
-            }
-            var input = el.find('input');
-            if (type) {
-                input.attr({ type: type });
-            }
-            if ('input-attributes' in control) {
-                input.attr(control['input-attributes']);
-            }
-            return el.prop('outerHTML');
-        }
-        function getStaticTextTemplate(context, config) {
-            switch (config.style) {
-                case 2 /* HORIZONTAL */:
-                    return $templateCache.get('static-horizontal-text.html');
-                default:
-                    return $templateCache.get('static-text.html');
-            }
-        }
-        function getSelectTemplate(context, config, name, control) {
-            var template = undefined;
-            switch (config.style) {
-                case 2 /* HORIZONTAL */:
-                    template = $templateCache.get('select-horizontal.html');
-                    break;
-                default:
-                    template = $templateCache.get('select.html');
-            }
-            addPostInterpolateAction(context, name, function (el) {
-                var select = el.find('select');
-                var propName = 'config.properties[\'' + name + '\'].enum';
-                if (_.isArray(control.enum)) {
-                    select.attr({ 'ng-options': 'label for label in ' + propName });
-                }
-                else {
-                    select.attr({ 'ng-options': 'label for (label, value) in ' + propName });
-                }
-            });
-            return applyElementConfig(context, config, control, template);
-        }
-        function getCheckboxTemplate(context, config, control) {
-            switch (config.style) {
-                case 2 /* HORIZONTAL */:
-                    return $templateCache.get('checkbox-horizontal.html');
-                default:
-                    return $templateCache.get('checkbox.html');
-            }
-        }
-        function getObjectTemplate(context, config, name, control) {
-            var configName = 'config.properties.' + name;
-            if ('javaType' in control) {
-                configName = control.javaType;
-            }
-            addPostInterpolateAction(context, name, function (el) {
-                el.find('.inline-object').attr({
-                    'hawtio-form-2': configName,
-                    'entity': 'entity.' + name,
-                    'no-wrap': 'true',
-                    'label': control.label || context.maybeHumanize(name)
-                });
-            });
-            return $templateCache.get('object.html');
-        }
-        function getArrayTemplate(context, config, name, control) {
-            if (control.items) {
-                if (!('javaType' in control.items)) {
-                    HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.type, " control: ", control);
-                }
-                else {
-                    HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
-                }
-            }
-            return $templateCache.get('array.html');
-        }
-        ;
-        function lookupTemplate(context, config, name, control) {
-            var controlType = mappings.getMapping(control.type);
-            if ('enum' in control) {
-                controlType = 'select';
-            }
-            if ('properties' in control) {
-                controlType = 'object';
-            }
-            if (control.hidden) {
-                controlType = 'hidden';
-            }
-            // coerce this for now...
-            if (control.type === 'object' && control.javaType && _.startsWith(control.javaType, 'java.util.Map')) {
-                controlType = 'map';
-            }
-            if (controlType) {
-                switch (controlType) {
-                    case 'array':
-                        return getArrayTemplate(context, config, name, control);
-                    case 'number':
-                        return getStandardTemplate(context, config, control, 'number');
-                    case 'password':
-                        return getStandardTemplate(context, config, control, 'password');
-                    case 'text':
-                        return getStandardTemplate(context, config, control, 'text');
-                    case 'static':
-                        return getStaticTextTemplate(context, config);
-                    case 'object':
-                        return getObjectTemplate(context, config, name, control);
-                    case 'hidden':
-                        control.hidden = true;
-                        return applyElementConfig(context, config, control, $templateCache.get('hidden.html'));
-                    case 'select':
-                        return getSelectTemplate(context, config, name, control);
-                    case 'checkbox':
-                        return getCheckboxTemplate(context, config, control);
-                }
-            }
-            // log.debug("No mapping found for control: ", control);
-            var type = control.javaType || control.type;
-            // log.debug("controlType: ", type);
-            // look in the schema registry
-            var schema = schemas.getSchema(type);
-            // log.debug("Schema: ", schema);
-            if (schema) {
-                return getObjectTemplate(context, config, name, _.extend(control, schema));
-            }
-            return undefined;
-        }
-        function getTemplate(context, config, name, control) {
-            if ('formTemplate' in control) {
-                return control.formTemplate;
-            }
-            return lookupTemplate(context, config, name, control);
-        }
         return {
             restrict: 'A',
             replace: true,
@@ -2418,7 +2434,11 @@ var HawtioForms;
                     maybeHumanize: maybeHumanize,
                     scope: scope,
                     element: element,
-                    attrs: attrs
+                    attrs: attrs,
+                    mappings: mappings,
+                    schemas: schemas,
+                    $templateCache: $templateCache,
+                    $interpolate: $interpolate
                 };
                 if (!scope.config) {
                     // log.debug("Object not found in $scope, looking up schema");
@@ -2438,7 +2458,12 @@ var HawtioForms;
                     scope.config.label = attrs['label'];
                 }
                 scope.config = HawtioForms.createFormConfiguration(scope.config);
-                scope.$watch('config', _.debounce(function () {
+                scope.$watch('config', function (newValue, oldValue) {
+                    /*
+                    if (newValue === oldValue) {
+                      return;
+                    }
+                    */
                     if (!scope.entity) {
                         scope.entity = {};
                     }
@@ -2448,7 +2473,7 @@ var HawtioForms;
                     // log.debug("Entity: ", entity);
                     context.postInterpolateActions = {};
                     element.empty();
-                    var form = angular.element(getFormMain(config));
+                    var form = angular.element(HawtioForms.getFormMain(context, config));
                     var parent = form.find('fieldset');
                     if (parent.length === 0) {
                         parent = form;
@@ -2464,7 +2489,7 @@ var HawtioForms;
                                 entity[name] = _default;
                             }
                             // log.debug("control: ", control);
-                            var template = getTemplate(context, config, name, control);
+                            var template = HawtioForms.getTemplate(context, config, name, control);
                             if (template) {
                                 // log.debug("template: ", template);
                                 var interpolateFunc = $interpolate(template);
@@ -2497,8 +2522,8 @@ var HawtioForms;
                     form.append('<pre>{{config}}</pre>');
                     */
                     element.append($compile(form)(scope));
-                    Core.$apply(scope);
-                }, 1), true);
+                    //Core.$apply(scope);
+                }, true);
             }
         };
     }]);
