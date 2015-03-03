@@ -59,6 +59,7 @@ declare module HawtioForms {
         ignorePrefixInLabel?: boolean;
         properties: FormProperties;
         tabs?: FormTabs;
+        label?: string;
     }
     function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
     interface ControlMappingRegistry {

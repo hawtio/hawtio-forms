@@ -68,6 +68,7 @@ module HawtioForms {
     ignorePrefixInLabel?: boolean
     properties: FormProperties;
     tabs?: FormTabs;
+    label?: string;
   }
 
   export function createFormConfiguration(options?: FormConfiguration):FormConfiguration {

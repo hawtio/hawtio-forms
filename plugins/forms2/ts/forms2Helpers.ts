@@ -140,6 +140,12 @@ module HawtioForms {
         log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
       }
     }
+    addPostInterpolateAction(context, name, (el) => {
+      el.find('.inline-array').attr({
+        'hawtio-forms-2-array': 'config.properties.' + name,
+        'entity': 'entity.' + name,
+      });
+    });
     return context.$templateCache.get(Constants.ARRAY);
   };
 
@@ -219,6 +225,39 @@ module HawtioForms {
       answer = el.prop('outerHTML');
     }
     return answer;
+  }
+
+  export function createMaybeHumanize(scope) {
+    return (value) => {
+      var config = scope.config;
+      if (config && !config.disableHumanizeLabel) {
+        return Core.humanizeValue(value);
+      } else {
+        return value;
+      }
+    }
+  }
+
+  export function initConfig(context, config:FormConfiguration) {
+    var answer = config;
+    if (!answer) {
+      // log.debug("Object not found in $scope, looking up schema");
+      // look in schema registry
+      var name = context.attrs[context.directiveName];
+      if (name) {
+        answer = context.schemas.cloneSchema(name);
+      }
+    }
+    // set any missing defaults
+    if ('noWrap' in context.attrs) {
+      if (context.attrs['noWrap']) {
+        answer.style = FormStyle.UNWRAPPED;
+      }
+    }
+    if ('label' in context.attrs) {
+      answer.label = context.attrs['label'];
+    }
+    return createFormConfiguration(answer);
   }
 
 
