@@ -2,7 +2,6 @@
 module HawtioForms {
   var directiveName = 'hawtioForm2'
   _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', ($compile, $templateCache, $interpolate, schemas:SchemaRegistry, mappings) => {
-
     return {
       restrict: 'A',
       replace: true,
@@ -10,7 +9,6 @@ module HawtioForms {
         config: '=' + directiveName,
         entity: '=?'
       },
-      templateUrl: UrlHelpers.join(templatePath, 'forms2Directive.html'),
       link: (scope, element, attrs) => {
         var maybeHumanize = (value) => {
           var config = scope.config;
@@ -52,11 +50,6 @@ module HawtioForms {
         }
         scope.config = createFormConfiguration(scope.config);
         scope.$watch('config', (newValue, oldValue) => {
-          /*
-          if (newValue === oldValue) {
-            return;
-          }
-          */
           if (!scope.entity) {
             scope.entity = {};
           }
@@ -65,7 +58,6 @@ module HawtioForms {
           // log.debug("Config: ", config);
           // log.debug("Entity: ", entity);
           context.postInterpolateActions = {};
-
           element.empty();
           var form = angular.element(getFormMain(context, config));
           var parent = form.find('fieldset');
@@ -85,24 +77,7 @@ module HawtioForms {
               // log.debug("control: ", control);
               var template = getTemplate(context, config, name, control);
               if (template) {
-                // log.debug("template: ", template);
-                var interpolateFunc = $interpolate(template);
-                // log.debug("name: ", name, " control: ", control);
-                template = interpolateFunc({
-                  maybeHumanize: maybeHumanize,
-                  control: control,
-                  name: name,
-                  model: "entity." + name + ""
-                });
-                // log.debug("postInterpolateActions: ", postInterpolateActions);
-                if (context.postInterpolateActions[name]) {
-                  var el = angular.element(template);
-                  context.postInterpolateActions[name].forEach((func) => {
-                    func(el);
-                  });
-                  template = el.prop('outerHTML');
-                }
-                // log.debug("template: ", template);
+                template = interpolateTemplate(context, config, name, control, template);
                 parent.append(template);
               }
             });

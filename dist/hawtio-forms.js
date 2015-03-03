@@ -2215,6 +2215,117 @@ var HawtioForms;
     HawtioForms.pluginName = 'hawtio-forms2';
     HawtioForms.templatePath = 'plugins/forms2/html';
     HawtioForms.log = Logger.get(HawtioForms.pluginName);
+    var Constants = (function () {
+        function Constants() {
+        }
+        Object.defineProperty(Constants, "FORM_STANDARD", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'form-standard.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "FORM_INLINE", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'form-inline.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "FORM_UNWRAPPED", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'form-unwrapped.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "FORM_HORIZONTAL", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'form-horizontal.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "STANDARD_HORIZONTAL_INPUT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'standard-horizontal-input.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "STANDARD_INPUT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'standard-input.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "STATIC_HORIZONTAL_TEXT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'static-horizontal-text.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "STATIC_TEXT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'static-text.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "SELECT_HORIZONTAL", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'select-horizontal.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "SELECT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'select.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "CHECKBOX_HORIZONTAL", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'checkbox-horizontal.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "CHECKBOX", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'checkbox.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "OBJECT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'object.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "ARRAY", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'array.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "HIDDEN", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'hidden.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Constants;
+    })();
+    HawtioForms.Constants = Constants;
     function addPostInterpolateAction(context, name, func) {
         if (!(name in context.postInterpolateActions)) {
             context.postInterpolateActions[name] = [];
@@ -2225,13 +2336,13 @@ var HawtioForms;
     function getFormMain(context, config) {
         switch (config.style) {
             case 0 /* STANDARD */:
-                return context.$templateCache.get('form-standard.html');
+                return context.$templateCache.get(Constants.FORM_STANDARD);
             case 1 /* INLINE */:
-                return context.$templateCache.get('form-inline.html');
+                return context.$templateCache.get(Constants.FORM_INLINE);
             case 3 /* UNWRAPPED */:
-                return context.$templateCache.get('form-unwrapped.html');
+                return context.$templateCache.get(Constants.FORM_UNWRAPPED);
             default:
-                return context.$templateCache.get('form-horizontal.html');
+                return context.$templateCache.get(Constants.FORM_HORIZONTAL);
         }
     }
     HawtioForms.getFormMain = getFormMain;
@@ -2239,10 +2350,10 @@ var HawtioForms;
         var template = undefined;
         switch (config.style) {
             case 2 /* HORIZONTAL */:
-                template = context.$templateCache.get('standard-horizontal-input.html');
+                template = context.$templateCache.get(Constants.STANDARD_HORIZONTAL_INPUT);
                 break;
             default:
-                template = context.$templateCache.get('standard-input.html');
+                template = context.$templateCache.get(Constants.STANDARD_INPUT);
         }
         return applyElementConfig(context, config, control, template, type);
     }
@@ -2271,9 +2382,9 @@ var HawtioForms;
     function getStaticTextTemplate(context, config) {
         switch (config.style) {
             case 2 /* HORIZONTAL */:
-                return context.$templateCache.get('static-horizontal-text.html');
+                return context.$templateCache.get(Constants.STATIC_HORIZONTAL_TEXT);
             default:
-                return context.$templateCache.get('static-text.html');
+                return context.$templateCache.get(Constants.STATIC_TEXT);
         }
     }
     HawtioForms.getStaticTextTemplate = getStaticTextTemplate;
@@ -2281,10 +2392,10 @@ var HawtioForms;
         var template = undefined;
         switch (config.style) {
             case 2 /* HORIZONTAL */:
-                template = context.$templateCache.get('select-horizontal.html');
+                template = context.$templateCache.get(Constants.SELECT_HORIZONTAL);
                 break;
             default:
-                template = context.$templateCache.get('select.html');
+                template = context.$templateCache.get(Constants.SELECT);
         }
         addPostInterpolateAction(context, name, function (el) {
             var select = el.find('select');
@@ -2302,9 +2413,9 @@ var HawtioForms;
     function getCheckboxTemplate(context, config, control) {
         switch (config.style) {
             case 2 /* HORIZONTAL */:
-                return context.$templateCache.get('checkbox-horizontal.html');
+                return context.$templateCache.get(Constants.CHECKBOX_HORIZONTAL);
             default:
-                return context.$templateCache.get('checkbox.html');
+                return context.$templateCache.get(Constants.CHECKBOX);
         }
     }
     HawtioForms.getCheckboxTemplate = getCheckboxTemplate;
@@ -2321,7 +2432,7 @@ var HawtioForms;
                 'label': control.label || context.maybeHumanize(name)
             });
         });
-        return context.$templateCache.get('object.html');
+        return context.$templateCache.get(Constants.OBJECT);
     }
     HawtioForms.getObjectTemplate = getObjectTemplate;
     function getArrayTemplate(context, config, name, control) {
@@ -2333,7 +2444,7 @@ var HawtioForms;
                 HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
             }
         }
-        return context.$templateCache.get('array.html');
+        return context.$templateCache.get(Constants.ARRAY);
     }
     HawtioForms.getArrayTemplate = getArrayTemplate;
     ;
@@ -2368,7 +2479,7 @@ var HawtioForms;
                     return getObjectTemplate(context, config, name, control);
                 case 'hidden':
                     control.hidden = true;
-                    return applyElementConfig(context, config, control, context.$templateCache.get('hidden.html'));
+                    return applyElementConfig(context, config, control, context.$templateCache.get(Constants.HIDDEN));
                 case 'select':
                     return getSelectTemplate(context, config, name, control);
                 case 'checkbox':
@@ -2394,6 +2505,27 @@ var HawtioForms;
         return lookupTemplate(context, config, name, control);
     }
     HawtioForms.getTemplate = getTemplate;
+    function interpolateTemplate(context, config, name, control, template) {
+        // log.debug("template: ", template);
+        var interpolateFunc = context.$interpolate(template);
+        // log.debug("name: ", name, " control: ", control);
+        var answer = interpolateFunc({
+            maybeHumanize: context.maybeHumanize,
+            control: control,
+            name: name,
+            model: "entity." + name + ""
+        });
+        // log.debug("postInterpolateActions: ", postInterpolateActions);
+        if (context.postInterpolateActions[name]) {
+            var el = angular.element(answer);
+            context.postInterpolateActions[name].forEach(function (func) {
+                func(el);
+            });
+            answer = el.prop('outerHTML');
+        }
+        return answer;
+    }
+    HawtioForms.interpolateTemplate = interpolateTemplate;
 })(HawtioForms || (HawtioForms = {}));
 
 /// <reference path="forms2Helpers.ts"/>
@@ -2418,7 +2550,6 @@ var HawtioForms;
                 config: '=' + directiveName,
                 entity: '=?'
             },
-            templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'forms2Directive.html'),
             link: function (scope, element, attrs) {
                 var maybeHumanize = function (value) {
                     var config = scope.config;
@@ -2459,11 +2590,6 @@ var HawtioForms;
                 }
                 scope.config = HawtioForms.createFormConfiguration(scope.config);
                 scope.$watch('config', function (newValue, oldValue) {
-                    /*
-                    if (newValue === oldValue) {
-                      return;
-                    }
-                    */
                     if (!scope.entity) {
                         scope.entity = {};
                     }
@@ -2491,24 +2617,7 @@ var HawtioForms;
                             // log.debug("control: ", control);
                             var template = HawtioForms.getTemplate(context, config, name, control);
                             if (template) {
-                                // log.debug("template: ", template);
-                                var interpolateFunc = $interpolate(template);
-                                // log.debug("name: ", name, " control: ", control);
-                                template = interpolateFunc({
-                                    maybeHumanize: maybeHumanize,
-                                    control: control,
-                                    name: name,
-                                    model: "entity." + name + ""
-                                });
-                                // log.debug("postInterpolateActions: ", postInterpolateActions);
-                                if (context.postInterpolateActions[name]) {
-                                    var el = angular.element(template);
-                                    context.postInterpolateActions[name].forEach(function (func) {
-                                        func(el);
-                                    });
-                                    template = el.prop('outerHTML');
-                                }
-                                // log.debug("template: ", template);
+                                template = HawtioForms.interpolateTemplate(context, config, name, control, template);
                                 parent.append(template);
                             }
                         });
@@ -2618,4 +2727,20 @@ var HawtioForms;
 
 angular.module("hawtio-forms-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("plugins/forms/html/formGrid.html","<div>\n\n  <script type=\"text/ng-template\" id=\"heroUnitTemplate.html\">\n    <div class=\"hero-unit\">\n      <h5>No Items Added</h5>\n      <p><a href=\"\" ng-click=\"addThing()\">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"headerCellTemplate.html\">\n    <th>{{label}}</th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"emptyHeaderCellTemplate.html\">\n    <th></th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"deleteRowTemplate.html\">\n    <td ng-click=\"removeThing({{index}})\" class=\"align-center\">\n      <i class=\"icon-remove red mouse-pointer\"></i>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellNumberTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\" min=\"{{min}}\" max=\"{{max}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n\n  <div ng-show=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12 nodata\">\n    </div>\n  </div>\n  <div ng-hide=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12\">\n      <h3 ng-show=\"configuration.heading\">{{getHeading()}}</h3>\n      <table class=\"table table-striped\">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click=\"addThing()\" class=\"centered mouse-pointer\">\n      <i class=\"icon-plus green\"></i><span ng-show=\"configuration.rowName\"> Add {{configuration.rowName.titleize()}}</span>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"standard-input.html\">\n    <div class=\"form-group\">\n      <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n      <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"standard-horizontal-input.html\">\n    <div class=\"form-group\">\n      <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n      <div class=\"col-sm-10\">\n        <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n        <p class=\"help-block\">{{control.description}}</p>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"hidden.html\">\n    <div class=\"form-group\" ng-hide=\"true\">\n      <input type=\"hidden\" ng-model=\"{{model}}\">\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"object.html\">\n    <div class=\"row\">\n      <div class=\"clearfix col-md-12\">\n        <div class=\"inline-object\"></div>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"select-horizontal.html\">\n    <div class=\"form-group\">\n      <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n      <div class=\"col-sm-10\">\n        <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n        <p class=\"help-block\">{{control.description}}</p>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"select.html\">\n    <div class=\"form-group\">\n      <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n      <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"static-text.html\">\n    <div class=\"form-group\">\n      <label class=\"control-label\">{{control.label}}</label>\n      <p class=\"form-control-static\">{{control.description}}</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"static-horizontal-text.html\">\n    <div class=\"form-group\">\n      <label class=\"col-sm-2 control-label\">{{control.label}}</label>\n      <div class=\"col-sm-10\">\n        <p class=\"form-control-static\">{{control.description}}</p>\n      </div>\n    </div>\n  </script>\n\n\n  <script type=\"text/ng-template\" id=\"checkbox-horizontal.html\">\n    <div class=\"form-group\">\n      <div class=\"col-sm-offset-2 col-sm-10\">\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n          </label>\n          <p class=\"help-block\">{{control.description}}</p>\n        </div>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"checkbox.html\">\n    <div class=\"form-group\">\n      <div class=\"checkbox\">\n        <label>\n          <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n        </label>\n        <p class=\"help-block\">{{control.description}}</p>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"radio-top-level.html\">\n    <div class=\"radio\">\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"array.html\">\n    <div class=\"row\">\n      <div class=\"clearfix col-md-12\">\n        <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n        <div class=\"row\"></div>\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"radio-group-member.html\">\n    <label>\n      <input type=\"radio\" name=\"\" value=\"\">\n    </label>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"form-unwrapped.html\">\n    <div class=\"\">\n      <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"form-standard.html\">\n    <form>\n      <fieldset>\n        <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n      </fieldset>\n    </form>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"form-inline.html\">\n    <form class=\"form-inline\">\n      <fieldset>\n        <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n      </fieldset>\n    </form>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"form-horizontal.html\">\n    <form class=\"form-horizontal\">\n      <fieldset>\n        <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n      </fieldset>\n    </form>\n  </script>\n\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-templates");
+$templateCache.put("plugins/forms2/html/array.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\"></div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/checkbox-horizontal.html","<div class=\"form-group\">\n  <div class=\"col-sm-offset-2 col-sm-10\">\n    <div class=\"checkbox\">\n      <label>\n        <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\">\n  <div class=\"checkbox\">\n    <label>\n      <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/form-horizontal.html","<form class=\"form-horizontal\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
+$templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
+$templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
+$templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
+$templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
+$templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
+$templateCache.put("plugins/forms2/html/radio-top-level.html","<div class=\"radio\">\n</div>\n");
+$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
+$templateCache.put("plugins/forms2/html/standard-horizontal-input.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/standard-input.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
+$templateCache.put("plugins/forms2/html/static-horizontal-text.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label}}</label>\n  <div class=\"col-sm-10\">\n    <p class=\"form-control-static\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/static-text.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label}}</label>\n  <p class=\"form-control-static\">{{control.description}}</p>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-templates");

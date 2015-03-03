@@ -4,6 +4,23 @@ declare module HawtioForms {
     var pluginName: string;
     var templatePath: string;
     var log: Logging.Logger;
+    class Constants {
+        static FORM_STANDARD: string;
+        static FORM_INLINE: string;
+        static FORM_UNWRAPPED: string;
+        static FORM_HORIZONTAL: string;
+        static STANDARD_HORIZONTAL_INPUT: string;
+        static STANDARD_INPUT: string;
+        static STATIC_HORIZONTAL_TEXT: string;
+        static STATIC_TEXT: string;
+        static SELECT_HORIZONTAL: string;
+        static SELECT: string;
+        static CHECKBOX_HORIZONTAL: string;
+        static CHECKBOX: string;
+        static OBJECT: string;
+        static ARRAY: string;
+        static HIDDEN: string;
+    }
     function addPostInterpolateAction(context: any, name: any, func: (el: any) => any): void;
     function getFormMain(context: any, config: FormConfiguration): string;
     function getStandardTemplate(context: any, config: FormConfiguration, control: FormElement, type: string): string;
@@ -15,4 +32,5 @@ declare module HawtioForms {
     function getArrayTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function lookupTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getTemplate(context: any, config: FormConfiguration, name: any, control: FormElement): string;
+    function interpolateTemplate(context: any, config: FormConfiguration, name: any, control: FormElement, template: string): string;
 }

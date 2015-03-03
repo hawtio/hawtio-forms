@@ -5,6 +5,24 @@ module HawtioForms {
   export var templatePath = 'plugins/forms2/html';
   export var log:Logging.Logger = Logger.get(pluginName);
 
+  export class Constants {
+    public static get FORM_STANDARD() { return UrlHelpers.join(templatePath, 'form-standard.html'); }
+    public static get FORM_INLINE() { return UrlHelpers.join(templatePath, 'form-inline.html'); }
+    public static get FORM_UNWRAPPED() { return UrlHelpers.join(templatePath, 'form-unwrapped.html'); }
+    public static get FORM_HORIZONTAL() { return UrlHelpers.join(templatePath, 'form-horizontal.html'); }
+    public static get STANDARD_HORIZONTAL_INPUT() { return UrlHelpers.join(templatePath, 'standard-horizontal-input.html'); }
+    public static get STANDARD_INPUT() { return UrlHelpers.join(templatePath, 'standard-input.html'); }
+    public static get STATIC_HORIZONTAL_TEXT() { return UrlHelpers.join(templatePath, 'static-horizontal-text.html'); }
+    public static get STATIC_TEXT() { return UrlHelpers.join(templatePath, 'static-text.html'); }
+    public static get SELECT_HORIZONTAL() { return UrlHelpers.join(templatePath, 'select-horizontal.html'); }
+    public static get SELECT() { return UrlHelpers.join(templatePath, 'select.html'); }
+    public static get CHECKBOX_HORIZONTAL() { return UrlHelpers.join(templatePath, 'checkbox-horizontal.html'); }
+    public static get CHECKBOX() { return UrlHelpers.join(templatePath, 'checkbox.html'); }
+    public static get OBJECT() { return UrlHelpers.join(templatePath, 'object.html'); }
+    public static get ARRAY() { return UrlHelpers.join(templatePath, 'array.html'); }
+    public static get HIDDEN() { return UrlHelpers.join(templatePath, 'hidden.html'); }
+  }
+
   export function addPostInterpolateAction(context, name, func:(el:any) => any) {
     if (!(name in context.postInterpolateActions)) {
       context.postInterpolateActions[name] = [];
@@ -15,13 +33,13 @@ module HawtioForms {
   export function getFormMain(context, config:FormConfiguration):string {
     switch(config.style) {
       case FormStyle.STANDARD:
-        return context.$templateCache.get('form-standard.html');
+        return context.$templateCache.get(Constants.FORM_STANDARD);
       case FormStyle.INLINE:
-        return context.$templateCache.get('form-inline.html');
+        return context.$templateCache.get(Constants.FORM_INLINE);
       case FormStyle.UNWRAPPED:
-        return context.$templateCache.get('form-unwrapped.html');
+        return context.$templateCache.get(Constants.FORM_UNWRAPPED);
       default:
-        return context.$templateCache.get('form-horizontal.html');
+        return context.$templateCache.get(Constants.FORM_HORIZONTAL);
     }
   }
 
@@ -29,10 +47,10 @@ module HawtioForms {
     var template = undefined;
     switch(config.style) {
       case FormStyle.HORIZONTAL:
-        template = context.$templateCache.get('standard-horizontal-input.html');
+        template = context.$templateCache.get(Constants.STANDARD_HORIZONTAL_INPUT);
         break;
       default:
-        template = context.$templateCache.get('standard-input.html');
+        template = context.$templateCache.get(Constants.STANDARD_INPUT);
     }
     return applyElementConfig(context, config, control, template, type);
   }
@@ -61,9 +79,9 @@ module HawtioForms {
   export function getStaticTextTemplate(context, config:FormConfiguration):string {
     switch(config.style) {
       case FormStyle.HORIZONTAL:
-        return context.$templateCache.get('static-horizontal-text.html');
+        return context.$templateCache.get(Constants.STATIC_HORIZONTAL_TEXT);
       default:
-        return context.$templateCache.get('static-text.html');
+        return context.$templateCache.get(Constants.STATIC_TEXT);
     }
   }
 
@@ -71,10 +89,10 @@ module HawtioForms {
     var template = undefined;
     switch(config.style) {
       case FormStyle.HORIZONTAL:
-        template = context.$templateCache.get('select-horizontal.html');
+        template = context.$templateCache.get(Constants.SELECT_HORIZONTAL);
         break;
       default:
-        template = context.$templateCache.get('select.html');
+        template = context.$templateCache.get(Constants.SELECT);
 
     }
     addPostInterpolateAction(context, name, (el) => {
@@ -92,9 +110,9 @@ module HawtioForms {
   export function getCheckboxTemplate(context, config:FormConfiguration, control:FormElement):string {
     switch(config.style) {
       case FormStyle.HORIZONTAL:
-        return context.$templateCache.get('checkbox-horizontal.html');
+        return context.$templateCache.get(Constants.CHECKBOX_HORIZONTAL);
       default:
-        return context.$templateCache.get('checkbox.html');
+        return context.$templateCache.get(Constants.CHECKBOX);
     }
   }
 
@@ -111,7 +129,7 @@ module HawtioForms {
         'label': control.label || context.maybeHumanize(name)
       });
     });
-    return context.$templateCache.get('object.html');
+    return context.$templateCache.get(Constants.OBJECT);
   }
 
   export function getArrayTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
@@ -122,7 +140,7 @@ module HawtioForms {
         log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
       }
     }
-    return context.$templateCache.get('array.html');
+    return context.$templateCache.get(Constants.ARRAY);
   };
 
   export function lookupTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
@@ -156,7 +174,7 @@ module HawtioForms {
           return getObjectTemplate(context, config, name, control);
         case 'hidden':
           control.hidden = true;
-          return applyElementConfig(context, config, control, context.$templateCache.get('hidden.html'));
+          return applyElementConfig(context, config, control, context.$templateCache.get(Constants.HIDDEN));
         case 'select':
           return getSelectTemplate(context, config, name, control);
         case 'checkbox':
@@ -180,6 +198,27 @@ module HawtioForms {
       return control.formTemplate;
     }
     return lookupTemplate(context, config, name, control);
+  }
+
+  export function interpolateTemplate(context, config:FormConfiguration, name, control:FormElement, template:string):string {
+    // log.debug("template: ", template);
+    var interpolateFunc = context.$interpolate(template);
+    // log.debug("name: ", name, " control: ", control);
+    var answer = interpolateFunc({
+      maybeHumanize: context.maybeHumanize,
+      control: control,
+      name: name,
+      model: "entity." + name + ""
+    });
+    // log.debug("postInterpolateActions: ", postInterpolateActions);
+    if (context.postInterpolateActions[name]) {
+      var el = angular.element(answer);
+      context.postInterpolateActions[name].forEach((func) => {
+        func(el);
+      });
+      answer = el.prop('outerHTML');
+    }
+    return answer;
   }
 
 
