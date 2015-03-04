@@ -1,0 +1,24 @@
+<div>
+  <script type="text/ng-template" id="header.html">
+    <th>{{control.label || name}}</th>
+  </script>
+  <script type="text/ng-template" id="emptyHeader.html">
+    <th></th>
+  </script>
+  <script type="text/ng-template" id="newItemHeader.html">
+    <th class="align-right">
+      <button class="button button-success" ng-click="createNewRow()">
+        <i class="fa fa-plus green" ></i>
+      </button>
+    </th>
+  </script>
+  <script type="text/ng-template" id="rowTemplate.html">
+    <tr></tr>
+  </script>
+  <table class="table table-striped">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div> 

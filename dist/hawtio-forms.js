@@ -2577,10 +2577,36 @@ var HawtioForms;
 var HawtioForms;
 (function (HawtioForms) {
     var directiveName = "hawtioForms2Array";
+    function clearBody(context) {
+        var body = context.element.find('tbody');
+        body.empty();
+        return body;
+    }
+    function newBodyRow(context) {
+        return angular.element(context.$templateCache.get('rowTemplate.html'));
+    }
+    function newHeaderRow(context) {
+        var header = context.element.find('thead');
+        header.empty();
+        return header.append(context.$templateCache.get('rowTemplate.html')).find('tr');
+    }
+    function buildTableHeader(context, columnSchema) {
+        var headerRow = newHeaderRow(context);
+        _.forIn(columnSchema.properties, function (control, name) {
+            var interpolateFunc = context.$interpolate(control.headerTemplate || context.$templateCache.get('header.html'));
+            headerRow.append(interpolateFunc({
+                control: control,
+                name: context.maybeHumanize(name)
+            }));
+        });
+        headerRow.append(context.$templateCache.get("newItemHeader.html"));
+        return headerRow;
+    }
     HawtioForms._module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', function ($compile, $templateCache, $interpolate, schemas, mappings) {
         return {
             restrict: 'A',
             replace: true,
+            templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'forms2Array.html'),
             scope: {
                 config: '=' + directiveName,
                 entity: '=?'
@@ -2600,18 +2626,39 @@ var HawtioForms;
                     $compile: $compile,
                     directiveName: directiveName
                 };
+                scope.template = '';
                 scope.$watch('config', function (config) {
+                    scope.template = '';
                     context.postInterpolateActions = {};
-                    element.empty();
                     if (!scope.entity) {
                         scope.entity = [];
                     }
-                    if (!config) {
+                    if (!config || !config.items) {
                         return;
                     }
+                    var type = config.items.type || config.items.javaType;
                     var entity = scope.entity;
                     HawtioForms.log.debug("Config: ", config);
                     HawtioForms.log.debug("Entity: ", entity);
+                    HawtioForms.log.debug("Type: ", type);
+                    var columnSchema = {
+                        properties: {}
+                    };
+                    if (mappings.hasMapping(type)) {
+                        var items = {};
+                        _.merge(items, config, {
+                            type: mappings.getMapping(type)
+                        });
+                        if ('items' in items) {
+                            delete items['items'];
+                        }
+                        columnSchema.properties.items = items;
+                    }
+                    else {
+                        columnSchema = schemas.getSchema(type);
+                    }
+                    HawtioForms.log.debug("columnSchema: ", columnSchema);
+                    buildTableHeader(context, columnSchema);
                 }, true);
             }
         };
@@ -2742,6 +2789,12 @@ var HawtioForms;
     HawtioForms._module.factory('ControlMappingRegistry', [function () {
         var controlMap = {};
         var answer = {
+            hasMapping: function (name) {
+                if (!name) {
+                    return false;
+                }
+                return (name.toLowerCase() in controlMap);
+            },
             addMapping: function (name, controlType) {
                 controlMap[name.toLowerCase()] = controlType;
             },
@@ -2790,6 +2843,7 @@ $templateCache.put("plugins/forms2/html/form-horizontal.html","<form class=\"for
 $templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
+$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <table class=\"table table-striped\">\n    <thead>\n    </thead>\n    <tbody>\n    </tbody>\n  </table>\n</div> \n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");

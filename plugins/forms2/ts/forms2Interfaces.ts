@@ -81,6 +81,7 @@ module HawtioForms {
   }
 
   export interface ControlMappingRegistry {
+    hasMapping(name: string):boolean;
     addMapping(name: string, controlType: string);
     getMapping(name: string):string;
     removeMapping(name: string):string;

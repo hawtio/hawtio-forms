@@ -63,6 +63,7 @@ declare module HawtioForms {
     }
     function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
     interface ControlMappingRegistry {
+        hasMapping(name: string): boolean;
         addMapping(name: string, controlType: string): any;
         getMapping(name: string): string;
         removeMapping(name: string): string;

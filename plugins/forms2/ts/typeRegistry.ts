@@ -4,6 +4,12 @@ module HawtioForms {
   _module.factory('ControlMappingRegistry', [() => {
     var controlMap = {};
     var answer = {
+      hasMapping: (name:string) => {
+        if (!name) {
+          return false;
+        }
+        return (name.toLowerCase() in controlMap);
+      },
       addMapping: (name:string, controlType: string) => {
         controlMap[name.toLowerCase()] = controlType;
       },
