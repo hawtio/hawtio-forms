@@ -32,7 +32,7 @@ declare module HawtioForms {
     function getArrayTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function lookupTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getTemplate(context: any, config: FormConfiguration, name: any, control: FormElement): string;
-    function interpolateTemplate(context: any, config: FormConfiguration, name: any, control: FormElement, template: string): string;
+    function interpolateTemplate(context: any, config: FormConfiguration, name: any, control: FormElement, template: string, model: string): string;
     function createMaybeHumanize(scope: any): (value: any) => any;
     function initConfig(context: any, config: FormConfiguration): FormConfiguration;
 }

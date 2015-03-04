@@ -2424,6 +2424,8 @@ var HawtioForms;
                 'hawtio-form-2': configName,
                 'entity': 'entity.' + name,
                 'no-wrap': 'true',
+                'mode': config.mode,
+                'style': config.style,
                 'label': control.label || context.maybeHumanize(name)
             });
         });
@@ -2431,18 +2433,20 @@ var HawtioForms;
     }
     HawtioForms.getObjectTemplate = getObjectTemplate;
     function getArrayTemplate(context, config, name, control) {
+        /*
         if (control.items) {
-            if (!('javaType' in control.items)) {
-                HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.type, " control: ", control);
-            }
-            else {
-                HawtioForms.log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
-            }
+          if (!('javaType' in control.items)) {
+            log.debug("Array, name: ", name, " type: ", control.items.type, " control: ", control);
+          } else {
+            log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
+          }
         }
+        */
         addPostInterpolateAction(context, name, function (el) {
             el.find('.inline-array').attr({
                 'hawtio-forms-2-array': 'config.properties.' + name,
                 'entity': 'entity.' + name,
+                'mode': config.mode
             });
         });
         return context.$templateCache.get(Constants.ARRAY);
@@ -2506,7 +2510,7 @@ var HawtioForms;
         return lookupTemplate(context, config, name, control);
     }
     HawtioForms.getTemplate = getTemplate;
-    function interpolateTemplate(context, config, name, control, template) {
+    function interpolateTemplate(context, config, name, control, template, model) {
         // log.debug("template: ", template);
         var interpolateFunc = context.$interpolate(template);
         // log.debug("name: ", name, " control: ", control);
@@ -2514,7 +2518,7 @@ var HawtioForms;
             maybeHumanize: context.maybeHumanize,
             control: control,
             name: name,
-            model: "entity." + name + ""
+            model: model
         });
         // log.debug("postInterpolateActions: ", postInterpolateActions);
         if (context.postInterpolateActions[name]) {
@@ -2558,6 +2562,12 @@ var HawtioForms;
         if ('label' in context.attrs) {
             answer.label = context.attrs['label'];
         }
+        if ('mode' in context.attrs) {
+            answer.mode = Number(context.attrs['mode']);
+        }
+        if ('style' in context.attrs) {
+            answer.style = Number(context.attrs['style']);
+        }
         return HawtioForms.createFormConfiguration(answer);
     }
     HawtioForms.initConfig = initConfig;
@@ -2590,7 +2600,18 @@ var HawtioForms;
             }
             else {
                 _.forIn(columnSchema.properties, function (control, name) {
+                    /*
+                    var template = getTemplate(context, context.scope.config, name, control);
+                    if (template) {
+                      template = interpolateTemplate(context, context.scope.config, name, control, template, 'entity[' + index + '].' + name);
+                      log.debug("template: ", template);
+                      var td = angular.element('<td></td>');
+                      td.append(template);
+                      tr.append(td);
+                    } else {
+                    */
                     tr.append('<td>' + row[name] + '</td>');
+                    //}
                 });
             }
             var deleteRow = angular.element(context.$templateCache.get('deleteRow.html'));
@@ -2648,7 +2669,7 @@ var HawtioForms;
                     $compile: $compile,
                     directiveName: directiveName
                 };
-                scope.template = '';
+                scope.config = HawtioForms.initConfig(context, scope.config);
                 scope.$watch('config', function (config) {
                     scope.template = '';
                     context.postInterpolateActions = {};
@@ -2660,9 +2681,11 @@ var HawtioForms;
                     }
                     var type = config.items.type || config.items.javaType;
                     var entity = scope.entity;
-                    HawtioForms.log.debug("Config: ", config);
-                    HawtioForms.log.debug("Entity: ", entity);
-                    HawtioForms.log.debug("Type: ", type);
+                    /*
+                    log.debug("Config: ", config);
+                    log.debug("Entity: ", entity);
+                    log.debug("Type: ", type);
+                    */
                     var columnSchema = {
                         properties: {}
                     };
@@ -2683,16 +2706,17 @@ var HawtioForms;
                         columnSchema = schemas.getSchema(type);
                     }
                     var table = angular.element($templateCache.get("table.html"));
-                    HawtioForms.log.debug("columnSchema: ", columnSchema);
+                    // log.debug("columnSchema: ", columnSchema);
                     var header = buildTableHeader(context, table, columnSchema);
                     var s = scope.$new();
+                    s.config = config;
                     s.deleteRow = function (index) {
-                        HawtioForms.log.debug("delete row clicked for entry: ", entity[index]);
                         var modal = $modal.open({
                             templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'arrayItemModal.html'),
                             controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
                                 $scope.schema = _.clone(columnSchema, true);
                                 $scope.schema.style = 0 /* STANDARD */;
+                                $scope.schema.mode = 0 /* VIEW */;
                                 $scope.header = "Delete Entry?";
                                 if (columnSchema.properties.$items) {
                                     $scope.newEntity = {
@@ -2713,7 +2737,6 @@ var HawtioForms;
                         });
                     };
                     s.editRow = function (index) {
-                        HawtioForms.log.debug("edit row clicked for entry: ", entity[index]);
                         var modal = $modal.open({
                             templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'arrayItemModal.html'),
                             controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
@@ -2754,7 +2777,7 @@ var HawtioForms;
                                 $scope.header = "Add New Entry";
                                 $scope.ok = function () {
                                     modal.close();
-                                    HawtioForms.log.debug("New entity: ", $scope.newEntity);
+                                    // log.debug("New entity: ", $scope.newEntity);
                                     if ('$items' in $scope.newEntity) {
                                         entity.push($scope.newEntity.$items);
                                     }
@@ -2767,7 +2790,6 @@ var HawtioForms;
                                 };
                             }]
                         });
-                        HawtioForms.log.debug("Create new row clicked");
                     };
                     element.append($compile(table)(s));
                     if (scope.watch) {
@@ -2775,7 +2797,7 @@ var HawtioForms;
                     }
                     scope.watch = scope.$watchCollection('entity', function (entity, old) {
                         if (entity !== old) {
-                            HawtioForms.log.debug("Entity: ", entity);
+                            // log.debug("Entity: ", entity);
                             var body = clearBody(context, table);
                             var tmp = angular.element('<div></div>');
                             buildTableBody(context, columnSchema, entity, tmp);
@@ -2843,7 +2865,7 @@ var HawtioForms;
                             // log.debug("control: ", control);
                             var template = HawtioForms.getTemplate(context, config, name, control);
                             if (template) {
-                                template = HawtioForms.interpolateTemplate(context, config, name, control, template);
+                                template = HawtioForms.interpolateTemplate(context, config, name, control, template, 'entity.' + name);
                                 parent.append(template);
                             }
                         });
@@ -2944,7 +2966,7 @@ var HawtioForms;
             }
         };
         /* Set up some defaults */
-        _.forEach(["int", "integer", "long", "short", "java.lang.integer", "java.lang.long", "float", "double", "java.lang.float", "java.lang.double"], function (name) { return answer.addMapping(name, 'number'); });
+        _.forEach(["int", "number", "integer", "long", "short", "java.lang.integer", "java.lang.long", "float", "double", "java.lang.float", "java.lang.double"], function (name) { return answer.addMapping(name, 'number'); });
         _.forEach(["boolean", "bool", "java.lang.boolean"], function (name) { return answer.addMapping(name, 'checkbox'); });
         answer.addMapping('password', 'password');
         answer.addMapping('hidden', 'hidden');
@@ -2961,20 +2983,20 @@ angular.module("hawtio-forms-templates", []).run(["$templateCache", function($te
 $templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/array.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-array\"></div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/arrayItemModal.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{header}}</h3>\n</div>\n<div class=\"modal-body\">\n  <div hawtio-form-2=\"schema\" entity=\"newEntity\"></div>\n</div>\n<div class=\"modal-footer\">\n  <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n  <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n</div>\n");
-$templateCache.put("plugins/forms2/html/checkbox-horizontal.html","<div class=\"form-group\">\n  <div class=\"col-sm-offset-2 col-sm-10\">\n    <div class=\"checkbox\">\n      <label>\n        <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\">\n  <div class=\"checkbox\">\n    <label>\n      <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/form-horizontal.html","<form class=\"form-horizontal\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
+$templateCache.put("plugins/forms2/html/checkbox-horizontal.html","<div class=\"form-group\">\n  <div class=\"col-sm-offset-2 col-sm-10\">\n    <div class=\"checkbox\">\n      <label>\n        <input ng-disabled=\"config.mode == 0\" type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\">\n  <div class=\"checkbox\">\n    <label>\n      <input ng-disabled=\"config.mode == 0\" type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/form-horizontal.html","<form ng-disabled=\"config.mode == 0\" class=\"form-horizontal\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
+$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
 $templateCache.put("plugins/forms2/html/radio-top-level.html","<div class=\"radio\">\n</div>\n");
-$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select class=\"form-control\" ng-model=\"{{model}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
-$templateCache.put("plugins/forms2/html/standard-horizontal-input.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/standard-input.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <input type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
+$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select ng-disabled=\"config.mode == 0\" class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select ng-disabled=\"config.mode == 0\" class=\"form-control\" ng-model=\"{{model}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
+$templateCache.put("plugins/forms2/html/standard-horizontal-input.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/standard-input.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
 $templateCache.put("plugins/forms2/html/static-horizontal-text.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label}}</label>\n  <div class=\"col-sm-10\">\n    <p class=\"form-control-static\">{{control.description}}</p>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/static-text.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label}}</label>\n  <p class=\"form-control-static\">{{control.description}}</p>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-templates");

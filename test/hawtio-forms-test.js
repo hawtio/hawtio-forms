@@ -41,7 +41,8 @@ var HawtioFormsTests;
   HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
 
     $scope.config = schemas.cloneSchema("os_build_BuildConfig");
-
+    $scope.config.style = HawtioForms.FormStyle.STANDARD;
+    $scope.config.mode = HawtioForms.FormMode.EDIT;
     $scope.model = {};
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
@@ -70,8 +71,34 @@ var HawtioFormsTests;
         }
       }
     });
+
+    schemas.addSchema('ArrayObject', {
+      properties: {
+        "Field1": {
+          "type": "string",
+          "input-attributes": {
+            placeholder: "Username..."
+          }
+        },
+        "Field2": {
+          "type": "password",
+          "input-attributes": {
+            placeholder: "Password..."
+          }
+        },
+        "Field3": {
+          "type": "string",
+          "enum": {
+            "label1": "value1",
+            "label2": "value2",
+            "label3": "value3"
+          }
+        }
+      }
+    });
     $scope.config = {
       "style": HawtioForms.FormStyle.HORIZONTAL,
+      "mode": HawtioForms.FormMode.EDIT,
       "disableHumanizeLabel": false,
       hideLegend: true,
       "properties": {
@@ -92,6 +119,24 @@ var HawtioFormsTests;
           "control-group-attributes": {
             "ng-show": "entity.booleanArg == true"
           }
+        },
+        array1: {
+          items: {
+            type: 'string'
+          },
+          type: 'array'
+        },
+        array2: {
+          items: {
+            type: 'number'
+          },
+          type: 'array'
+        },
+        array3: {
+          items: {
+            type: 'ArrayObject'
+          },
+          type: 'array'
         },
         scheme: {
           type: "java.lang.String",

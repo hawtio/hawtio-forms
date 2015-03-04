@@ -54,7 +54,7 @@ module HawtioForms {
               // log.debug("control: ", control);
               var template = getTemplate(context, config, name, control);
               if (template) {
-                template = interpolateTemplate(context, config, name, control, template);
+                template = interpolateTemplate(context, config, name, control, template, 'entity.' + name);
                 parent.append(template);
               }
             });

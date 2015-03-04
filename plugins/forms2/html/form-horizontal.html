@@ -1,4 +1,4 @@
-<form class="form-horizontal">
+<form ng-disabled="config.mode == 0" class="form-horizontal">
   <fieldset>
     <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>
   </fieldset>

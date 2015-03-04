@@ -126,6 +126,8 @@ module HawtioForms {
         'hawtio-form-2': configName,
         'entity': 'entity.' + name,
         'no-wrap': 'true',
+        'mode': config.mode,
+        'style': config.style,
         'label': control.label || context.maybeHumanize(name)
       });
     });
@@ -133,6 +135,7 @@ module HawtioForms {
   }
 
   export function getArrayTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
+    /*
     if (control.items) {
       if (!('javaType' in control.items)) {
         log.debug("Array, name: ", name, " type: ", control.items.type, " control: ", control);
@@ -140,10 +143,12 @@ module HawtioForms {
         log.debug("Array, name: ", name, " type: ", control.items.javaType, " control: ", control);
       }
     }
+    */
     addPostInterpolateAction(context, name, (el) => {
       el.find('.inline-array').attr({
         'hawtio-forms-2-array': 'config.properties.' + name,
         'entity': 'entity.' + name,
+        'mode': config.mode
       });
     });
     return context.$templateCache.get(Constants.ARRAY);
@@ -206,7 +211,7 @@ module HawtioForms {
     return lookupTemplate(context, config, name, control);
   }
 
-  export function interpolateTemplate(context, config:FormConfiguration, name, control:FormElement, template:string):string {
+  export function interpolateTemplate(context, config:FormConfiguration, name, control:FormElement, template:string, model:string):string {
     // log.debug("template: ", template);
     var interpolateFunc = context.$interpolate(template);
     // log.debug("name: ", name, " control: ", control);
@@ -214,7 +219,7 @@ module HawtioForms {
       maybeHumanize: context.maybeHumanize,
       control: control,
       name: name,
-      model: "entity." + name + ""
+      model: model
     });
     // log.debug("postInterpolateActions: ", postInterpolateActions);
     if (context.postInterpolateActions[name]) {
@@ -256,6 +261,12 @@ module HawtioForms {
     }
     if ('label' in context.attrs) {
       answer.label = context.attrs['label'];
+    }
+    if ('mode' in context.attrs) {
+      answer.mode = Number(context.attrs['mode']);
+    }
+    if ('style' in context.attrs) {
+      answer.style = Number(context.attrs['style']);
     }
     return createFormConfiguration(answer);
   }

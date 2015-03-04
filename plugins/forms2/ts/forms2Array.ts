@@ -15,7 +15,18 @@ module HawtioForms {
         tr.append('<td>' + row + '</td>');
       } else {
         _.forIn(columnSchema.properties, (control, name) => {
-          tr.append('<td>' + row[name] + '</td>');
+          /*
+          var template = getTemplate(context, context.scope.config, name, control);
+          if (template) {
+            template = interpolateTemplate(context, context.scope.config, name, control, template, 'entity[' + index + '].' + name);
+            log.debug("template: ", template);
+            var td = angular.element('<td></td>');
+            td.append(template);
+            tr.append(td); 
+          } else {
+          */
+            tr.append('<td>' + row[name] + '</td>');
+          //}
         });
       }
       var deleteRow = angular.element(context.$templateCache.get('deleteRow.html'));
@@ -79,7 +90,7 @@ module HawtioForms {
           $compile: $compile,
           directiveName: directiveName        
         };
-        scope.template = '';
+        scope.config = initConfig(context, scope.config);
         scope.$watch('config', (config) => {
           scope.template = '';
           context.postInterpolateActions = {};
@@ -91,9 +102,11 @@ module HawtioForms {
           }
           var type = config.items.type || config.items.javaType;
           var entity = scope.entity;
+          /*
           log.debug("Config: ", config);
           log.debug("Entity: ", entity);
           log.debug("Type: ", type);
+          */
           var columnSchema = <any> {
             properties: {
 
@@ -115,17 +128,18 @@ module HawtioForms {
             columnSchema = schemas.getSchema(type);
           }
           var table = angular.element($templateCache.get("table.html"));
-          log.debug("columnSchema: ", columnSchema);
+          // log.debug("columnSchema: ", columnSchema);
           var header = buildTableHeader(context, table, columnSchema);
           var s = scope.$new();
+          s.config = config;
 
           s.deleteRow = (index) => {
-            log.debug("delete row clicked for entry: ", entity[index]);
             var modal = $modal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
               controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
                 $scope.schema = _.clone(columnSchema, true);
                 $scope.schema.style = FormStyle.STANDARD;
+                $scope.schema.mode = FormMode.VIEW;
                 $scope.header = "Delete Entry?";
                 if (columnSchema.properties.$items) {
                   $scope.newEntity = {
@@ -146,7 +160,6 @@ module HawtioForms {
           }
 
           s.editRow = (index) => {
-            log.debug("edit row clicked for entry: ", entity[index]);
             var modal = $modal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
               controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
@@ -186,7 +199,7 @@ module HawtioForms {
                 $scope.header = "Add New Entry";
                 $scope.ok = () => {
                   modal.close();
-                  log.debug("New entity: ", $scope.newEntity);
+                  // log.debug("New entity: ", $scope.newEntity);
                   if ('$items' in $scope.newEntity) {
                     entity.push($scope.newEntity.$items);
                   } else {
@@ -198,7 +211,6 @@ module HawtioForms {
                 }
               }]
             });
-            log.debug("Create new row clicked");
           }
           element.append($compile(table)(s));
           if (scope.watch) {
@@ -206,7 +218,7 @@ module HawtioForms {
           }
           scope.watch = scope.$watchCollection('entity', (entity, old) => {
             if (entity !== old) {
-              log.debug("Entity: ", entity);
+              // log.debug("Entity: ", entity);
               var body = clearBody(context, table);
               var tmp = angular.element('<div></div>');
               buildTableBody(context, columnSchema, entity, tmp);

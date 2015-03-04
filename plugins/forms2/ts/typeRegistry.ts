@@ -37,6 +37,7 @@ module HawtioForms {
     }
     /* Set up some defaults */
     _.forEach([ "int",
+      "number",
       "integer",
       "long",
       "short",

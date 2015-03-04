@@ -7,7 +7,7 @@
   </script>
   <script type="text/ng-template" id="newItemHeader.html">
     <th class="align-right">
-      <button class="button button-success" ng-click="createNewRow()">
+      <button ng-hide="config.mode == 0" class="button button-success" ng-click="createNewRow()">
         <i class="fa fa-plus green" ></i>
       </button>
     </th>
@@ -17,8 +17,8 @@
   </script>
   <script type="text/ng-template" id="deleteRow.html">
     <td class="align-right">
-      <button class='editRow'><i class="fa fa-pencil yellow"></i></button>
-      <button class='deleteRow'><i class="fa fa-minus red"></i></button>
+      <button ng-hide="config.mode == 0" class='editRow'><i class="fa fa-pencil yellow"></i></button>
+      <button ng-hide="config.mode == 0" class='deleteRow'><i class="fa fa-minus red"></i></button>
     </td>
   </script>
   <script type="text/ng-template" id="table.html">
