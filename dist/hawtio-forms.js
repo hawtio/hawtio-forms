@@ -2577,21 +2577,43 @@ var HawtioForms;
 var HawtioForms;
 (function (HawtioForms) {
     var directiveName = "hawtioForms2Array";
-    function clearBody(context) {
-        var body = context.element.find('tbody');
+    function clearBody(context, table) {
+        var body = table.find('tbody');
         body.empty();
         return body;
+    }
+    function buildTableBody(context, columnSchema, entity, body) {
+        _.forEach(entity, function (row, index) {
+            var tr = newBodyRow(context);
+            if (columnSchema.properties.$items) {
+                tr.append('<td>' + row + '</td>');
+            }
+            else {
+                _.forIn(columnSchema.properties, function (control, name) {
+                    tr.append('<td>' + row[name] + '</td>');
+                });
+            }
+            var deleteRow = angular.element(context.$templateCache.get('deleteRow.html'));
+            deleteRow.find('.deleteRow').attr({
+                'ng-click': 'deleteRow(' + index + ')'
+            });
+            deleteRow.find('.editRow').attr({
+                'ng-click': 'editRow(' + index + ')'
+            });
+            tr.append(deleteRow);
+            body.append(tr);
+        });
     }
     function newBodyRow(context) {
         return angular.element(context.$templateCache.get('rowTemplate.html'));
     }
-    function newHeaderRow(context) {
-        var header = context.element.find('thead');
+    function newHeaderRow(context, table) {
+        var header = table.find('thead');
         header.empty();
         return header.append(context.$templateCache.get('rowTemplate.html')).find('tr');
     }
-    function buildTableHeader(context, columnSchema) {
-        var headerRow = newHeaderRow(context);
+    function buildTableHeader(context, table, columnSchema) {
+        var headerRow = newHeaderRow(context, table);
         _.forIn(columnSchema.properties, function (control, name) {
             var interpolateFunc = context.$interpolate(control.headerTemplate || context.$templateCache.get('header.html'));
             headerRow.append(interpolateFunc({
@@ -2602,7 +2624,7 @@ var HawtioForms;
         headerRow.append(context.$templateCache.get("newItemHeader.html"));
         return headerRow;
     }
-    HawtioForms._module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', function ($compile, $templateCache, $interpolate, schemas, mappings) {
+    HawtioForms._module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$modal', function ($compile, $templateCache, $interpolate, schemas, mappings, $modal) {
         return {
             restrict: 'A',
             replace: true,
@@ -2652,13 +2674,114 @@ var HawtioForms;
                         if ('items' in items) {
                             delete items['items'];
                         }
-                        columnSchema.properties.items = items;
+                        if (!items.label) {
+                            items.label = 'Entries';
+                        }
+                        columnSchema.properties.$items = items;
                     }
                     else {
                         columnSchema = schemas.getSchema(type);
                     }
+                    var table = angular.element($templateCache.get("table.html"));
                     HawtioForms.log.debug("columnSchema: ", columnSchema);
-                    buildTableHeader(context, columnSchema);
+                    var header = buildTableHeader(context, table, columnSchema);
+                    var s = scope.$new();
+                    s.deleteRow = function (index) {
+                        HawtioForms.log.debug("delete row clicked for entry: ", entity[index]);
+                        var modal = $modal.open({
+                            templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'arrayItemModal.html'),
+                            controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                                $scope.schema = _.clone(columnSchema, true);
+                                $scope.schema.style = 0 /* STANDARD */;
+                                $scope.header = "Delete Entry?";
+                                if (columnSchema.properties.$items) {
+                                    $scope.newEntity = {
+                                        $items: entity[index]
+                                    };
+                                }
+                                else {
+                                    $scope.newEntity = _.clone(entity[index]);
+                                }
+                                $scope.ok = function () {
+                                    modal.close();
+                                    entity.splice(index, 1);
+                                };
+                                $scope.cancel = function () {
+                                    modal.dismiss();
+                                };
+                            }]
+                        });
+                    };
+                    s.editRow = function (index) {
+                        HawtioForms.log.debug("edit row clicked for entry: ", entity[index]);
+                        var modal = $modal.open({
+                            templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'arrayItemModal.html'),
+                            controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                                $scope.schema = _.clone(columnSchema, true);
+                                $scope.schema.style = 0 /* STANDARD */;
+                                $scope.header = "Edit Entry";
+                                if (columnSchema.properties.$items) {
+                                    $scope.newEntity = {
+                                        $items: entity[index]
+                                    };
+                                }
+                                else {
+                                    $scope.newEntity = _.clone(entity[index]);
+                                }
+                                $scope.ok = function () {
+                                    modal.close();
+                                    HawtioForms.log.debug("New entity: ", $scope.newEntity);
+                                    if ('$items' in $scope.newEntity) {
+                                        entity[index] = $scope.newEntity.$items;
+                                    }
+                                    else {
+                                        entity[index] = $scope.newEntity;
+                                    }
+                                };
+                                $scope.cancel = function () {
+                                    modal.dismiss();
+                                };
+                            }]
+                        });
+                    };
+                    s.createNewRow = function () {
+                        var modal = $modal.open({
+                            templateUrl: UrlHelpers.join(HawtioForms.templatePath, 'arrayItemModal.html'),
+                            controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                                $scope.schema = _.clone(columnSchema, true);
+                                $scope.schema.style = 0 /* STANDARD */;
+                                $scope.newEntity = undefined;
+                                $scope.header = "Add New Entry";
+                                $scope.ok = function () {
+                                    modal.close();
+                                    HawtioForms.log.debug("New entity: ", $scope.newEntity);
+                                    if ('$items' in $scope.newEntity) {
+                                        entity.push($scope.newEntity.$items);
+                                    }
+                                    else {
+                                        entity.push($scope.newEntity);
+                                    }
+                                };
+                                $scope.cancel = function () {
+                                    modal.dismiss();
+                                };
+                            }]
+                        });
+                        HawtioForms.log.debug("Create new row clicked");
+                    };
+                    element.append($compile(table)(s));
+                    if (scope.watch) {
+                        scope.watch();
+                    }
+                    scope.watch = scope.$watchCollection('entity', function (entity, old) {
+                        if (entity !== old) {
+                            HawtioForms.log.debug("Entity: ", entity);
+                            var body = clearBody(context, table);
+                            var tmp = angular.element('<div></div>');
+                            buildTableBody(context, columnSchema, entity, tmp);
+                            body.append($compile(tmp.children())(s));
+                        }
+                    });
                 }, true);
             }
         };
@@ -2837,13 +2960,14 @@ var HawtioForms;
 angular.module("hawtio-forms-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("plugins/forms/html/formGrid.html","<div>\n\n  <script type=\"text/ng-template\" id=\"heroUnitTemplate.html\">\n    <div class=\"hero-unit\">\n      <h5>No Items Added</h5>\n      <p><a href=\"\" ng-click=\"addThing()\">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"headerCellTemplate.html\">\n    <th>{{label}}</th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"emptyHeaderCellTemplate.html\">\n    <th></th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"deleteRowTemplate.html\">\n    <td ng-click=\"removeThing({{index}})\" class=\"align-center\">\n      <i class=\"icon-remove red mouse-pointer\"></i>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellNumberTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\" min=\"{{min}}\" max=\"{{max}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n\n  <div ng-show=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12 nodata\">\n    </div>\n  </div>\n  <div ng-hide=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12\">\n      <h3 ng-show=\"configuration.heading\">{{getHeading()}}</h3>\n      <table class=\"table table-striped\">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click=\"addThing()\" class=\"centered mouse-pointer\">\n      <i class=\"icon-plus green\"></i><span ng-show=\"configuration.rowName\"> Add {{configuration.rowName.titleize()}}</span>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/array.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-array\"></div>\n    </div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/arrayItemModal.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{header}}</h3>\n</div>\n<div class=\"modal-body\">\n  <div hawtio-form-2=\"schema\" entity=\"newEntity\"></div>\n</div>\n<div class=\"modal-footer\">\n  <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n  <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n</div>\n");
 $templateCache.put("plugins/forms2/html/checkbox-horizontal.html","<div class=\"form-group\">\n  <div class=\"col-sm-offset-2 col-sm-10\">\n    <div class=\"checkbox\">\n      <label>\n        <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\">\n  <div class=\"checkbox\">\n    <label>\n      <input type=\"checkbox\" ng-model=\"{{model}}\"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/form-horizontal.html","<form class=\"form-horizontal\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <table class=\"table table-striped\">\n    <thead>\n    </thead>\n    <tbody>\n    </tbody>\n  </table>\n</div> \n");
+$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
