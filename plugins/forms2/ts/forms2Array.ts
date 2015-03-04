@@ -217,13 +217,11 @@ module HawtioForms {
             scope.watch();
           }
           scope.watch = scope.$watchCollection('entity', (entity, old) => {
-            if (entity !== old) {
-              // log.debug("Entity: ", entity);
-              var body = clearBody(context, table);
-              var tmp = angular.element('<div></div>');
-              buildTableBody(context, columnSchema, entity, tmp);
-              body.append($compile(tmp.children())(s));
-            }
+            // log.debug("Entity: ", entity);
+            var body = clearBody(context, table);
+            var tmp = angular.element('<div></div>');
+            buildTableBody(context, columnSchema, entity, tmp);
+            body.append($compile(tmp.children())(s));
           });
         }, true);
 

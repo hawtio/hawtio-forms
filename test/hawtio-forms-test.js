@@ -76,18 +76,21 @@ var HawtioFormsTests;
       properties: {
         "Field1": {
           "type": "string",
+          "label": "Username",
           "input-attributes": {
             placeholder: "Username..."
           }
         },
         "Field2": {
           "type": "password",
+          "label": "Password",
           "input-attributes": {
             placeholder: "Password..."
           }
         },
         "Field3": {
           "type": "string",
+          "label": "Type",
           "enum": {
             "label1": "value1",
             "label2": "value2",
@@ -229,7 +232,32 @@ var HawtioFormsTests;
         "Tab Three": ["booleanArg"]
       }
     };
-    $scope.model = {};
+    $scope.model ={
+      "scheme": "http",
+      "array1": ["foo", "bar", "cheese"],
+      "array2": [
+        20,
+        13
+      ],
+      "array3": [
+        {
+          "Field1": "test1",
+          "Field2": "test1",
+          "Field3": "value2"
+        },
+        {
+          "Field1": "test2",
+          "Field2": "test2",
+          "Field3": "value3"
+        }, 
+        {
+          "Field1": "test3",
+          "Field2": "test3",
+          "Field3": "value1"
+        } 
+      ]
+    };
+
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
     $scope.$watch('model', _.debounce(function() {
