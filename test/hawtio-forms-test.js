@@ -73,6 +73,7 @@ var HawtioFormsTests;
     });
 
     schemas.addSchema('ArrayObject', {
+      description: 'Some object with a username and password',
       properties: {
         "Field1": {
           "type": "string",

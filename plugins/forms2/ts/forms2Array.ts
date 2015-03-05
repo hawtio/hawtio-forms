@@ -133,14 +133,25 @@ module HawtioForms {
           var s = scope.$new();
           s.config = config;
 
+          function initSchema(schema) {
+            var answer = _.clone(schema, true);
+            answer.style = FormStyle.STANDARD;
+            if ('$items' in answer.properties) {
+              answer.properties.$items['label-attributes'] = {
+                'style': 'display: none'
+              };
+            }
+            return answer;
+          }
+
           s.deleteRow = (index) => {
             var modal = $modal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
               controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
-                $scope.schema = _.clone(columnSchema, true);
-                $scope.schema.style = FormStyle.STANDARD;
+                $scope.schema = initSchema(columnSchema);
                 $scope.schema.mode = FormMode.VIEW;
                 $scope.header = "Delete Entry?";
+                $scope.description = "<p>Are you sure you want to delete the following entry?</p><p><strong>This operation cannot be undone!</strong></p>";
                 if (columnSchema.properties.$items) {
                   $scope.newEntity = {
                     $items: entity[index]
@@ -163,8 +174,7 @@ module HawtioForms {
             var modal = $modal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
               controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
-                $scope.schema = _.clone(columnSchema, true);
-                $scope.schema.style = FormStyle.STANDARD;
+                $scope.schema = initSchema(columnSchema);
                 $scope.header = "Edit Entry";
                 if (columnSchema.properties.$items) {
                   $scope.newEntity = {
@@ -193,8 +203,7 @@ module HawtioForms {
             var modal = $modal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
               controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
-                $scope.schema = _.clone(columnSchema, true);
-                $scope.schema.style = FormStyle.STANDARD;
+                $scope.schema = initSchema(columnSchema);
                 $scope.newEntity = undefined;
                 $scope.header = "Add New Entry";
                 $scope.ok = () => {
