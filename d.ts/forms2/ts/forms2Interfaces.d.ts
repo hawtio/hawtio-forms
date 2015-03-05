@@ -75,5 +75,7 @@ declare module HawtioForms {
         cloneSchema(name: string): FormConfiguration;
         removeSchema(name: string): FormConfiguration;
         iterate(iter: (FormConfiguration, string) => void): any;
+        addListener(name: string, callback: (nme: string, schema: any) => void): any;
+        removeListener(name: string): any;
     }
 }

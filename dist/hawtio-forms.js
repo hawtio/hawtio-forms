@@ -2889,13 +2889,34 @@ var HawtioForms;
 (function (HawtioForms) {
     HawtioForms._module.factory("SchemaRegistry", function () {
         var schemaMap = {};
+        var listeners = {};
+        function addSchemaInternal(name, schema) {
+            schemaMap[name] = schema;
+            _.forIn(listeners, function (listener, id) {
+                listener(name, schema);
+            });
+        }
         var registry = {
+            addListener: function (name, callback) {
+                if (!name || !callback) {
+                    return;
+                }
+                _.forIn(schemaMap, function (schema, name) {
+                    callback(name, schema);
+                });
+                listeners[name] = callback;
+            },
+            removeListener: function (name) {
+                if (name in listeners) {
+                    delete listeners[name];
+                }
+            },
             addSchema: function (name, schema) {
                 // log.debug("Adding schema: ", name, " schema: ", schema);
-                schemaMap[name] = schema;
+                addSchemaInternal(name, schema);
                 if (schema.javaType) {
                     // log.debug("Adding schema by Java type: ", schema.javaType, " value: ", schema);
-                    schemaMap[schema.javaType] = schema;
+                    addSchemaInternal(schema.javaType, schema);
                 }
                 if (schema.definitions) {
                     // log.debug("Found definitions in schema: ", name);
@@ -2922,6 +2943,11 @@ var HawtioForms;
                 _.forIn(schemaMap, iter);
             }
         };
+        /*
+        registry.addListener('logging', (name: string, schema: any) => {
+          log.debug("Added schema name: ", name, " schema: ", schema);
+        });
+        */
         return registry;
     });
 })(HawtioForms || (HawtioForms = {}));
