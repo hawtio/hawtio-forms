@@ -56,6 +56,15 @@ module HawtioForms {
     UNWRAPPED
   }
 
+  export interface FormWizardPage {
+    title?: string;
+    controls: Array<string>;
+  }
+
+  export interface FormWizardPages {
+    pages: FormWizardPage;
+  }
+
   /**
    * Interface that describes the configuration object for hawtio forms
    */
@@ -68,6 +77,8 @@ module HawtioForms {
     ignorePrefixInLabel?: boolean
     properties: FormProperties;
     tabs?: FormTabs;
+    wizard?: FormWizardPages;
+    controls?: Array<string>;
     label?: string;
   }
 

@@ -74,26 +74,25 @@ module HawtioForms {
         entity: '=?'
       },
       link: (scope, element, attrs) => {
-        var maybeHumanize = createMaybeHumanize(scope);
-        var context = {
-          postInterpolateActions: {
+        scope.$watch('config', (newConfig) => {
+          var context = {
+            postInterpolateActions: {
 
-          },
-          maybeHumanize: maybeHumanize,
-          scope: scope,
-          element: element,
-          attrs: attrs,
-          mappings: mappings,
-          schemas: schemas,
-          $templateCache: $templateCache,
-          $interpolate: $interpolate,
-          $compile: $compile,
-          directiveName: directiveName        
-        };
-        scope.config = initConfig(context, scope.config);
-        scope.$watch('config', (config) => {
-          scope.template = '';
-          context.postInterpolateActions = {};
+            },
+            maybeHumanize: undefined,
+            config: undefined,
+            element: element,
+            attrs: attrs,
+            mappings: mappings,
+            schemas: schemas,
+              $templateCache: $templateCache,
+              $interpolate: $interpolate,
+                $compile: $compile,
+            directiveName: directiveName        
+          };
+          var config = <any> initConfig(context, _.cloneDeep(newConfig), false);
+          context.config = config;
+          context.maybeHumanize = createMaybeHumanize(context);
           if (!scope.entity) {
             scope.entity = [];
           }
@@ -102,11 +101,6 @@ module HawtioForms {
           }
           var type = config.items.type || config.items.javaType;
           var entity = scope.entity;
-          /*
-          log.debug("Config: ", config);
-          log.debug("Entity: ", entity);
-          log.debug("Type: ", type);
-          */
           var columnSchema = <any> {
             properties: {
 
@@ -128,10 +122,11 @@ module HawtioForms {
             columnSchema = schemas.getSchema(type);
           }
           var table = angular.element($templateCache.get("table.html"));
-          // log.debug("columnSchema: ", columnSchema);
           var header = buildTableHeader(context, table, columnSchema);
           var s = scope.$new();
+
           s.config = config;
+          s.entity = entity;
 
           function initSchema(schema) {
             var answer = _.clone(schema, true);
@@ -185,7 +180,6 @@ module HawtioForms {
                 }
                 $scope.ok = () => {
                   modal.close();
-                  log.debug("New entity: ", $scope.newEntity);
                   if ('$items' in $scope.newEntity) {
                     entity[index] = $scope.newEntity.$items;
                   } else {
@@ -208,7 +202,6 @@ module HawtioForms {
                 $scope.header = "Add New Entry";
                 $scope.ok = () => {
                   modal.close();
-                  // log.debug("New entity: ", $scope.newEntity);
                   if ('$items' in $scope.newEntity) {
                     entity.push($scope.newEntity.$items);
                   } else {
@@ -221,17 +214,14 @@ module HawtioForms {
               }]
             });
           }
-          element.append($compile(table)(s));
-          if (scope.watch) {
-            scope.watch();
-          }
-          scope.watch = scope.$watchCollection('entity', (entity, old) => {
-            // log.debug("Entity: ", entity);
+          s.watch = s.$watchCollection('entity', (entity, old) => {
+            scope.entity = entity;
             var body = clearBody(context, table);
             var tmp = angular.element('<div></div>');
             buildTableBody(context, columnSchema, entity, tmp);
             body.append($compile(tmp.children())(s));
           });
+          element.append($compile(table)(s));
         }, true);
 
       }

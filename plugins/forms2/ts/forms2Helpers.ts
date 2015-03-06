@@ -232,10 +232,10 @@ module HawtioForms {
     return answer;
   }
 
-  export function createMaybeHumanize(scope) {
+  export function createMaybeHumanize(context) {
     return (value) => {
-      var config = scope.config;
-      if (config && !config.disableHumanizeLabel) {
+      var config = context.config;
+      if (!config || (config && !config.disableHumanizeLabel)) {
         return Core.humanizeValue(value);
       } else {
         return value;
@@ -243,30 +243,37 @@ module HawtioForms {
     }
   }
 
-  export function initConfig(context, config:FormConfiguration) {
-    var answer = config;
-    if (!answer) {
-      // log.debug("Object not found in $scope, looking up schema");
+  export function initConfig(context, config:FormConfiguration, lookup = true) {
+    var answer = <any> config;
+    if (!answer && lookup) {
       // look in schema registry
       var name = context.attrs[context.directiveName];
+      // log.debug("not a full config object, looking up schema: ", name);
       if (name) {
         answer = context.schemas.cloneSchema(name);
+        if (!answer) {
+          // log.debug("No schema found for type: ", name);
+          // log.debug("attrs: ", context.attrs);
+          answer = {};
+        }
       }
     }
-    // set any missing defaults
-    if ('noWrap' in context.attrs) {
-      if (context.attrs['noWrap']) {
-        answer.style = FormStyle.UNWRAPPED;
+    if (answer) {
+      // set any missing defaults
+      if ('label' in context.attrs) {
+        answer.label = context.attrs['label'];
       }
-    }
-    if ('label' in context.attrs) {
-      answer.label = context.attrs['label'];
-    }
-    if ('mode' in context.attrs) {
-      answer.mode = Number(context.attrs['mode']);
-    }
-    if ('style' in context.attrs) {
-      answer.style = Number(context.attrs['style']);
+      if ('mode' in context.attrs) {
+        answer.mode = Number(context.attrs['mode']);
+      }
+      if ('style' in context.attrs) {
+        answer.style = Number(context.attrs['style']);
+      }
+      if ('noWrap' in context.attrs) {
+        if (context.attrs['noWrap']) {
+          answer.style = FormStyle.UNWRAPPED;
+        }
+      }
     }
     return createFormConfiguration(answer);
   }

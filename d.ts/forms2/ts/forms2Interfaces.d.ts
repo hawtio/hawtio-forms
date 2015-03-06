@@ -47,6 +47,13 @@ declare module HawtioForms {
         HORIZONTAL = 2,
         UNWRAPPED = 3,
     }
+    interface FormWizardPage {
+        title?: string;
+        controls: Array<string>;
+    }
+    interface FormWizardPages {
+        pages: FormWizardPage;
+    }
     /**
      * Interface that describes the configuration object for hawtio forms
      */
@@ -59,6 +66,8 @@ declare module HawtioForms {
         ignorePrefixInLabel?: boolean;
         properties: FormProperties;
         tabs?: FormTabs;
+        wizard?: FormWizardPages;
+        controls?: Array<string>;
         label?: string;
     }
     function createFormConfiguration(options?: FormConfiguration): FormConfiguration;

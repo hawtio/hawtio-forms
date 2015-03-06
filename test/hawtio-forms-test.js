@@ -104,7 +104,33 @@ var HawtioFormsTests;
       "style": HawtioForms.FormStyle.HORIZONTAL,
       "mode": HawtioForms.FormMode.EDIT,
       "disableHumanizeLabel": false,
-      hideLegend: true,
+      hideLegend: false,
+      controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
+      /*
+      "tabs": {
+        "Tab One": ["key", "value"],
+        "Tab Two": ["*"],
+        "Tab Three": ["booleanArg"]
+      },
+      */
+      /*
+      wizard: {
+        pages: {
+          "Page1": {
+            controls: ["array1", "key"]
+          },
+          "Page2": {
+            controls: ["scheme", "nestedObject"]
+          },
+          "Page3": {
+            controls: ["fromSchemaRegistry", "array3"]
+          },
+          "Page4": {
+            controls: ['*']
+          }
+        }
+      },
+      */
       "properties": {
         "fromSchemaRegistry": {
           "type": "testObject"
@@ -216,22 +242,13 @@ var HawtioFormsTests;
             "value": 5
           }
         },
-        "objectArg": {
-          "description": "some object",
-          "type": "object"
-        },
         "booleanArg": {
           "description": "Toggles whether or not you want to enter the argument key",
           "type": "java.lang.Boolean"
         }
       },
       "description": "This is my awesome form",
-      "type": "java.lang.String",
-      "tabs": {
-        "Tab One": ["key", "value"],
-        "Tab Two": ["*"],
-        "Tab Three": ["booleanArg"]
-      }
+      "type": "java.lang.String"
     };
     $scope.model ={
       "scheme": "http",
