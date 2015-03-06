@@ -45,6 +45,7 @@ module HawtioForms {
             if (parent.length === 0) {
               parent = form;
             }
+            var singlePage = false;
             if (('wizard' in config) && config.wizard.pages) {
               var wizard = config.wizard;
               _.forIn(wizard.pages, (pageConfig, id) => {
@@ -59,15 +60,19 @@ module HawtioForms {
                 pages[id] = pageConfig;
               });
             } else if ('tabs' in config) {
+              parent.append($templateCache.get('tabElement.html'));
+              parent = parent.find('.tabbable');
               var tabs = config.tabs;
               _.forIn(tabs, (tabConfig, id) => {
+                var tab = angular.element($templateCache.get('tabPage.html'));
+                tab.attr({
+                  'title': id
+                });
                 var tabPage = {
-                  title: id,
                   controls: tabConfig,
-                  el: angular.element($templateCache.get('tabPage.html')),
-                  parent: undefined
+                  el: tab,
+                  parent: tab
                 }
-                tabPage.parent = tabPage.el.find('.tabPageBody');
                 pages[id] = tabPage;
               });
             } else if ('controls' in config) {
@@ -76,12 +81,14 @@ module HawtioForms {
                 'el': form,
                 'parent': parent
               }
+              singlePage = true;
             } else {
               pages['$main'] = {
                 'controls': ['*'],
                 'el': form,
                 'parent': parent
               }
+              singlePage = true;
             }
             _.forIn(config.properties, (control:FormElement, name:string) => {
               var value = Core.pathGet(control, ['input-attributes', 'value']);
@@ -99,20 +106,28 @@ module HawtioForms {
                 controls[name] = template;
               }
             });
+            /*
+            log.debug("pages: ", pages);
+            log.debug("controls: ", controls);
+            */
             var ids = _.keys(pages);
+            var wildcardId:string = undefined;
             ids.forEach((pageId) => {
               var pageConfig = pages[pageId];
-              delete pages[pageId];
               pageConfig.controls.forEach((name:string) => {
                 if (name === '*') {
-                  _.forIn(controls, (control, controlId) => {
-                    if (_.any(pageConfig.controls, (id) => id === controlId)) {
-                      return;
-                    } else {
-                      pageConfig.parent.append(control);
-                      delete controls[name];
-                    } 
-                  });
+                  if (singlePage) {
+                    _.forIn(controls, (control, controlId) => {
+                      if (_.any(pageConfig.controls, (id) => id === controlId)) {
+                        return;
+                      } else {
+                        pageConfig.parent.append(control);
+                        delete controls[controlId];
+                      } 
+                    });
+                  } else {
+                    wildcardId = pageId;
+                  }
                 } else {
                   if (name in controls) {
                     pageConfig.parent.append(controls[name]); 
@@ -123,6 +138,16 @@ module HawtioForms {
                 }
               });
             });
+            // take care of leftover controls
+            if (_.keys(controls).length > 0) {
+              if (!wildcardId) {
+                wildcardId = _.last(ids);
+              }
+              _.forIn(controls, (control, controlId) => {
+                pages[wildcardId].parent.append(control);
+                delete controls[controlId];
+              });
+            }
             var s = scope.$new();
             s.config = config;
             // s.entity = entity;
@@ -137,7 +162,6 @@ module HawtioForms {
               }
             });
             element.append($compile(form)(s));
-            Core.$apply(scope);
           }
         }, true);
       }

@@ -2859,6 +2859,7 @@ var HawtioForms;
                         if (parent.length === 0) {
                             parent = form;
                         }
+                        var singlePage = false;
                         if (('wizard' in config) && config.wizard.pages) {
                             var wizard = config.wizard;
                             _.forIn(wizard.pages, function (pageConfig, id) {
@@ -2874,15 +2875,19 @@ var HawtioForms;
                             });
                         }
                         else if ('tabs' in config) {
+                            parent.append($templateCache.get('tabElement.html'));
+                            parent = parent.find('.tabbable');
                             var tabs = config.tabs;
                             _.forIn(tabs, function (tabConfig, id) {
+                                var tab = angular.element($templateCache.get('tabPage.html'));
+                                tab.attr({
+                                    'title': id
+                                });
                                 var tabPage = {
-                                    title: id,
                                     controls: tabConfig,
-                                    el: angular.element($templateCache.get('tabPage.html')),
-                                    parent: undefined
+                                    el: tab,
+                                    parent: tab
                                 };
-                                tabPage.parent = tabPage.el.find('.tabPageBody');
                                 pages[id] = tabPage;
                             });
                         }
@@ -2892,6 +2897,7 @@ var HawtioForms;
                                 'el': form,
                                 'parent': parent
                             };
+                            singlePage = true;
                         }
                         else {
                             pages['$main'] = {
@@ -2899,6 +2905,7 @@ var HawtioForms;
                                 'el': form,
                                 'parent': parent
                             };
+                            singlePage = true;
                         }
                         _.forIn(config.properties, function (control, name) {
                             var value = Core.pathGet(control, ['input-attributes', 'value']);
@@ -2916,21 +2923,30 @@ var HawtioForms;
                                 controls[name] = template;
                             }
                         });
+                        /*
+                        log.debug("pages: ", pages);
+                        log.debug("controls: ", controls);
+                        */
                         var ids = _.keys(pages);
+                        var wildcardId = undefined;
                         ids.forEach(function (pageId) {
                             var pageConfig = pages[pageId];
-                            delete pages[pageId];
                             pageConfig.controls.forEach(function (name) {
                                 if (name === '*') {
-                                    _.forIn(controls, function (control, controlId) {
-                                        if (_.any(pageConfig.controls, function (id) { return id === controlId; })) {
-                                            return;
-                                        }
-                                        else {
-                                            pageConfig.parent.append(control);
-                                            delete controls[name];
-                                        }
-                                    });
+                                    if (singlePage) {
+                                        _.forIn(controls, function (control, controlId) {
+                                            if (_.any(pageConfig.controls, function (id) { return id === controlId; })) {
+                                                return;
+                                            }
+                                            else {
+                                                pageConfig.parent.append(control);
+                                                delete controls[controlId];
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        wildcardId = pageId;
+                                    }
                                 }
                                 else {
                                     if (name in controls) {
@@ -2943,6 +2959,16 @@ var HawtioForms;
                                 }
                             });
                         });
+                        // take care of leftover controls
+                        if (_.keys(controls).length > 0) {
+                            if (!wildcardId) {
+                                wildcardId = _.last(ids);
+                            }
+                            _.forIn(controls, function (control, controlId) {
+                                pages[wildcardId].parent.append(control);
+                                delete controls[controlId];
+                            });
+                        }
                         var s = scope.$new();
                         s.config = config;
                         // s.entity = entity;
@@ -2957,7 +2983,6 @@ var HawtioForms;
                             }
                         });
                         element.append($compile(form)(s));
-                        Core.$apply(scope);
                     }
                 }, true);
             }
@@ -3095,7 +3120,7 @@ $templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\
 $templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
-$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tabPage\">\n      <div class=\"tabPageBody\">\n      </div>\n    </div>\n  </script>\n</div>\n");
+$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");

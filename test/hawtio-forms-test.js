@@ -105,14 +105,12 @@ var HawtioFormsTests;
       "mode": HawtioForms.FormMode.EDIT,
       "disableHumanizeLabel": false,
       hideLegend: false,
-      controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
-      /*
+      // controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
       "tabs": {
-        "Tab One": ["key", "value"],
+        "Tab One": ["scheme", "array3", "key", "value"],
         "Tab Two": ["*"],
         "Tab Three": ["booleanArg"]
       },
-      */
       /*
       wizard: {
         pages: {
