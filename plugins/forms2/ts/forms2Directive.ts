@@ -48,6 +48,9 @@ module HawtioForms {
             // log.debug("Config: ", config);
             // log.debug("Entity: ", entity);
             var form = angular.element(getFormMain(context, config));
+            form.find('form').attr({
+              name: config.id || 'form'
+            });
             var parent = form.find('fieldset');
             if (parent.length === 0) {
               parent = form;
@@ -59,14 +62,19 @@ module HawtioForms {
               parent.append(wizardBody);
               s.pageIds = [];
               parent = parent.find('.wizardParent');
+
+              s.onFinish = () => {
+                log.warn("No onFinish() function supplied to form wizard");
+              };
+              s.buttons = {
+                'next': 'Next',
+                'back': 'Back',
+                'finish': 'Finish'
+              }
+
               _.forIn(wizard, (attr, key) => {
                 s[key] = attr;
               });
-              if (!('onFinish' in s)) {
-                s.onFinish = () => {
-                  log.warn("No onFinish() function supplied to form wizard");
-                };
-              }
               _.forIn(wizard.pages, (pageConfig, id) => {
                 if (!('title' in pageConfig)) {
                   pageConfig.title = id;
@@ -84,9 +92,16 @@ module HawtioForms {
                 s.pageIds.push(id);
               });
               s.currentPageIndex = 0
-              s.gotoPage = (index) => {
+              s.gotoPage = (index, current) => {
                 if (index < 0 || index > s.pageIds.length) {
                   return;
+                }
+                if (s.onChange) {
+                  var idx = s.onChange(current, index, s.pageIds);
+                  if (idx) {
+                    s.currentPageIndex = idx;
+                    return;
+                  }
                 }
                 s.currentPageIndex = index;
               }
@@ -100,10 +115,10 @@ module HawtioForms {
                 return s.currentPageIndex === s.pageIds.length - 1;
               }
               s.next = () => {
-                s.gotoPage(s.currentPageIndex + 1);
+                s.gotoPage(s.currentPageIndex + 1, s.currentPageIndex);
               };
               s.back = () => {
-                s.gotoPage(s.currentPageIndex - 1);
+                s.gotoPage(s.currentPageIndex - 1, s.currentPageIndex);
               };
             } else if ('tabs' in config) {
               parent.append($templateCache.get('tabElement.html'));

@@ -79,36 +79,11 @@ var HawtioFormsTests;
   }]);
 
   var baseConfig = {
+      "id": 'myForm',
       "style": HawtioForms.FormStyle.HORIZONTAL,
       "mode": HawtioForms.FormMode.EDIT,
       "disableHumanizeLabel": false,
       hideLegend: false,
-      //controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
-      /*
-      "tabs": {
-        "Tab One": ["scheme", "array3", "key", "value"],
-        "Tab Two": ["*"],
-        "Tab Three": ["booleanArg"]
-      },
-      */
-     /*
-      wizard: {
-        pages: {
-          "Page1": {
-            controls: ["array1", "key"]
-          },
-          "Page2": {
-            controls: ["scheme", "nestedObject"]
-          },
-          "Page3": {
-            controls: ["fromSchemaRegistry", "array3"]
-          },
-          "Page4": {
-            controls: ['*']
-          }
-        }
-      },
-      */
       "properties": {
         "fromSchemaRegistry": {
           "type": "testObject"
@@ -281,8 +256,19 @@ var HawtioFormsTests;
   HawtioFormsTests.Forms2WizardController = _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
     var config = _.clone(baseConfig, true);
     config.wizard = {
+        onChange: function(current, next, pageIds) {
+          log.debug("page changed, current page: ", current, " next: ", next);
+          // can manipulate what page the wizard goes to
+          /*
+          if (next < current) {
+            return current;
+          }
+          return next;
+          */
+        },
         onFinish: function () {
           log.debug("On finish clicked, model: ", $scope.model);
+          Core.notification('success', 'Finished!');
         },
         pages: {
           "Welcome to my awesome wizard!": {

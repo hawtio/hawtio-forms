@@ -6,9 +6,9 @@
       </div>
       <div class="wizardButtons align-right">
         <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>
-        <button ng-click="back()" ng-hide="atFront()">Back</button>
-        <button ng-click="next()" ng-hide="atBack()">Next</button>
-        <button ng-click="onFinish()" ng-show="atBack()">Finish</button>
+        <button class="btn" ng-click="back()" ng-hide="atFront()">{{buttons.back}}</button>
+        <button class="btn btn-primary" ng-click="next()" ng-disabled="isValid()" ng-hide="atBack()">{{buttons.next}}</button>
+        <button class="btn btn-primary" ng-click="onFinish()" ng-disabled="isValid()" ng-show="atBack()">{{buttons.finish}}</button>
       </div>
     </div>
   </script>
