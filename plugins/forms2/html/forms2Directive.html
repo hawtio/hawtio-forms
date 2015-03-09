@@ -8,7 +8,7 @@
         <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>
         <button ng-click="back()" ng-hide="atFront()">Back</button>
         <button ng-click="next()" ng-hide="atBack()">Next</button>
-        <button ng-click="next()" ng-show="atBack()">Finish</button>
+        <button ng-click="onFinish()" ng-show="atBack()">Finish</button>
       </div>
     </div>
   </script>

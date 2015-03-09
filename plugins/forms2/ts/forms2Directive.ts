@@ -59,6 +59,14 @@ module HawtioForms {
               parent.append(wizardBody);
               s.pageIds = [];
               parent = parent.find('.wizardParent');
+              _.forIn(wizard, (attr, key) => {
+                s[key] = attr;
+              });
+              if (!('onFinish' in s)) {
+                s.onFinish = () => {
+                  log.warn("No onFinish() function supplied to form wizard");
+                };
+              }
               _.forIn(wizard.pages, (pageConfig, id) => {
                 if (!('title' in pageConfig)) {
                   pageConfig.title = id;

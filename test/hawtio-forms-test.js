@@ -281,17 +281,20 @@ var HawtioFormsTests;
   HawtioFormsTests.Forms2WizardController = _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
     var config = _.clone(baseConfig, true);
     config.wizard = {
+        onFinish: function () {
+          log.debug("On finish clicked, model: ", $scope.model);
+        },
         pages: {
-          "Page1": {
+          "Welcome to my awesome wizard!": {
             controls: ["array1", "key"]
           },
-          "Page2": {
+          "Fill in these cool form controls...": {
             controls: ["scheme", "nestedObject"]
           },
-          "Page3": {
+          "And these too, because forms are great!": {
             controls: ["fromSchemaRegistry", "array3"]
           },
-          "Page4": {
+          "If you're happy with what you've entered, click finish!": {
             controls: ['*']
           }
         }
