@@ -36,6 +36,13 @@ module HawtioForms {
           }
           var entity = scope.entity;
           if ('properties' in config) {
+            // create our child scope here
+            var s = scope.$new();
+            s.config = config;
+            // s.entity = entity;
+            s.maybeHumanize = context.maybeHumanize;
+
+            // These are here to figure out what controls go on which page
             var pages = {}
             var controls = {};
             // log.debug("Config: ", config);
@@ -48,17 +55,48 @@ module HawtioForms {
             var singlePage = false;
             if (('wizard' in config) && config.wizard.pages) {
               var wizard = config.wizard;
+              var wizardBody = $templateCache.get('wizardParent.html');
+              parent.append(wizardBody);
+              s.pageIds = [];
+              parent = parent.find('.wizardParent');
               _.forIn(wizard.pages, (pageConfig, id) => {
                 if (!('title' in pageConfig)) {
                   pageConfig.title = id;
                 }
                 pageConfig.el = angular.element($templateCache.get('wizardPage.html'));
+                pageConfig.el.attr({
+                  'ng-switch-when': id
+                });
+                pageConfig.el.find('h3').text(id);
                 if ('template' in pageConfig) {
                   pageConfig.el.append($compile(pageConfig.template)(scope));
                 }
                 pageConfig.parent = pageConfig.el.find('.wizardPageBody');
                 pages[id] = pageConfig;
+                s.pageIds.push(id);
               });
+              s.currentPageIndex = 0
+              s.gotoPage = (index) => {
+                if (index < 0 || index > s.pageIds.length) {
+                  return;
+                }
+                s.currentPageIndex = index;
+              }
+              s.getCurrentPageId = () => {
+                return s.pageIds[s.currentPageIndex];
+              };
+              s.atFront = () => {
+                return s.currentPageIndex === 0;
+              }
+              s.atBack = () => {
+                return s.currentPageIndex === s.pageIds.length - 1;
+              }
+              s.next = () => {
+                s.gotoPage(s.currentPageIndex + 1);
+              };
+              s.back = () => {
+                s.gotoPage(s.currentPageIndex - 1);
+              };
             } else if ('tabs' in config) {
               parent.append($templateCache.get('tabElement.html'));
               parent = parent.find('.tabbable');
@@ -114,29 +152,31 @@ module HawtioForms {
             var wildcardId:string = undefined;
             ids.forEach((pageId) => {
               var pageConfig = pages[pageId];
-              pageConfig.controls.forEach((name:string) => {
-                if (name === '*') {
-                  if (singlePage) {
-                    _.forIn(controls, (control, controlId) => {
-                      if (_.any(pageConfig.controls, (id) => id === controlId)) {
-                        return;
-                      } else {
-                        pageConfig.parent.append(control);
-                        delete controls[controlId];
-                      } 
-                    });
+              if (pageConfig.controls) {
+                pageConfig.controls.forEach((name:string) => {
+                  if (name === '*') {
+                    if (singlePage) {
+                      _.forIn(controls, (control, controlId) => {
+                        if (_.any(pageConfig.controls, (id) => id === controlId)) {
+                          return;
+                        } else {
+                          pageConfig.parent.append(control);
+                          delete controls[controlId];
+                        } 
+                      });
+                    } else {
+                      wildcardId = pageId;
+                    }
                   } else {
-                    wildcardId = pageId;
+                    if (name in controls) {
+                      pageConfig.parent.append(controls[name]); 
+                      delete controls[name];
+                    } else {
+                      log.debug("Control with name ", name, " not found");
+                    }
                   }
-                } else {
-                  if (name in controls) {
-                    pageConfig.parent.append(controls[name]); 
-                    delete controls[name];
-                  } else {
-                    log.debug("Control with name ", name, " not found");
-                  }
-                }
-              });
+                });
+              }
             });
             // take care of leftover controls
             if (_.keys(controls).length > 0) {
@@ -148,10 +188,6 @@ module HawtioForms {
                 delete controls[controlId];
               });
             }
-            var s = scope.$new();
-            s.config = config;
-            // s.entity = entity;
-            s.maybeHumanize = context.maybeHumanize;
             /*
                form.append('<pre>{{entity}}</pre>');
                form.append('<pre>{{config}}</pre>');

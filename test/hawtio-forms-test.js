@@ -24,8 +24,10 @@ var HawtioFormsTests;
               .rank(2)
               .title( function() { return "Forms2"; } )
               .href( function() { return "/forms2"; } )
-              .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 1)
-              .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 2)
+              .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 9)
+              .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
+              .subPath("Wizard Form", "wizard_form", builder.join(tp, "wizardForm2.html"), 7)
+              .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 3)
               .build();
 
     builder.configureRouting($routeProvider, tab);        
@@ -36,32 +38,6 @@ var HawtioFormsTests;
     nav.add(tab);
     nav.add(tab2);
     schemas.addSchema('kubernetes', Kubernetes.schema);
-  }]);
-
-  HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
-
-    $scope.config = schemas.cloneSchema("os_build_BuildConfig");
-    $scope.config.style = HawtioForms.FormStyle.STANDARD;
-    $scope.config.mode = HawtioForms.FormMode.EDIT;
-    $scope.model = {};
-    $scope.configStr = angular.toJson($scope.config, true);
-    $scope.markup = $templateCache.get("markup.html");
-    $scope.$watch('model', _.debounce(function() {
-      $scope.modelStr = angular.toJson($scope.model, true);
-      Core.$apply($scope);
-    }, 500), true);
-    $scope.$watch('configStr', _.debounce(function() {
-      try {
-        $scope.config = angular.fromJson($scope.configStr);
-        log.debug("Updated config...");
-        Core.$apply($scope);
-      } catch (e) {
-      }
-    }, 1000));
-  
-  }]);
-
-  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
     schemas.addSchema('testObject', {
       "description": "Object from registry",
       properties: {
@@ -100,18 +76,22 @@ var HawtioFormsTests;
         }
       }
     });
-    $scope.config = {
+  }]);
+
+  var baseConfig = {
       "style": HawtioForms.FormStyle.HORIZONTAL,
       "mode": HawtioForms.FormMode.EDIT,
       "disableHumanizeLabel": false,
       hideLegend: false,
-      // controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
+      //controls: ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"],
+      /*
       "tabs": {
         "Tab One": ["scheme", "array3", "key", "value"],
         "Tab Two": ["*"],
         "Tab Three": ["booleanArg"]
       },
-      /*
+      */
+     /*
       wizard: {
         pages: {
           "Page1": {
@@ -248,7 +228,7 @@ var HawtioFormsTests;
       "description": "This is my awesome form",
       "type": "java.lang.String"
     };
-    $scope.model ={
+    var baseModel ={
       "scheme": "http",
       "array1": ["foo", "bar", "cheese"],
       "array2": [
@@ -273,7 +253,100 @@ var HawtioFormsTests;
         } 
       ]
     };
+ 
 
+  HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+
+    $scope.config = schemas.cloneSchema("os_build_BuildConfig");
+    $scope.config.style = HawtioForms.FormStyle.STANDARD;
+    $scope.config.mode = HawtioForms.FormMode.EDIT;
+    $scope.model = {};
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  
+  }]);
+  
+  HawtioFormsTests.Forms2WizardController = _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
+    var config = _.clone(baseConfig, true);
+    config.wizard = {
+        pages: {
+          "Page1": {
+            controls: ["array1", "key"]
+          },
+          "Page2": {
+            controls: ["scheme", "nestedObject"]
+          },
+          "Page3": {
+            controls: ["fromSchemaRegistry", "array3"]
+          },
+          "Page4": {
+            controls: ['*']
+          }
+        }
+      };
+    $scope.config = config;
+    var model = _.clone(baseModel, true);
+    $scope.model = model;
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  }]);
+
+  HawtioFormsTests.Forms2TabsController = _module.controller("HawtioFormsTests.Forms2TabsController", ["$scope", "$templateCache", function($scope, $templateCache) {
+    var config = _.clone(baseConfig, true);
+    config.tabs = {
+        "Tab One": ["scheme", "array3", "key", "value"],
+        "Tab Two": ["*"],
+        "Tab Three": ["booleanArg"]
+      };
+    $scope.config = config;
+    var model = _.clone(baseModel, true);
+    $scope.model = model;
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  }]);
+
+  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+    var config = _.clone(baseConfig, true);
+    config.controls = ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"];
+    $scope.config = config;
+    var model = _.clone(baseModel, true);
+    $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
     $scope.$watch('model', _.debounce(function() {

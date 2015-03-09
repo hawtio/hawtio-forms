@@ -1,9 +1,22 @@
 <div>
+  <script type="text/ng-template" id="wizardParent.html">
+    <div>
+      <div class="wizardParent" ng-switch="getCurrentPageId()">
+
+      </div>
+      <div class="wizardButtons align-right">
+        <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>
+        <button ng-click="back()" ng-hide="atFront()">Back</button>
+        <button ng-click="next()" ng-hide="atBack()">Next</button>
+        <button ng-click="next()" ng-show="atBack()">Finish</button>
+      </div>
+    </div>
+  </script>
+
   <script type="text/ng-template" id="wizardPage.html">
     <div class="wizardPage">
       <h3></h3>
       <div class="wizardPageBody">
-
       </div>
     </div>
   </script>
