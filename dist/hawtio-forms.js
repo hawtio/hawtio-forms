@@ -2390,6 +2390,15 @@ var HawtioForms;
         }
     }
     HawtioForms.getStaticTextTemplate = getStaticTextTemplate;
+    function setSelectOptions(isArray, propName, select) {
+        if (isArray) {
+            select.attr({ 'ng-options': 'label for label in ' + propName });
+        }
+        else {
+            select.attr({ 'ng-options': 'label for (label, value) in ' + propName });
+        }
+    }
+    HawtioForms.setSelectOptions = setSelectOptions;
     function getSelectTemplate(context, config, name, control) {
         var template = undefined;
         switch (config.style) {
@@ -2402,12 +2411,7 @@ var HawtioForms;
         addPostInterpolateAction(context, name, function (el) {
             var select = el.find('select');
             var propName = 'config.properties[\'' + name + '\'].enum';
-            if (_.isArray(control.enum)) {
-                select.attr({ 'ng-options': 'label for label in ' + propName });
-            }
-            else {
-                select.attr({ 'ng-options': 'label for (label, value) in ' + propName });
-            }
+            setSelectOptions(_.isArray(control.enum), propName, select);
         });
         return applyElementConfig(context, config, control, template);
     }
@@ -2615,18 +2619,49 @@ var HawtioForms;
             }
             else {
                 _.forIn(columnSchema.properties, function (control, name) {
-                    /*
-                    var template = getTemplate(context, context.scope.config, name, control);
+                    var tmpConfig = {
+                        style: 3 /* UNWRAPPED */,
+                        mode: 0 /* VIEW */,
+                        properties: {}
+                    };
+                    tmpConfig.properties[name] = control;
+                    var template = HawtioForms.getTemplate(context, tmpConfig, name, control);
                     if (template) {
-                      template = interpolateTemplate(context, context.scope.config, name, control, template, 'entity[' + index + '].' + name);
-                      log.debug("template: ", template);
-                      var td = angular.element('<td></td>');
-                      td.append(template);
-                      tr.append(td);
-                    } else {
-                    */
-                    tr.append('<td>' + row[name] + '</td>');
-                    //}
+                        var el = angular.element(template);
+                        el.attr({
+                            'class': ''
+                        });
+                        el.find('label').text('');
+                        ['input', 'select'].forEach(function (controlType) {
+                            el.find(controlType).attr({
+                                'ng-disabled': 'true',
+                                'style': 'width: auto'
+                            }).removeClass('form-control').addClass('table-control');
+                        });
+                        if (control.enum) {
+                            HawtioForms.addPostInterpolateAction(context, name, function (el) {
+                                var select = el.find('select');
+                                var propName = 'config.columnSchema.properties[\'' + name + '\'].enum';
+                                HawtioForms.setSelectOptions(_.isArray(control.enum), propName, select);
+                            });
+                        }
+                        if ('properties' in control || 'javaType' in control) {
+                            HawtioForms.addPostInterpolateAction(context, name, function (el) {
+                                el.find('h4').remove();
+                                el.find('.inline-object').attr({
+                                    'entity': 'entity[' + index + '].' + name,
+                                    'label': false
+                                });
+                            });
+                        }
+                        template = HawtioForms.interpolateTemplate(context, tmpConfig, name, control, el.prop('outerHTML'), 'entity[' + index + '].' + name);
+                        var td = angular.element('<td></td>');
+                        td.append(template);
+                        tr.append(td);
+                    }
+                    else {
+                        tr.append('<td>' + row[name] + '</td>');
+                    }
                 });
             }
             var deleteRow = angular.element(context.$templateCache.get('deleteRow.html'));
@@ -2717,6 +2752,7 @@ var HawtioForms;
                     var table = angular.element($templateCache.get("table.html"));
                     var header = buildTableHeader(context, table, columnSchema);
                     var s = scope.$new();
+                    config.columnSchema = columnSchema;
                     s.config = config;
                     s.entity = entity;
                     function initSchema(schema) {
@@ -3204,7 +3240,7 @@ $templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\
 $templateCache.put("plugins/forms2/html/form-horizontal.html","<form ng-disabled=\"config.mode == 0\" class=\"form-horizontal\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-inline.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
 $templateCache.put("plugins/forms2/html/form-standard.html","<form>\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
-$templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</h4>\n\n</div>\n");
+$templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend || config.label == \'false\'\">{{config.label || config.description}}</h4>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
 $templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardParent.html\">\n    <div>\n      <div class=\"wizardParent\" ng-switch=\"getCurrentPageId()\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardButtons.html\">\n    <div class=\"wizardButtons align-right\">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class=\"btn\" ng-click=\"back()\" ng-hide=\"atFront()\">{{buttons.back}}</button>\n      <button class=\"btn btn-primary next\" ng-click=\"next()\" ng-hide=\"atBack()\">{{buttons.next}}</button>\n      <button class=\"btn btn-primary finish\" ng-click=\"onFinish()\" ng-show=\"atBack()\">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");

@@ -15,18 +15,51 @@ module HawtioForms {
         tr.append('<td>' + row + '</td>');
       } else {
         _.forIn(columnSchema.properties, (control, name) => {
-          /*
-          var template = getTemplate(context, context.scope.config, name, control);
+          var tmpConfig = <FormConfiguration>{
+            style: FormStyle.UNWRAPPED, 
+            mode: FormMode.VIEW, 
+            properties: {
+            
+            }
+          };
+          tmpConfig.properties[name] = control;
+          var template = getTemplate(context, tmpConfig, name, control);
           if (template) {
-            template = interpolateTemplate(context, context.scope.config, name, control, template, 'entity[' + index + '].' + name);
-            log.debug("template: ", template);
+            var el = angular.element(template);
+            el.attr({
+              'class': ''
+            });
+            el.find('label').text('');
+            ['input', 'select'].forEach((controlType) => {
+              el.find(controlType).attr({
+                'ng-disabled': 'true',
+                'style': 'width: auto'
+              }).removeClass('form-control')
+                .addClass('table-control');
+            });
+            if (control.enum) {
+              addPostInterpolateAction(context, name, (el) => {
+                var select = el.find('select');
+                var propName = 'config.columnSchema.properties[\'' + name + '\'].enum';
+                setSelectOptions(_.isArray(control.enum), propName, select);
+              });
+            }
+            if ('properties' in control || 'javaType' in control) {
+              addPostInterpolateAction(context, name, (el) => {
+                el.find('h4').remove();
+                el.find('.inline-object').attr({
+                  'entity': 'entity[' + index + '].' + name,
+                  'label': false
+                });
+              });
+            }
+            template = interpolateTemplate(context, tmpConfig, name, control, el.prop('outerHTML'), 'entity[' + index + '].' + name);
             var td = angular.element('<td></td>');
             td.append(template);
             tr.append(td); 
           } else {
-          */
             tr.append('<td>' + row[name] + '</td>');
-          //}
+          }
         });
       }
       var deleteRow = angular.element(context.$templateCache.get('deleteRow.html'));
@@ -58,7 +91,7 @@ module HawtioForms {
       headerRow.append(interpolateFunc({
         control: control,
         name: context.maybeHumanize(name)
-      }));
+        }));
     });
     headerRow.append(context.$templateCache.get("newItemHeader.html"));
     return headerRow;
@@ -124,6 +157,8 @@ module HawtioForms {
           var table = angular.element($templateCache.get("table.html"));
           var header = buildTableHeader(context, table, columnSchema);
           var s = scope.$new();
+
+          config.columnSchema = columnSchema;
 
           s.config = config;
           s.entity = entity;

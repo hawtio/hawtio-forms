@@ -27,6 +27,7 @@ declare module HawtioForms {
     function getStandardTemplate(context: any, config: FormConfiguration, control: FormElement, type: string): string;
     function applyElementConfig(context: any, config: FormConfiguration, control: FormElement, template: string, type?: string): string;
     function getStaticTextTemplate(context: any, config: FormConfiguration): string;
+    function setSelectOptions(isArray: boolean, propName: string, select: any): void;
     function getSelectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getCheckboxTemplate(context: any, config: FormConfiguration, control: FormElement): string;
     function getObjectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;

@@ -27,6 +27,7 @@ var HawtioFormsTests;
               .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 9)
               .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
               .subPath("Wizard Form", "wizard_form", builder.join(tp, "wizardForm2.html"), 7)
+              .subPath("Nested Form", "nested_form", builder.join(tp, "nestedForm2.html"), 6)
               .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 3)
               .build();
 
@@ -50,6 +51,7 @@ var HawtioFormsTests;
 
     schemas.addSchema('ArrayObject', {
       description: 'Some object with a username and password',
+      javaType: 'com.foo.ArrayObject',
       properties: {
         "Field1": {
           "type": "string",
@@ -73,6 +75,19 @@ var HawtioFormsTests;
             "label2": "value2",
             "label3": "value3"
           }
+        }
+      }
+    });
+
+    schemas.addSchema('ObjectWithArrayObject', {
+      desription: 'Some object with an embedded object',
+      javaType: 'com.foo.ObjectWithArrayObject',
+      properties: {
+        arg1: {
+          type: 'string'
+        },
+        arg2: {
+          type: 'ArrayObject'
         }
       }
     });
@@ -291,6 +306,78 @@ var HawtioFormsTests;
       };
     $scope.config = config;
     var model = _.clone(baseModel, true);
+    $scope.model = model;
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  }]);
+
+  HawtioFormsTests.Forms2TabsController = _module.controller("HawtioFormsTests.Forms2NestedController", ["$scope", "$templateCache", function($scope, $templateCache) {
+    var config = {
+      properties: {
+        array3: {
+          items: {
+            type: 'ArrayObject'
+          },
+          type: 'array'
+        },
+        collection: {
+          type: 'array',
+          items: {
+            type: 'ObjectWithArrayObject'
+          }
+        }
+      }
+    };
+    $scope.config = config;
+    var model = {
+      "collection": [
+        {
+          "arg2": {
+            "Field1": "one",
+            "Field2": "two",
+            "Field3": "value2"
+          },
+          "arg1": "An argument!"
+        },
+        {
+          arg1: 'Another thing!',
+          arg2: {
+            "Field1": "three",
+            "Field2": "four",
+            "Field3": "value1"
+          }
+        }
+      ],
+      "array3": [
+        {
+          "Field1": "test1",
+          "Field2": "test1",
+          "Field3": "value2"
+        },
+        {
+          "Field1": "test2",
+          "Field2": "test2",
+          "Field3": "value3"
+        }, 
+        {
+          "Field1": "test3",
+          "Field2": "test3",
+          "Field3": "value1"
+        } 
+      ]
+    };
     $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");

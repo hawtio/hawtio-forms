@@ -92,6 +92,14 @@ module HawtioForms {
     }
   }
 
+  export function setSelectOptions(isArray:boolean, propName:string, select) {
+    if (isArray) {
+      select.attr({'ng-options': 'label for label in ' + propName });
+    } else {
+      select.attr({'ng-options': 'label for (label, value) in ' + propName });
+    }
+  }
+
   export function getSelectTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
     var template = undefined;
     switch(config.style) {
@@ -105,11 +113,7 @@ module HawtioForms {
     addPostInterpolateAction(context, name, (el) => {
       var select = el.find('select');
       var propName = 'config.properties[\'' + name + '\'].enum';
-      if (_.isArray(control.enum)) {
-        select.attr({'ng-options': 'label for label in ' + propName });
-      } else {
-        select.attr({'ng-options': 'label for (label, value) in ' + propName });
-      }
+      setSelectOptions(_.isArray(control.enum), propName, select);
     });
     return applyElementConfig(context, config, control, template);
   }
@@ -127,6 +131,7 @@ module HawtioForms {
     var configName = 'config.properties.' + name;
     if ('javaType' in control) {
       configName = control.javaType;
+
     }
     addPostInterpolateAction(context, name, (el) => {
       el.find('.inline-object').attr({
