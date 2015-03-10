@@ -25,6 +25,7 @@ var HawtioFormsTests;
               .title( function() { return "Forms2"; } )
               .href( function() { return "/forms2"; } )
               .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 9)
+              .subPath("Map", "map", builder.join(tp, "map.html"), 9)
               .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
               .subPath("Wizard Form", "wizard_form", builder.join(tp, "wizardForm2.html"), 7)
               .subPath("Nested Form", "nested_form", builder.join(tp, "nestedForm2.html"), 6)
@@ -249,7 +250,7 @@ var HawtioFormsTests;
     };
  
 
-  HawtioFormsTests.Forms2SchemaController = _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+  _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
 
     $scope.config = schemas.cloneSchema("os_build_BuildConfig");
     $scope.config.style = HawtioForms.FormStyle.STANDARD;
@@ -269,10 +270,9 @@ var HawtioFormsTests;
       } catch (e) {
       }
     }, 1000));
-  
   }]);
   
-  HawtioFormsTests.Forms2WizardController = _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
+  _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
     var config = _.clone(baseConfig, true);
     config.wizard = {
         onChange: function(current, next, pageIds) {
@@ -323,7 +323,7 @@ var HawtioFormsTests;
     }, 1000));
   }]);
 
-  HawtioFormsTests.Forms2TabsController = _module.controller("HawtioFormsTests.Forms2NestedController", ["$scope", "$templateCache", function($scope, $templateCache) {
+  _module.controller("HawtioFormsTests.Forms2NestedController", ["$scope", "$templateCache", function($scope, $templateCache) {
     var config = {
       properties: {
         array3: {
@@ -395,15 +395,21 @@ var HawtioFormsTests;
     }, 1000));
   }]);
 
-  HawtioFormsTests.Forms2TabsController = _module.controller("HawtioFormsTests.Forms2TabsController", ["$scope", "$templateCache", function($scope, $templateCache) {
-    var config = _.clone(baseConfig, true);
-    config.tabs = {
-        "Tab One": ["scheme", "array3", "key", "value"],
-        "Tab Two": ["*"],
-        "Tab Three": ["booleanArg"]
-      };
+  _module.controller("HawtioFormsTests.Forms2MapController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+    schemas.addListener('mapControllerListener', function (name, schema) {
+        _.forIn(schema.properties, function (property, id) {
+          if (property.type === 'map') {
+            log.debug("Property: ", id, " is a map, key type: ", property.items.key, " value type: ", property.items.value);
+          }
+        });
+      });
+    var config = {
+
+    };
+    var model = {
+
+    };
     $scope.config = config;
-    var model = _.clone(baseModel, true);
     $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
@@ -421,7 +427,33 @@ var HawtioFormsTests;
     }, 1000));
   }]);
 
-  HawtioFormsTests.Forms2Controller = _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+  _module.controller("HawtioFormsTests.Forms2TabsController", ["$scope", "$templateCache", function($scope, $templateCache) {
+    var config = _.clone(baseConfig, true);
+    config.tabs = {
+        "Tab One": ["scheme", "array3", "key", "value"],
+        "Tab Two": ["*"],
+        "Tab Three": ["booleanArg"]
+      };
+    var model = _.clone(baseModel, true);
+    $scope.config = config;
+    $scope.model = model;
+    $scope.configStr = angular.toJson($scope.config, true);
+    $scope.markup = $templateCache.get("markup.html");
+    $scope.$watch('model', _.debounce(function() {
+      $scope.modelStr = angular.toJson($scope.model, true);
+      Core.$apply($scope);
+    }, 500), true);
+    $scope.$watch('configStr', _.debounce(function() {
+      try {
+        $scope.config = angular.fromJson($scope.configStr);
+        log.debug("Updated config...");
+        Core.$apply($scope);
+      } catch (e) {
+      }
+    }, 1000));
+  }]);
+
+  _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
     var config = _.clone(baseConfig, true);
     config.controls = ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"];
     $scope.config = config;
@@ -443,7 +475,7 @@ var HawtioFormsTests;
     }, 1000));
   }]);
 
-  HawtioFormsTests.WizardController = _module.controller("HawtioFormsTests.WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
+  _module.controller("HawtioFormsTests.WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
     $scope.wizardConfig = {
       "properties": {
         "key": {
@@ -494,7 +526,7 @@ var HawtioFormsTests;
 
   }]);
 
-  HawtioFormsTests.FormTestController = _module.controller("Forms.FormTestController", ["$scope", function ($scope) {
+  _module.controller("Forms.FormTestController", ["$scope", function ($scope) {
     $scope.editing = false;
     $scope.html = "text/html";
     $scope.javascript = "javascript";

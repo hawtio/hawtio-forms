@@ -3115,7 +3115,7 @@ var HawtioForms;
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
-    HawtioForms._module.factory("SchemaRegistry", function () {
+    HawtioForms._module.factory("SchemaRegistry", ['ControlMappingRegistry', function (mappings) {
         var schemaMap = {};
         var listeners = {};
         function addSchemaInternal(name, schema) {
@@ -3123,6 +3123,19 @@ var HawtioForms;
             _.forIn(listeners, function (listener, id) {
                 listener(name, schema);
             });
+        }
+        function getTypeConfig(type) {
+            if (mappings.getMapping(type) === type) {
+                return {
+                    type: 'object',
+                    javaType: type
+                };
+            }
+            else {
+                return {
+                    type: type
+                };
+            }
         }
         var registry = {
             addListener: function (name, callback) {
@@ -3140,11 +3153,26 @@ var HawtioForms;
                 }
             },
             addSchema: function (name, schema) {
+                var schemaClone = _.cloneDeep(schema);
+                _.forIn(schemaClone.properties, function (property, id) {
+                    if (_.startsWith(property.javaType, 'java.util.Map')) {
+                        var trimmed = property.javaType.replace('java.util.Map<', '').replace('>', '');
+                        var parts = trimmed.split(',');
+                        if (parts.length !== 2) {
+                            return;
+                        }
+                        property.type = 'map';
+                        property.items = {
+                            key: getTypeConfig(parts[0]),
+                            value: getTypeConfig(parts[1])
+                        };
+                    }
+                });
                 // log.debug("Adding schema: ", name, " schema: ", schema);
-                addSchemaInternal(name, schema);
+                addSchemaInternal(name, schemaClone);
                 if (schema.javaType) {
                     // log.debug("Adding schema by Java type: ", schema.javaType, " value: ", schema);
-                    addSchemaInternal(schema.javaType, schema);
+                    addSchemaInternal(schema.javaType, schemaClone);
                 }
                 if (schema.definitions) {
                     // log.debug("Found definitions in schema: ", name);
@@ -3177,7 +3205,7 @@ var HawtioForms;
         });
         */
         return registry;
-    });
+    }]);
 })(HawtioForms || (HawtioForms = {}));
 
 /// <reference path="forms2Plugin.ts"/>
