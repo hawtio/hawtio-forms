@@ -30,6 +30,13 @@ module HawtioForms {
     context.postInterpolateActions[name].push(func);
   }
 
+  export function addPreCompileAction(context, name, func:() => void) {
+    if (!(name in context.preCompileActions)) {
+      context.preCompileActions[name] = [];
+    }
+    context.preCompileActions[name].push(func);
+  }
+
   export function getFormMain(context, config:FormConfiguration):string {
     switch(config.style) {
       case FormStyle.STANDARD:
@@ -69,7 +76,7 @@ module HawtioForms {
     var input = el.find('input');
     if (type) {
       input.attr({type: type});
-    }
+      }
     if ('input-attributes' in control) {
       input.attr(control['input-attributes']);
     }

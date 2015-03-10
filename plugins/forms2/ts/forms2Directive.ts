@@ -17,8 +17,12 @@ module HawtioForms {
             postInterpolateActions: {
 
             },
+            preCompileActions: {
+
+            },
             maybeHumanize: undefined,
             config: undefined,
+            scope: undefined,
             element: element,
             attrs: attrs,
             mappings: mappings,
@@ -37,7 +41,7 @@ module HawtioForms {
           var entity = scope.entity;
           if ('properties' in config) {
             // create our child scope here
-            var s = scope.$new();
+            var s = context.scope = scope.$new();
             s.config = config;
             // s.entity = entity;
             s.maybeHumanize = context.maybeHumanize;
@@ -56,6 +60,7 @@ module HawtioForms {
               parent = form;
             }
             var singlePage = false;
+
             if (('wizard' in config) && config.wizard.pages) {
               var wizard = config.wizard;
               var wizardBody = $templateCache.get('wizardParent.html');
@@ -71,7 +76,6 @@ module HawtioForms {
                 'back': 'Back',
                 'finish': 'Finish'
               }
-
               _.forIn(wizard, (attr, key) => {
                 s[key] = attr;
               });
@@ -88,6 +92,19 @@ module HawtioForms {
                   pageConfig.el.append($compile(pageConfig.template)(scope));
                 }
                 pageConfig.parent = pageConfig.el.find('.wizardPageBody');
+                pageConfig.parent.attr({
+                  'ng-form': _.camelCase(id)
+                });
+                addPreCompileAction(context, _.camelCase(id), () => {
+                  var buttons = angular.element($templateCache.get('wizardButtons.html'));
+                  var disabled = <any> {
+                    'ng-disabled': _.camelCase(id) + '.$invalid'
+                  }
+                  buttons.find('.next').attr(disabled);
+                  buttons.find('.finish').attr(disabled);
+                  pageConfig.parent.append(buttons);
+
+                });
                 pages[id] = pageConfig;
                 s.pageIds.push(id);
               });
@@ -105,6 +122,10 @@ module HawtioForms {
                 }
                 s.currentPageIndex = index;
               }
+              s.isValid = () => {
+                log.debug("scope: ", scope);
+                return true;
+              };
               s.getCurrentPageId = () => {
                 return s.pageIds[s.currentPageIndex];
               };
@@ -220,6 +241,12 @@ module HawtioForms {
                 parent.append(pageConfig.el);
               }
             });
+
+            _.forIn(context.preCompileActions, (value, name) => {
+              _.forEach(value, (func:() => void) => {
+                func();
+              });
+            }); 
             element.append($compile(form)(s));
           }
         }, true);

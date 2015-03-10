@@ -22,6 +22,7 @@ declare module HawtioForms {
         static HIDDEN: string;
     }
     function addPostInterpolateAction(context: any, name: any, func: (el: any) => any): void;
+    function addPreCompileAction(context: any, name: any, func: () => void): void;
     function getFormMain(context: any, config: FormConfiguration): string;
     function getStandardTemplate(context: any, config: FormConfiguration, control: FormElement, type: string): string;
     function applyElementConfig(context: any, config: FormConfiguration, control: FormElement, template: string, type?: string): string;

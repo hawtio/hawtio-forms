@@ -92,15 +92,18 @@ var HawtioFormsTests;
           "label": "The Argument",
           "type": "java.lang.String",
           "description": "Enter the argument key",
-          "label-attributes": {
-
-          },
           "input-attributes": {
             "value": "This is an initial value",
             "placeholder": "Enter in some value"
           },
           "control-group-attributes": {
             "ng-show": "entity.booleanArg == true"
+          }
+        },
+        "RequiredThing": {
+          type: 'text',
+          'input-attributes': {
+            'required': 'true'
           }
         },
         array1: {
@@ -203,6 +206,7 @@ var HawtioFormsTests;
       "description": "This is my awesome form",
       "type": "java.lang.String"
     };
+
     var baseModel ={
       "scheme": "http",
       "array1": ["foo", "bar", "cheese"],
@@ -272,7 +276,7 @@ var HawtioFormsTests;
         },
         pages: {
           "Welcome to my awesome wizard!": {
-            controls: ["array1", "key"]
+            controls: ["RequiredThing", "array1", "booleanArg", "key"]
           },
           "Fill in these cool form controls...": {
             controls: ["scheme", "nestedObject"]

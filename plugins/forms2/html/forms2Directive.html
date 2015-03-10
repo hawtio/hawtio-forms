@@ -2,14 +2,16 @@
   <script type="text/ng-template" id="wizardParent.html">
     <div>
       <div class="wizardParent" ng-switch="getCurrentPageId()">
+      </div>
+    </div>
+  </script>
 
-      </div>
-      <div class="wizardButtons align-right">
-        <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>
-        <button class="btn" ng-click="back()" ng-hide="atFront()">{{buttons.back}}</button>
-        <button class="btn btn-primary" ng-click="next()" ng-disabled="isValid()" ng-hide="atBack()">{{buttons.next}}</button>
-        <button class="btn btn-primary" ng-click="onFinish()" ng-disabled="isValid()" ng-show="atBack()">{{buttons.finish}}</button>
-      </div>
+  <script type="text/ng-template" id="wizardButtons.html">
+    <div class="wizardButtons align-right">
+      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>
+      <button class="btn" ng-click="back()" ng-hide="atFront()">{{buttons.back}}</button>
+      <button class="btn btn-primary next" ng-click="next()" ng-hide="atBack()">{{buttons.next}}</button>
+      <button class="btn btn-primary finish" ng-click="onFinish()" ng-show="atBack()">{{buttons.finish}}</button>
     </div>
   </script>
 
