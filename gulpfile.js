@@ -119,6 +119,41 @@ gulp.task('reload', function() {
     .pipe(plugins.connect.reload());
 });
 
+gulp.task('site', ['build'], function() {
+  gulp.src('website/.gitignore')
+    .pipe(gulp.dest('site'));
+  gulp.src('website/*')
+    .pipe(gulp.dest('site'));
+  gulp.src('index.html')
+    .pipe(plugins.rename('404.html'))
+    .pipe(gulp.dest('site'));
+  gulp.src(['index.html', 'test/**', 'css/**', 'images/**', 'img/**', 'libs/**/*.js', 'libs/**/*.css', 'libs/**/*.swf', 'libs/**/*.woff','libs/**/*.woff2', 'libs/**/*.ttf', 'libs/**/*.map', 'dist/**'], {base: '.'})
+    .pipe(gulp.dest('site'));
+
+  var dirs = fs.readdirSync('./libs');
+  dirs.forEach(function(dir) {
+    var path = './libs/' + dir + "/img";
+    try {
+      if (fs.statSync(path).isDirectory()) {
+        console.log("found image dir: " + path);
+        var pattern = 'libs/' + dir + "/img/**";
+        gulp.src([pattern]).pipe(gulp.dest('site/img'));
+      }
+    } catch (e) {
+      // ignore, file does not exist
+    }
+  });
+});
+
+gulp.task('deploy', ['build', 'site'], function() {
+  return gulp.src(['site/**', 'site/**/*.*', 'site/*.*'], { base: 'site' })
+    .pipe(plugins.debug({title: 'deploy'}))
+    .pipe(plugins.ghPages({
+      message: "[ci skip] Update site"                     
+    }));
+});
+
+
 gulp.task('build', ['bower', 'path-adjust', 'tsc', 'template', 'concat', 'clean']);
 
 gulp.task('default', ['connect']);
