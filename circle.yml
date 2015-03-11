@@ -24,7 +24,9 @@ deployment:
     branch: master
     owner: hawtio
     commands:
-      - # gulp site
-      - # gulp deploy
+      - git config user.email "circleci@mail.com"
+      - git config user.name "circleci"
+      - gulp site
+      - gulp deploy
 
 
