@@ -3,6 +3,10 @@ machine:
     version: 0.10.33
   services:
 
+branches:
+  ignore:
+    - gh-pages
+
 dependencies:
   pre:
     - npm install -g bower gulp
@@ -10,10 +14,6 @@ dependencies:
     - bower install
   override:
     - gulp build
-
-general:
-  artifacts:
-    - "site/**"
 
 test:
   override:
@@ -24,6 +24,7 @@ deployment:
     branch: master
     owner: hawtio
     commands:
-      - gulp deploy
+      - # gulp site
+      - # gulp deploy
 
 
