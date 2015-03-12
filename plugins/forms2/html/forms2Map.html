@@ -21,7 +21,21 @@
     </table>
   </script>
   <script type="text/ng-template" id="rowTemplate.html">
-    <tr></tr>
+    <tr>
+      <td>
+        <div class="form-map-key">
+        </div>
+      </td>
+      <td>
+        <div class="form-map-value">
+        </div>
+      </td>
+      <td class="align-right">
+        <button ng-hide="config.mode == 0" class="form-map-remove button button-danger">
+          <i class="fa fa-remove red"></i>
+        </button>
+      </td>
+    </tr>
   </script>
 
 </div>
