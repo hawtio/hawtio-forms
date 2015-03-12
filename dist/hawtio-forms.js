@@ -3137,6 +3137,11 @@ var HawtioForms;
 (function (HawtioForms) {
     var directiveName = "hawtioForms2Map";
     HawtioForms._module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$modal', function ($compile, $templateCache, $interpolate, schemas, mappings, $modal) {
+        function clearBody(context, table) {
+            var body = table.find('tbody');
+            body.empty();
+            return body;
+        }
         function findSchema(name, type, control) {
             var answer = {
                 properties: {},
@@ -3179,7 +3184,7 @@ var HawtioForms;
                 else {
                     s.values[key] = value;
                 }
-                var template = context.$templateCache.get('rowTemplate.html');
+                var template = context.$templateCache.get('mapRowTemplate.html');
                 var func = $interpolate(template);
                 template = func({
                     key: key
@@ -3232,6 +3237,7 @@ var HawtioForms;
                     var entity = scope.entity;
                     // log.debug("In map, config: ", config, " entity: ", entity);
                     var s = scope.$new();
+                    context.s = s;
                     var keySchema = findSchema('key', config.items.key.type, config.items.key);
                     var valueSchema = findSchema('value', config.items.value.type, config.items.value);
                     var table = angular.element($templateCache.get('table.html'));
@@ -3243,6 +3249,17 @@ var HawtioForms;
                     s.keySchema.mode = s.valueSchema.mode = 0 /* VIEW */;
                     s.keySchema.style = s.valueSchema.style = 3 /* UNWRAPPED */;
                     s.keySchema.hideLegend = s.valueSchema.hideLegend = true;
+                    function initSchema(schema) {
+                        var answer = _.cloneDeep(schema);
+                        answer.style = 0 /* STANDARD */;
+                        _.forIn(answer.properties, function (value, key) {
+                            if ('noLabel' in value) {
+                                delete value['noLabel'];
+                            }
+                        });
+                        HawtioForms.log.debug("Schema: ", schema);
+                        return answer;
+                    }
                     s.editRow = function (key) {
                         HawtioForms.log.debug("Edit row: ", key);
                     };
@@ -3251,11 +3268,33 @@ var HawtioForms;
                     };
                     s.createRow = function () {
                         HawtioForms.log.debug("create row");
+                        var modal = $modal.open({
+                            templateUrl: "mapItemModal.html",
+                            controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+                                $scope.header = "Create Entry";
+                                $scope.description = "<p>Add a new entry to the map by filling in the details for the key and value</p>";
+                                $scope.keySchema = initSchema(keySchema);
+                                $scope.valueSchema = initSchema(valueSchema);
+                                $scope.ok = function () {
+                                    modal.close();
+                                    var key = $scope.newKeyEntity.key;
+                                    var value = $scope.newValueEntity;
+                                    if (valueSchema.control.items || mappings.hasMapping(valueSchema.control.type)) {
+                                        value = $scope.newValueEntity.value;
+                                    }
+                                    HawtioForms.log.debug("New key: ", key);
+                                    HawtioForms.log.debug("New value: ", value);
+                                    entity[key] = value;
+                                };
+                                $scope.cancel = function () {
+                                    modal.dismiss();
+                                };
+                            }]
+                        });
                     };
-                    context.s = s;
-                    s.$watchCollection('entity', function (entity, old) {
+                    s.$watch('entity', function (entity, old) {
                         scope.entity = entity;
-                        body.empty();
+                        var body = clearBody(context, table);
                         var tmp = angular.element('<div></div>');
                         buildMap(context, entity, keySchema, valueSchema, tmp);
                         body.append($compile(tmp.children())(s));
@@ -3427,7 +3466,7 @@ $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"hawti
 $templateCache.put("plugins/forms2/html/form2Map.html","<div>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
 $templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardParent.html\">\n    <div>\n      <div class=\"wizardParent\" ng-switch=\"getCurrentPageId()\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardButtons.html\">\n    <div class=\"wizardButtons align-right\">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class=\"btn\" ng-click=\"back()\" ng-hide=\"atFront()\">{{buttons.back}}</button>\n      <button class=\"btn btn-primary next\" ng-click=\"next()\" ng-hide=\"atBack()\">{{buttons.next}}</button>\n      <button class=\"btn btn-primary finish\" ng-click=\"onFinish()\" ng-show=\"atBack()\">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Map.html","<div>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n        <tr>\n          <th>\n            Key\n          </th>\n          <th>\n            Value\n          </th>\n          <th class=\"align-right\">\n            <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createRow()\">\n              <i class=\"fa fa-plus green\" ></i>\n            </button>\n          </th>\n        </tr>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr>\n      <td>\n        <div class=\"inline form-map-key\" hawtio-form-2=\"keySchema\" entity=\"keys[\'{{key}}\']\"></div>\n      </td>\n      <td>\n        <div class=\"inline form-map-value\" hawtio-form-2=\"valueSchema\" entity=\"values[\'{{key}}\']\"></div>\n      </td>\n      <td class=\"align-right\">\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-edit button button-warning\" ng-click=\"editRow(\'{{key}}\')\">\n          <i class=\"fa fa-pencil yellow\"></i>\n        </button>\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-remove button button-danger\" ng-click=\"deleteRow(\'{{key}}\')\">\n          <i class=\"fa fa-remove red\"></i>\n        </button>\n      </td>\n    </tr>\n  </script>\n\n</div>\n");
+$templateCache.put("plugins/forms2/html/forms2Map.html","<div>\n  <script type=\"text/ng-template\" id=\"mapItemModal.html\">\n    <div class=\"modal-header\">\n      <h3 class=\"modal-title\">{{header}}</h3>\n    </div>\n    <div class=\"modal-body\">\n      <div class=\"row\">\n        <div ng-show=\"description\" ng-bind-html=\"description\"></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"keySchema\" entity=\"newKeyEntity\"></div>\n        </div>\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"valueSchema\" entity=\"newValueEntity\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"modal-footer\">\n      <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n      <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n    </div>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n        <tr>\n          <th>\n            Key\n          </th>\n          <th>\n            Value\n          </th>\n          <th class=\"align-right\">\n            <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createRow()\">\n              <i class=\"fa fa-plus green\" ></i>\n            </button>\n          </th>\n        </tr>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n  <script type=\"text/ng-template\" id=\"mapRowTemplate.html\">\n    <tr>\n      <td>\n        <div class=\"inline form-map-key\" hawtio-form-2=\"keySchema\" entity=\"keys[\'{{key}}\']\"></div>\n      </td>\n      <td>\n        <div class=\"inline form-map-value\" hawtio-form-2=\"valueSchema\" entity=\"values[\'{{key}}\']\"></div>\n      </td>\n      <td class=\"align-right\">\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-edit button button-warning\" ng-click=\"editRow(\'{{key}}\')\">\n          <i class=\"fa fa-pencil yellow\"></i>\n        </button>\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-remove button button-danger\" ng-click=\"deleteRow(\'{{key}}\')\">\n          <i class=\"fa fa-remove red\"></i>\n        </button>\n      </td>\n    </tr>\n  </script>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/map.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-map\"></div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");

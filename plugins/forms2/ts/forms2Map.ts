@@ -4,6 +4,12 @@ module HawtioForms {
 
   _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$modal', ($compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, $interpolate:ng.IInterpolateService, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $modal) => {
 
+    function clearBody(context, table) {
+      var body = table.find('tbody');
+      body.empty();
+      return body;
+    }
+
     function findSchema(name: string, type:string, control):any {
       var answer = <any> {
         properties: {},
@@ -45,7 +51,7 @@ module HawtioForms {
         } else {
           s.values[key] = value;
         }
-        var template = <any>context.$templateCache.get('rowTemplate.html');
+        var template = <any>context.$templateCache.get('mapRowTemplate.html');
         var func = $interpolate(template);
         template = func({
           key: key
@@ -101,7 +107,7 @@ module HawtioForms {
           var entity = scope.entity;
           // log.debug("In map, config: ", config, " entity: ", entity);
           var s = scope.$new();
-
+          context.s = s;
           var keySchema = findSchema('key', config.items.key.type, config.items.key);
           var valueSchema = findSchema('value', config.items.value.type, config.items.value);
 
@@ -116,30 +122,61 @@ module HawtioForms {
           s.keySchema.style = s.valueSchema.style = FormStyle.UNWRAPPED;
           s.keySchema.hideLegend = s.valueSchema.hideLegend = true;
 
+          function initSchema(schema) {
+            var answer = _.cloneDeep(schema);
+            answer.style = FormStyle.STANDARD;
+            _.forIn(answer.properties, (value, key) => {
+              if ('noLabel' in value) {
+                delete value['noLabel'];
+              } 
+            });
+            log.debug("Schema: ", schema);
+            return answer;
+          }
+
           s.editRow = (key:string) => {
             log.debug("Edit row: ", key);
-
           }
 
           s.deleteRow = (key:string) => {
             log.debug("Delete row: ", key);
-
           }
 
           s.createRow = () => {
             log.debug("create row");
-
+            var modal = $modal.open({
+              templateUrl: "mapItemModal.html",
+              controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
+                $scope.header = "Create Entry";
+                $scope.description = "<p>Add a new entry to the map by filling in the details for the key and value</p>";
+                $scope.keySchema = initSchema(keySchema);
+                $scope.valueSchema = initSchema(valueSchema);
+                $scope.ok = () => {
+                  modal.close();
+                  var key = $scope.newKeyEntity.key;
+                  var value = $scope.newValueEntity;
+                  if (valueSchema.control.items || mappings.hasMapping(valueSchema.control.type)) {
+                    value = $scope.newValueEntity.value;
+                  }
+                  log.debug("New key: ", key);
+                  log.debug("New value: ", value);
+                  entity[key] = value;
+                }
+                $scope.cancel = () => {
+                  modal.dismiss();
+                }
+              }]
+            });
           }
 
-          context.s = s;
-
-          s.$watchCollection('entity', (entity, old) => {
+          s.$watch('entity', (entity, old) => {
             scope.entity = entity;
-            body.empty();
+            var body = clearBody(context, table);
             var tmp = angular.element('<div></div>');
             buildMap(context, entity, keySchema, valueSchema, tmp);
             body.append($compile(tmp.children())(s));
           }, true);
+
           element.append($compile(table)(s));
         });
 
