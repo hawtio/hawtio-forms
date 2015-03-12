@@ -80,6 +80,18 @@ var HawtioFormsTests;
       }
     });
 
+    schemas.addSchema('StringArray', {
+      description: 'Array of strings',
+      properties: {
+        values: {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      }
+    });
+
     schemas.addSchema('ObjectWithArrayObject', {
       desription: 'Some object with an embedded object',
       javaType: 'com.foo.ObjectWithArrayObject',
@@ -396,6 +408,7 @@ var HawtioFormsTests;
   }]);
 
   _module.controller("HawtioFormsTests.Forms2MapController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
+    /*
     schemas.addListener('mapControllerListener', function (name, schema) {
         _.forIn(schema.properties, function (property, id) {
           if (property.type === 'map') {
@@ -403,11 +416,145 @@ var HawtioFormsTests;
           }
         });
       });
+      */
     var config = {
-
+      label: 'Various Maps',
+      properties: {
+        simpleMap: {
+          type: 'map',
+          items: {
+            key: {
+              type: 'string'
+            },
+            value: {
+              type: 'string'
+            }
+          }
+        },
+        mapWithObject: {
+          type: 'map',
+          items: {
+            key: {
+              type: 'string'
+            },
+            value: {
+              type: 'ArrayObject'
+            }
+          }
+        },
+        mapWithArrayObject: {
+          type: 'map',
+          items: {
+            key: {
+              type: 'string'
+            },
+            value: {
+              type: 'StringArray'
+            }
+          }
+        },
+        mapWithArray: {
+          type: 'map',
+          items: {
+            key: {
+              type: 'string'
+            },
+            value: {
+              type: 'array',
+              items: {
+                type: 'string'
+              }
+            }
+          } 
+        },
+        mapWithArrayOfObject: {
+          type: 'map',
+          items: {
+            key: {
+              type: 'string'
+            },
+            value: {
+              type: 'array',
+              items: {
+                type: 'ArrayObject'
+              }
+            }
+          }
+        }
+      }
     };
     var model = {
+      simpleMap: {
+        'foo': 'bar',
+        'one': 'two',
+        'three': 'four'
+      },
+      mapWithObject: {
+        'One': {
+          "Field1": "test1",
+          "Field2": "test1",
+          "Field3": "value2"
+        },
+        Two: {
+          "Field1": "test2",
+          "Field2": "test2",
+          "Field3": "value3"
+        }, 
+        Three: {
+          "Field1": "test3",
+          "Field2": "test3",
+          "Field3": "value1"
+        } 
+      },
+      mapWithArrayObject: {
+        one: {
+          values: ['one', 'two', 'three']
+        },
+        two: {
+          values: ['one', 'two', 'three']
+        }
+      },
+      mapWithArray: {
+        one: ['one', 'two', 'three'],
+        two: ['one', 'three', 'two']
+      },
+      mapWithArrayOfObject: {
+        one: [
+        {
+          "Field1": "test1",
+          "Field2": "test1",
+          "Field3": "value2"
+        },
+        {
+          "Field1": "test2",
+          "Field2": "test2",
+          "Field3": "value3"
+        }, 
+        {
+          "Field1": "test3",
+          "Field2": "test3",
+          "Field3": "value1"
+        } 
+      ],
+        two: [
+        {
+          "Field1": "test1",
+          "Field2": "test1",
+          "Field3": "value2"
+        },
+        {
+          "Field1": "test2",
+          "Field2": "test2",
+          "Field3": "value3"
+        }, 
+        {
+          "Field1": "test3",
+          "Field2": "test3",
+          "Field3": "value1"
+        } 
+      ]
 
+      }
     };
     $scope.config = config;
     $scope.model = model;
