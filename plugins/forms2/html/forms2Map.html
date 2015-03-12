@@ -10,7 +10,7 @@
             Value
           </th>
           <th class="align-right">
-            <button ng-hide="config.mode == 0" class="button button-success" ng-click="createNewRow()">
+            <button ng-hide="config.mode == 0" class="button button-success" ng-click="createRow()">
               <i class="fa fa-plus green" ></i>
             </button>
           </th>
@@ -23,15 +23,16 @@
   <script type="text/ng-template" id="rowTemplate.html">
     <tr>
       <td>
-        <div class="form-map-key">
-        </div>
+        <div class="inline form-map-key" hawtio-form-2="keySchema" entity="keys['{{key}}']"></div>
       </td>
       <td>
-        <div class="form-map-value">
-        </div>
+        <div class="inline form-map-value" hawtio-form-2="valueSchema" entity="values['{{key}}']"></div>
       </td>
       <td class="align-right">
-        <button ng-hide="config.mode == 0" class="form-map-remove button button-danger">
+        <button ng-hide="config.mode == 0" class="form-map-edit button button-warning" ng-click="editRow('{{key}}')">
+          <i class="fa fa-pencil yellow"></i>
+        </button>
+        <button ng-hide="config.mode == 0" class="form-map-remove button button-danger" ng-click="deleteRow('{{key}}')">
           <i class="fa fa-remove red"></i>
         </button>
       </td>

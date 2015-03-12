@@ -31,9 +31,6 @@ module HawtioForms {
 
 
     function buildMap(context, entity, keySchema, valueSchema, body) {
-      log.debug("keySchema: ", keySchema);
-      log.debug("valueSchema: ", valueSchema);
-      log.debug("context.config: ", context.config);
       var s = context.s;
       s.keys = {}
       s.values = {};
@@ -48,18 +45,12 @@ module HawtioForms {
         } else {
           s.values[key] = value;
         }
-        var tr = angular.element(context.$templateCache.get('rowTemplate.html'));
-        var keyEl = tr.find('.form-map-key');
-        keyEl.attr({
-          'hawtio-form-2': 'keySchema',
-          'entity': "keys['" + key + "']"
+        var template = <any>context.$templateCache.get('rowTemplate.html');
+        var func = $interpolate(template);
+        template = func({
+          key: key
         });
-        var valueEl = tr.find('.form-map-value');
-        valueEl.attr({
-          'hawtio-form-2': 'valueSchema',
-          'entity': "values['" + key + "']"
-        });
-        body.append(tr);
+        body.append(template);
       });
     }
 
@@ -72,7 +63,6 @@ module HawtioForms {
         entity: '=?'
       },
       link: (scope, element, attrs) => {
-        log.debug("in map, attrs: ", attrs);
         scope.$watch('config', (newConfig) => {
           var context = {
             postInterpolateActions: {
@@ -109,7 +99,7 @@ module HawtioForms {
             return;
           }
           var entity = scope.entity;
-          log.debug("In map, config: ", config, " entity: ", entity);
+          // log.debug("In map, config: ", config, " entity: ", entity);
           var s = scope.$new();
 
           var keySchema = findSchema('key', config.items.key.type, config.items.key);
@@ -125,6 +115,22 @@ module HawtioForms {
           s.keySchema.mode = s.valueSchema.mode = FormMode.VIEW;
           s.keySchema.style = s.valueSchema.style = FormStyle.UNWRAPPED;
           s.keySchema.hideLegend = s.valueSchema.hideLegend = true;
+
+          s.editRow = (key:string) => {
+            log.debug("Edit row: ", key);
+
+          }
+
+          s.deleteRow = (key:string) => {
+            log.debug("Delete row: ", key);
+
+          }
+
+          s.createRow = () => {
+            log.debug("create row");
+
+          }
+
           context.s = s;
 
           s.$watchCollection('entity', (entity, old) => {
