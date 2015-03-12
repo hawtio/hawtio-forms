@@ -19,6 +19,7 @@ declare module HawtioForms {
         static CHECKBOX: string;
         static OBJECT: string;
         static ARRAY: string;
+        static MAP: string;
         static HIDDEN: string;
     }
     function addPostInterpolateAction(context: any, name: any, func: (el: any) => any): void;
@@ -31,6 +32,7 @@ declare module HawtioForms {
     function getSelectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getCheckboxTemplate(context: any, config: FormConfiguration, control: FormElement): string;
     function getObjectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function getMapTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getArrayTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function lookupTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
     function getTemplate(context: any, config: FormConfiguration, name: any, control: FormElement): string;

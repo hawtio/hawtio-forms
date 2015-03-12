@@ -20,6 +20,7 @@ module HawtioForms {
     public static get CHECKBOX() { return UrlHelpers.join(templatePath, 'checkbox.html'); }
     public static get OBJECT() { return UrlHelpers.join(templatePath, 'object.html'); }
     public static get ARRAY() { return UrlHelpers.join(templatePath, 'array.html'); }
+    public static get MAP() { return UrlHelpers.join(templatePath, 'map.html'); }
     public static get HIDDEN() { return UrlHelpers.join(templatePath, 'hidden.html'); }
   }
 
@@ -146,6 +147,17 @@ module HawtioForms {
     return context.$templateCache.get(Constants.OBJECT);
   }
 
+  export function getMapTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
+    addPostInterpolateAction(context, name, (el) => {
+      el.find('.inline-map').attr({
+        'hawtio-forms-2-map': 'config.properties.' + name,
+        'entity': 'entity.' + name,
+        'mode': config.mode
+      });
+    });
+    return context.$templateCache.get(Constants.MAP);
+  }
+
   export function getArrayTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
     /*
     if (control.items) {
@@ -195,6 +207,8 @@ module HawtioForms {
           return getStaticTextTemplate(context, config);
         case 'object':
           return getObjectTemplate(context, config, name, control);
+        case 'map':
+          return getMapTemplate(context, config, name, control);
         case 'hidden':
           control.hidden = true;
           return applyElementConfig(context, config, control, context.$templateCache.get(Constants.HIDDEN));
