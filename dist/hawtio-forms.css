@@ -19,3 +19,7 @@
   border: 1px solid #d4d4d4;
   margin-bottom: auto;
 }
+
+.hawtio-form-2 legend {
+  border: none;
+}
