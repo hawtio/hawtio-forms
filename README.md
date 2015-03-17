@@ -2,12 +2,13 @@
 
 [![Circle CI](https://circleci.com/gh/hawtio/hawtio-forms.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-forms)
 
-This module contains the forms plugin from hawtio.  It also includes hawtio's editor as it's own plugin.
+This module contains the forms plugin from hawtio.   The hawtio-forms module provides an easy way, given a [JSON Schema](http://json-schema.org/)-like model of generating a form with 2 way binding to some JSON data.
 
-This plugin provides an easy way, given a [JSON Schema](http://json-schema.org/) model of generating a form with 2 way binding to some JSON data.
+hawtio-forms currently contains two implementations that draw forms, forms and forms2.  Currently the forms2 plugin is quite usable, supports more types and styles and is the recommended plugin to use for forms going forward.  The old forms plugin will stick around for awhile for backwards compatability.
 
 See a demo in action at [forms.hawt.io](http://forms.hawt.io)
 
+You can also have a look at the [forms2 interfaces](https://github.com/hawtio/hawtio-forms/blob/master/plugins/forms2/ts/forms2Interfaces.ts) and the [forms interfaces](https://github.com/hawtio/hawtio-forms/blob/master/plugins/forms/ts/formInterfaces.ts)
 
 ## Customizing the UI with tabs
 
@@ -191,7 +192,4 @@ In the above the label for **foo.value** would just show _value_ rather than _fo
 To use a custom control use the **formTemplate** entry on a property to define the AngularJS partial to be used to render the form control. This lets you use any AngularJS directive or widget.
 
 For example if you search for **formTemplate** in the [code generated Camel json schema file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/lib/camelModel.js#L120) you will see how the **description** property uses a _textarea_
-
-## Live example
-<div ng-include="'app/forms/html/test.html'"></div>
 
