@@ -5,10 +5,19 @@ var HawtioFormsTests;
   var tp = HawtioFormsTests.templatePath = 'test';
   var log = HawtioFormsTests.log = Logger.get(pluginName);
   var _module = HawtioFormsTests._module = angular.module(HawtioFormsTests.pluginName, []);
+  var welcomeTab = null;
   var tab = null;
   var tab2 = null;
 
   _module.config(['$routeProvider', 'HawtioNavBuilderProvider', function($routeProvider, builder) {
+    welcomeTab = builder.create()
+            .id('welcome')
+            .rank(10)
+            .title( function() { return "Documentation"; })
+            .href( function() { return "/docs"; })
+            .subPath("Welcome", "readme", builder.join(tp, "readme.html"), 1)
+            .build();
+
     tab = builder.create()
             .id(pluginName)
             .rank(1)
@@ -32,11 +41,13 @@ var HawtioFormsTests;
               .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 3)
               .build();
 
+    builder.configureRouting($routeProvider, welcomeTab);        
     builder.configureRouting($routeProvider, tab);        
     builder.configureRouting($routeProvider, tab2);        
   }]);
 
   _module.run(["HawtioNav", "SchemaRegistry", function(nav, schemas) {
+    nav.add(welcomeTab);
     nav.add(tab);
     nav.add(tab2);
     schemas.addSchema('kubernetes', Kubernetes.schema);
@@ -260,7 +271,13 @@ var HawtioFormsTests;
         } 
       ]
     };
- 
+
+  _module.controller("WelcomePageController", ["$scope", "marked", "$http", function ($scope, marked, $http) {
+    $http.get('README.md').success(function(data) {
+      $scope.readme = marked(data);
+    });
+    
+  }]);
 
   _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
 
