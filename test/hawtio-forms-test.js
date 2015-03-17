@@ -272,10 +272,15 @@ var HawtioFormsTests;
       ]
     };
 
-  _module.controller("WelcomePageController", ["$scope", "marked", "$http", function ($scope, marked, $http) {
-    $http.get('README.md').success(function(data) {
-      $scope.readme = marked(data);
-    });
+  _module.controller("WelcomePageController", ["$scope", "marked", "$http", "$timeout", function ($scope, marked, $http, $timeout) {
+    $timeout(function() {
+      $http.get('./README.md').success(function(data) {
+        log.debug("Fetched README.md, data: ", data);
+        $scope.readme = marked(data);
+      }).error(function(data) {
+        log.debug("Failed to fetch README.md: ", data); 
+      });
+    }, 500);
     
   }]);
 
