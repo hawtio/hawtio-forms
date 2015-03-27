@@ -3322,15 +3322,6 @@ img.nodeIcon:hover {
   display: inline-block;
 }
 
-.grid-block,
-.health-display {
-  border: 1px solid #00f;
-}
-
-.widget-title {
-  border-bottom: 1px solid #00f;
-}
-
 .container-group-header {
   vertical-align: middle;
   line-height: 18px;
@@ -3387,3 +3378,4 @@ ul.nav select {
 .form-horizontal textarea + div + .help-block {
   margin-top: 10px;
 }
+
