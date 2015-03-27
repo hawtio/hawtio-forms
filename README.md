@@ -2,6 +2,8 @@
 
 [![Circle CI](https://circleci.com/gh/hawtio/hawtio-forms.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-forms)
 
+<a class="btn btn-primary" href="http://forms.hawt.io">View Demo</a>
+
 This module contains the forms plugin from hawtio.   The hawtio-forms module provides an easy way, given a [JSON Schema](http://json-schema.org/)-like model of generating a form with 2 way binding to some JSON data.
 
 hawtio-forms currently contains two implementations that draw forms, forms and forms2.  Currently the forms2 plugin is quite usable, supports more types and styles and is the recommended plugin to use for forms going forward.  The old forms plugin will stick around for awhile for backwards compatability.
