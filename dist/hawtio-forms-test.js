@@ -3387,6 +3387,36 @@ var Forms2Tests;
     _module.run(["HawtioNav", "SchemaRegistry", function (nav, schemas) {
         nav.add(welcomeTab);
         nav.add(tab2);
+        nav.add({
+            id: 'project-link',
+            isSelected: function () {
+                return false;
+            },
+            title: function () {
+                return 'github';
+            },
+            click: function () {
+                window.location.href = 'https://github.com/hawtio/hawtio-forms';
+            },
+            href: function () {
+                return 'https://github.com/hawtio/hawtio-forms';
+            }
+        });
+        nav.add({
+            id: 'hawtio-link',
+            isSelected: function () {
+                return false;
+            },
+            title: function () {
+                return 'hawtio';
+            },
+            click: function () {
+                window.location.href = 'http://hawt.io';
+            },
+            href: function () {
+                return 'http://hawt.io';
+            }
+        });
         schemas.addSchema('kubernetes', Kubernetes.schema);
         schemas.addSchema('testObject', {
             "description": "Object from registry",
