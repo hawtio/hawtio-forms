@@ -1,8 +1,6 @@
 ## hawtio-forms
 
-[![Circle CI](https://circleci.com/gh/hawtio/hawtio-forms.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-forms)
-
-<a class="btn btn-primary" href="http://forms.hawt.io">Try a Demo</a> | <a class="btn btn-primary" href="https://vimeo.com/123441243">Watch the Video</a>
+[![Circle CI](https://circleci.com/gh/hawtio/hawtio-forms.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-forms) | <a class="btn btn-primary" href="http://forms.hawt.io">Try a Demo</a> | <a class="btn btn-primary" href="https://vimeo.com/123441243">Watch the Video</a>
 
 This module contains the forms plugin from hawtio.   The hawtio-forms module provides an easy way, given a [JSON Schema](http://json-schema.org/)-like model of generating a form with 2 way binding to some JSON data.
 
