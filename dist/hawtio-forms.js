@@ -2625,6 +2625,26 @@ var HawtioForms;
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
+    HawtioForms._module.directive('hawtioCombobox', [function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                scope.$watch(_.debounce(function () {
+                    if (element.prop('disabled')) {
+                        return;
+                    }
+                    if (element.children().length > 5) {
+                        element.combobox();
+                    }
+                }, 100, { trailing: true }));
+            }
+        };
+    }]);
+})(HawtioForms || (HawtioForms = {}));
+
+/// <reference path="forms2Plugin.ts"/>
+var HawtioForms;
+(function (HawtioForms) {
     var directiveName = "hawtioForms2Array";
     function clearBody(context, table) {
         var body = table.find('tbody');
@@ -3472,8 +3492,8 @@ $templateCache.put("plugins/forms2/html/map.html","<div class=\"row\">\n  <div c
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
 $templateCache.put("plugins/forms2/html/radio-top-level.html","<div class=\"radio\">\n</div>\n");
-$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select ng-disabled=\"config.mode == 0\" class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select ng-disabled=\"config.mode == 0\" class=\"form-control\" ng-model=\"{{model}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
+$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select ng-disabled=\"config.mode == 0\" hawtio-combobox class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select ng-disabled=\"config.mode == 0\" hawtio-combobox class=\"form-control\" ng-model=\"{{model}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
 $templateCache.put("plugins/forms2/html/standard-horizontal-input.html","<div class=\"form-group\">\n  <label ng-hide=\"{{control.noLabel}}\" class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/standard-input.html","<div class=\"form-group\">\n  <label ng-hide=\"{{control.noLabel}}\" class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\">\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
 $templateCache.put("plugins/forms2/html/static-horizontal-text.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label}}</label>\n  <div class=\"col-sm-10\">\n    <p class=\"form-control-static\">{{control.description}}</p>\n  </div>\n</div>\n");
