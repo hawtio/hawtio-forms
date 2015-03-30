@@ -14,6 +14,7 @@
 /// <reference path="d.ts/forms2/ts/forms2Interfaces.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Helpers.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Plugin.d.ts"/>
+/// <reference path="d.ts/forms2/ts/combobox.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Array.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Directive.d.ts"/>
 /// <reference path="d.ts/forms2/ts/forms2Map.d.ts"/>

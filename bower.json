@@ -6,7 +6,10 @@
   ],
   "main": [
     "dist/hawtio-forms.js",
-    "dist/hawtio-forms.css"
+    "dist/bootstrap-combobox.js",
+    "dist/hawtio-forms.css",
+    "dist/bootsrtap-combobox.css"
+
   ],
   "ignore": [
     "**/.*",

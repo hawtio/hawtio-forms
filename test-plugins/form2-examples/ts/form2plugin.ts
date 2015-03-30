@@ -128,6 +128,20 @@ module Forms2Tests {
         "fromSchemaRegistry": {
           "type": "testObject"
         },
+        "LongObjectSelect": {
+          type: "java.lang.String",
+          enum: {
+            "label1": "value1",
+            "label2": "value2",
+            "label3": "value3",
+            "label4": "value4",
+            "label5": "value5",
+            "label6": "value6",
+            "label7": "value7",
+            "label8": "value8"
+          },
+          default: "value3"
+        },
         "key": {
           "label": "The Argument",
           "type": "java.lang.String",
