@@ -2283,6 +2283,27 @@ var HawtioForms;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Constants, "OPTION_ARRAY", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'optionArray.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "OPTION_OBJECT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'optionObject.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Constants, "OPTION_CONFIG_OBJECT", {
+            get: function () {
+                return UrlHelpers.join(HawtioForms.templatePath, 'optionConfigObject.html');
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Constants, "CHECKBOX_HORIZONTAL", {
             get: function () {
                 return UrlHelpers.join(HawtioForms.templatePath, 'checkbox-horizontal.html');
@@ -2398,12 +2419,6 @@ var HawtioForms;
     }
     HawtioForms.getStaticTextTemplate = getStaticTextTemplate;
     function setSelectOptions(isArray, propName, select) {
-        if (isArray) {
-            select.attr({ 'ng-options': 'label for label in ' + propName });
-        }
-        else {
-            select.attr({ 'ng-options': 'label for (label, value) in ' + propName });
-        }
     }
     HawtioForms.setSelectOptions = setSelectOptions;
     function getSelectTemplate(context, config, name, control) {
@@ -2418,7 +2433,37 @@ var HawtioForms;
         addPostInterpolateAction(context, name, function (el) {
             var select = el.find('select');
             var propName = 'config.properties[\'' + name + '\'].enum';
-            setSelectOptions(_.isArray(control.enum), propName, select);
+            var isArray = _.isArray(control.enum);
+            if (isArray) {
+                if (_.isObject(_.first(control.enum))) {
+                    var template = context.$templateCache.get(Constants.OPTION_CONFIG_OBJECT);
+                    var interpolate = context.$interpolate(template);
+                    _.forEach(control.enum, function (config) {
+                        var newOption = angular.element(interpolate(config));
+                        newOption.attr(config.attributes);
+                        select.append(newOption);
+                    });
+                }
+                else {
+                    var template = context.$templateCache.get(Constants.OPTION_ARRAY);
+                    var interpolate = context.$interpolate(template);
+                    _.forEach(control.enum, function (value) {
+                        select.append(interpolate({
+                            value: value
+                        }));
+                    });
+                }
+            }
+            else {
+                var template = context.$templateCache.get(Constants.OPTION_OBJECT);
+                var interpolate = context.$interpolate(template);
+                _.forIn(control.enum, function (value, key) {
+                    select.append(interpolate({
+                        key: key,
+                        value: value
+                    }));
+                });
+            }
         });
         return applyElementConfig(context, config, control, template);
     }
@@ -3490,6 +3535,9 @@ $templateCache.put("plugins/forms2/html/forms2Map.html","<div>\n  <script type=\
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/map.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-map\"></div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
+$templateCache.put("plugins/forms2/html/optionArray.html","<option>{{value}}</option>\n");
+$templateCache.put("plugins/forms2/html/optionConfigObject.html","<option value=\"{{value}}\">{{label}}</option>\n");
+$templateCache.put("plugins/forms2/html/optionObject.html","<option value=\"{{value}}\">{{key}}</option>\n");
 $templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
 $templateCache.put("plugins/forms2/html/radio-top-level.html","<div class=\"radio\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select ng-disabled=\"config.mode == 0\" hawtio-combobox class=\"form-control\" ng-model=\"{{model}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");

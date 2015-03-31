@@ -128,6 +128,34 @@ module Forms2Tests {
         "fromSchemaRegistry": {
           "type": "testObject"
         },
+        "SelectWithConfig": {
+          type: 'text',
+          enum: [{
+            value: 'A Value 1',
+            label: 'A Label 1',
+            attributes: {
+              title: 'A title 1'
+            }
+          }, {
+            value: 'A Value 2',
+            label: 'A Label 2',
+            attributes: {
+              title: 'A title 2'
+            }
+          }, {
+            value: 'A Value 3',
+            label: 'A Label 3',
+            attributes: {
+              title: 'A title 3'
+            }
+          }, {
+            value: 'A Value 4',
+            label: 'A Label 4',
+            attributes: {
+              title: 'A title 4'
+            }
+          }]
+        },
         "LongObjectSelect": {
           type: "java.lang.String",
           enum: {
@@ -152,6 +180,13 @@ module Forms2Tests {
           },
           "control-group-attributes": {
             "ng-show": "entity.booleanArg == true"
+          }
+        },
+        "InputWithTypeahead": {
+          type: 'text',
+          typeaheadData: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
+          'input-attributes': {
+            'typeahead': 'number for number in config.properties.InputWithTypeahead.typeaheadData'
           }
         },
         "RequiredThing": {

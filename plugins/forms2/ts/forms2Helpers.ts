@@ -16,6 +16,9 @@ module HawtioForms {
     public static get STATIC_TEXT() { return UrlHelpers.join(templatePath, 'static-text.html'); }
     public static get SELECT_HORIZONTAL() { return UrlHelpers.join(templatePath, 'select-horizontal.html'); }
     public static get SELECT() { return UrlHelpers.join(templatePath, 'select.html'); }
+    public static get OPTION_ARRAY() { return UrlHelpers.join(templatePath, 'optionArray.html'); }
+    public static get OPTION_OBJECT() { return UrlHelpers.join(templatePath, 'optionObject.html'); }
+    public static get OPTION_CONFIG_OBJECT() { return UrlHelpers.join(templatePath, 'optionConfigObject.html'); }
     public static get CHECKBOX_HORIZONTAL() { return UrlHelpers.join(templatePath, 'checkbox-horizontal.html'); }
     public static get CHECKBOX() { return UrlHelpers.join(templatePath, 'checkbox.html'); }
     public static get OBJECT() { return UrlHelpers.join(templatePath, 'object.html'); }
@@ -94,11 +97,6 @@ module HawtioForms {
   }
 
   export function setSelectOptions(isArray:boolean, propName:string, select) {
-    if (isArray) {
-      select.attr({'ng-options': 'label for label in ' + propName });
-    } else {
-      select.attr({'ng-options': 'label for (label, value) in ' + propName });
-    }
   }
 
   export function getSelectTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
@@ -114,7 +112,35 @@ module HawtioForms {
     addPostInterpolateAction(context, name, (el) => {
       var select = el.find('select');
       var propName = 'config.properties[\'' + name + '\'].enum';
-      setSelectOptions(_.isArray(control.enum), propName, select);
+      var isArray = _.isArray(control.enum);
+      if (isArray) {
+        if (_.isObject(_.first(control.enum))) {
+          var template = context.$templateCache.get(Constants.OPTION_CONFIG_OBJECT);
+          var interpolate = context.$interpolate(template);
+          _.forEach(control.enum, (config:any) => {
+            var newOption = angular.element(interpolate(config));
+            newOption.attr(config.attributes);
+            select.append(newOption);
+          });
+        } else {
+          var template = context.$templateCache.get(Constants.OPTION_ARRAY);
+          var interpolate = context.$interpolate(template);
+          _.forEach(control.enum, (value) => {
+            select.append(interpolate({
+              value: value
+            }));
+          });
+        }
+      } else {
+        var template = context.$templateCache.get(Constants.OPTION_OBJECT);
+        var interpolate = context.$interpolate(template);
+        _.forIn(control.enum, (value, key) => {
+          select.append(interpolate({
+            key: key,
+            value: value
+          }));
+        });
+      }
     });
     return applyElementConfig(context, config, control, template);
   }

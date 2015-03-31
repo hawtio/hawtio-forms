@@ -15,6 +15,9 @@ declare module HawtioForms {
         static STATIC_TEXT: string;
         static SELECT_HORIZONTAL: string;
         static SELECT: string;
+        static OPTION_ARRAY: string;
+        static OPTION_OBJECT: string;
+        static OPTION_CONFIG_OBJECT: string;
         static CHECKBOX_HORIZONTAL: string;
         static CHECKBOX: string;
         static OBJECT: string;
