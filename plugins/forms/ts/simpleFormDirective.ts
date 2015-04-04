@@ -37,6 +37,7 @@ module Forms {
 
     public showtypes = 'false';
     public showhelp = 'true';
+    public showempty = 'true';
 
     public onsubmit = 'onSubmit';
 
@@ -322,13 +323,46 @@ module Forms {
         if (property.hidden) {
           return;
         }
+
+        // special for expression (Apache Camel)
+        if (property.kind === "expression") {
+          propSchema = Forms.lookupDefinition("expression", fullSchema);
+
+          // create 2 inputs, the 1st is the drop down with the languages
+          // and then merge the 2 inputs together, which is a hack
+          // but easier to do than change the complicated Forms.createWidget to do a widget with a selectbox + input
+          var childId = id + ".language";
+          var childId2 = id + ".expression";
+
+          // for the 2nd input we need to use the information from the original property for title, description, required etc.
+          var adjustedProperty = jQuery.extend(true, {}, propSchema.properties.expression);
+          adjustedProperty.description = property.description;
+          adjustedProperty.title = property.title;
+          adjustedProperty.required = property.required;
+
+          var input:JQuery = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+          var input2:JQuery = Forms.createWidget(propTypeName, adjustedProperty, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+
+          // move the selectbox from input to input2 as we want it to be on the same line
+          var selectWidget = input.find("select");
+          var inputWidget = input2.find("input");
+          if (selectWidget && inputWidget) {
+            // adjust the widght so the two inputs can be on the same line and have same combined length as the others (600px)
+            selectWidget.attr("style", "width: 120px; margin-right: 10px");
+            inputWidget.attr("style", "width: 470px");
+            inputWidget.before(selectWidget);
+          }
+
+          fieldset.append(input2);
+          return;
+        }
+
         var nestedProperties = null;
         if (!propSchema && "object" === propTypeName && property.properties) {
           // if we've no type name but have nested properties on an object type use those
           nestedProperties = property.properties;
         } else if (propSchema && Forms.isObjectType(propSchema)) {
           // otherwise use the nested properties from the related schema type
-          //console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));
           nestedProperties = propSchema.properties;
         }
         if (nestedProperties) {
