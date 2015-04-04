@@ -214,18 +214,35 @@ module Forms {
     return rc;
   }
 
-  export function getLabel(config, arg, label) {
-    return angular.element('<label class="' + config.labelclass + '">' + label + '</label>');
+  export function getLabel(config, arg, label, required = false) {
+    if (required) {
+      return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
+    } else {
+      return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+    }
   }
 
   export function getControlDiv(config) {
     return angular.element('<div class="' + config.controlclass + '"></div>');
   }
 
-  export function getHelpSpan(config, arg, id) {
+  export function getHelpSpan(config, arg, id, property = null) {
     var help = Core.pathGet(config.data, ['properties', id, 'help']);
+    if (Core.isBlank(help)) {
+      // fallback and use description
+      help = Core.pathGet(config.data, ['properties', id, 'description']);
+    }
+    if (Core.isBlank(help) && angular.isDefined(property)) {
+      // fallback and get from property
+      help = Core.pathGet(property, ['help']);
+      if (Core.isBlank(help)) {
+        help = Core.pathGet(property, ['description']);
+      }
+    }
+
+    var show = config.showhelp || "true";
     if (!Core.isBlank(help)) {
-      return angular.element('<span class="help-block">' + help + '</span>');
+      return angular.element('<span class="help-block" ng-show="' + show + '">' + help + '</span>');
     } else {
       return angular.element('<span class="help-block"></span>');
     }
