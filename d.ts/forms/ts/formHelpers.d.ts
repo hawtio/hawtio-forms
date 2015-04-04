@@ -66,7 +66,7 @@ declare module Forms {
     function isArrayOrNestedObject(property: any, schema: any): boolean;
     function configure(config: any, scopeConfig: any, attrs: any): any;
     function getControlGroup(config: any, arg: any, id: any): ng.IAugmentedJQuery;
-    function getLabel(config: any, arg: any, label: any): ng.IAugmentedJQuery;
+    function getLabel(config: any, arg: any, label: any, required?: boolean): ng.IAugmentedJQuery;
     function getControlDiv(config: any): ng.IAugmentedJQuery;
-    function getHelpSpan(config: any, arg: any, id: any): ng.IAugmentedJQuery;
+    function getHelpSpan(config: any, arg: any, id: any, property?: any): ng.IAugmentedJQuery;
 }
