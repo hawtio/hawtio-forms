@@ -19,6 +19,7 @@ declare module Forms {
         controlclass: string;
         labelclass: string;
         showtypes: string;
+        showhelp: string;
         onsubmit: string;
         getMode(): string;
         getEntity(): string;

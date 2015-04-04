@@ -1212,6 +1212,7 @@ var Forms;
             this.controlclass = 'col-sm-10';
             this.labelclass = 'col-sm-2 control-label';
             this.showtypes = 'false';
+            this.showhelp = 'true';
             this.onsubmit = 'onSubmit';
         }
         SimpleFormConfig.prototype.getMode = function () {
