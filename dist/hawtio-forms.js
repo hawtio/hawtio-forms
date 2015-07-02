@@ -3046,218 +3046,226 @@ var HawtioForms;
                         scope.entity = {};
                     }
                     var entity = scope.entity;
-                    if ('properties' in config) {
-                        // create our child scope here
-                        var s = context.scope = scope.$new();
-                        s.config = config;
-                        // s.entity = entity;
-                        s.maybeHumanize = context.maybeHumanize;
-                        // These are here to figure out what controls go on which page
-                        var pages = {};
-                        var controls = {};
-                        // log.debug("Config: ", config);
-                        // log.debug("Entity: ", entity);
-                        var form = angular.element(HawtioForms.getFormMain(context, config));
-                        form.find('form').attr({
-                            name: config.id || 'form'
+                    if (!('properties' in config)) {
+                        return;
+                    }
+                    // create our child scope here
+                    var s = context.scope = scope.$new();
+                    s.config = config;
+                    // s.entity = entity;
+                    s.maybeHumanize = context.maybeHumanize;
+                    // These are here to figure out what controls go on which page
+                    var pages = {};
+                    var controls = {};
+                    // log.debug("Config: ", config);
+                    // log.debug("Entity: ", entity);
+                    var form = angular.element(HawtioForms.getFormMain(context, config));
+                    form.find('form').attr({
+                        name: config.id || 'form'
+                    });
+                    var parent = form.find('fieldset');
+                    if (parent.length === 0) {
+                        parent = form;
+                    }
+                    var singlePage = false;
+                    if (('wizard' in config) && config.wizard.pages) {
+                        var wizard = config.wizard;
+                        var wizardBody = $templateCache.get('wizardParent.html');
+                        parent.append(wizardBody);
+                        s.pageIds = [];
+                        parent = parent.find('.wizardParent');
+                        s.onFinish = function () {
+                            HawtioForms.log.warn("No onFinish() function supplied to form wizard");
+                        };
+                        s.buttons = {
+                            'next': 'Next',
+                            'back': 'Back',
+                            'finish': 'Finish'
+                        };
+                        _.forIn(wizard, function (attr, key) {
+                            s[key] = attr;
                         });
-                        var parent = form.find('fieldset');
-                        if (parent.length === 0) {
-                            parent = form;
-                        }
-                        var singlePage = false;
-                        if (('wizard' in config) && config.wizard.pages) {
-                            var wizard = config.wizard;
-                            var wizardBody = $templateCache.get('wizardParent.html');
-                            parent.append(wizardBody);
-                            s.pageIds = [];
-                            parent = parent.find('.wizardParent');
-                            s.onFinish = function () {
-                                HawtioForms.log.warn("No onFinish() function supplied to form wizard");
-                            };
-                            s.buttons = {
-                                'next': 'Next',
-                                'back': 'Back',
-                                'finish': 'Finish'
-                            };
-                            _.forIn(wizard, function (attr, key) {
-                                s[key] = attr;
+                        _.forIn(wizard.pages, function (pageConfig, id) {
+                            if (!('title' in pageConfig)) {
+                                pageConfig.title = id;
+                            }
+                            pageConfig.el = angular.element($templateCache.get('wizardPage.html'));
+                            pageConfig.el.attr({
+                                'ng-switch-when': id
                             });
-                            _.forIn(wizard.pages, function (pageConfig, id) {
-                                if (!('title' in pageConfig)) {
-                                    pageConfig.title = id;
-                                }
-                                pageConfig.el = angular.element($templateCache.get('wizardPage.html'));
-                                pageConfig.el.attr({
-                                    'ng-switch-when': id
-                                });
-                                pageConfig.el.find('h3').text(id);
-                                if ('template' in pageConfig) {
-                                    pageConfig.el.append($compile(pageConfig.template)(scope));
-                                }
-                                pageConfig.parent = pageConfig.el.find('.wizardPageBody');
-                                pageConfig.parent.attr({
-                                    'ng-form': _.camelCase(id)
-                                });
-                                HawtioForms.addPreCompileAction(context, _.camelCase(id), function () {
-                                    var buttons = angular.element($templateCache.get('wizardButtons.html'));
-                                    var disabled = {
-                                        'ng-disabled': _.camelCase(id) + '.$invalid'
-                                    };
-                                    buttons.find('.next').attr(disabled);
-                                    buttons.find('.finish').attr(disabled);
-                                    pageConfig.parent.append(buttons);
-                                });
-                                pages[id] = pageConfig;
-                                s.pageIds.push(id);
+                            pageConfig.el.find('h3').text(id);
+                            if ('template' in pageConfig) {
+                                pageConfig.el.append($compile(pageConfig.template)(scope));
+                            }
+                            pageConfig.parent = pageConfig.el.find('.wizardPageBody');
+                            pageConfig.parent.attr({
+                                'ng-form': _.camelCase(id)
                             });
-                            s.currentPageIndex = 0;
-                            s.gotoPage = function (index, current) {
-                                if (index < 0 || index > s.pageIds.length) {
+                            HawtioForms.addPreCompileAction(context, _.camelCase(id), function () {
+                                var buttons = angular.element($templateCache.get('wizardButtons.html'));
+                                var disabled = {
+                                    'ng-disabled': _.camelCase(id) + '.$invalid'
+                                };
+                                buttons.find('.next').attr(disabled);
+                                buttons.find('.finish').attr(disabled);
+                                pageConfig.parent.append(buttons);
+                            });
+                            pages[id] = pageConfig;
+                            s.pageIds.push(id);
+                        });
+                        s.currentPageIndex = 0;
+                        s.gotoPage = function (index, current) {
+                            if (index < 0 || index > s.pageIds.length) {
+                                return;
+                            }
+                            if (s.onChange) {
+                                var idx = s.onChange(current, index, s.pageIds);
+                                if (idx) {
+                                    s.currentPageIndex = idx;
                                     return;
                                 }
-                                if (s.onChange) {
-                                    var idx = s.onChange(current, index, s.pageIds);
-                                    if (idx) {
-                                        s.currentPageIndex = idx;
-                                        return;
-                                    }
-                                }
-                                s.currentPageIndex = index;
-                            };
-                            s.isValid = function () {
-                                HawtioForms.log.debug("scope: ", scope);
-                                return true;
-                            };
-                            s.getCurrentPageId = function () {
-                                return s.pageIds[s.currentPageIndex];
-                            };
-                            s.atFront = function () {
-                                return s.currentPageIndex === 0;
-                            };
-                            s.atBack = function () {
-                                return s.currentPageIndex === s.pageIds.length - 1;
-                            };
-                            s.next = function () {
-                                s.gotoPage(s.currentPageIndex + 1, s.currentPageIndex);
-                            };
-                            s.back = function () {
-                                s.gotoPage(s.currentPageIndex - 1, s.currentPageIndex);
-                            };
-                        }
-                        else if ('tabs' in config) {
-                            parent.append($templateCache.get('tabElement.html'));
-                            parent = parent.find('.tabbable');
-                            var tabs = config.tabs;
-                            _.forIn(tabs, function (tabConfig, id) {
-                                var tab = angular.element($templateCache.get('tabPage.html'));
-                                tab.attr({
-                                    'title': id
-                                });
-                                var tabPage = {
-                                    controls: tabConfig,
-                                    el: tab,
-                                    parent: tab
-                                };
-                                pages[id] = tabPage;
+                            }
+                            s.currentPageIndex = index;
+                        };
+                        s.isValid = function () {
+                            HawtioForms.log.debug("scope: ", scope);
+                            return true;
+                        };
+                        s.getCurrentPageId = function () {
+                            return s.pageIds[s.currentPageIndex];
+                        };
+                        s.atFront = function () {
+                            return s.currentPageIndex === 0;
+                        };
+                        s.atBack = function () {
+                            return s.currentPageIndex === s.pageIds.length - 1;
+                        };
+                        s.next = function () {
+                            s.gotoPage(s.currentPageIndex + 1, s.currentPageIndex);
+                        };
+                        s.back = function () {
+                            s.gotoPage(s.currentPageIndex - 1, s.currentPageIndex);
+                        };
+                    }
+                    else if ('tabs' in config) {
+                        parent.append($templateCache.get('tabElement.html'));
+                        parent = parent.find('.tabbable');
+                        var tabs = config.tabs;
+                        _.forIn(tabs, function (tabConfig, id) {
+                            var tab = angular.element($templateCache.get('tabPage.html'));
+                            tab.attr({
+                                'title': id
                             });
-                        }
-                        else if ('controls' in config) {
-                            pages['$main'] = {
-                                'controls': config.controls,
-                                'el': form,
-                                'parent': parent
+                            var tabPage = {
+                                controls: tabConfig,
+                                el: tab,
+                                parent: tab
                             };
-                            singlePage = true;
-                        }
-                        else {
-                            pages['$main'] = {
-                                'controls': ['*'],
-                                'el': form,
-                                'parent': parent
-                            };
-                            singlePage = true;
-                        }
-                        _.forIn(config.properties, function (control, name) {
-                            var value = Core.pathGet(control, ['input-attributes', 'value']);
-                            if (value) {
-                                entity[name] = value;
-                            }
-                            var _default = Core.pathGet(control, ['default']);
-                            if (_default) {
-                                entity[name] = _default;
-                            }
-                            // log.debug("control: ", control);
-                            var template = HawtioForms.getTemplate(context, config, name, control);
-                            if (template) {
-                                template = HawtioForms.interpolateTemplate(context, config, name, control, template, 'entity.' + name);
-                                controls[name] = template;
-                            }
+                            pages[id] = tabPage;
                         });
-                        /*
-                        log.debug("pages: ", pages);
-                        log.debug("controls: ", controls);
-                        */
-                        var ids = _.keys(pages);
-                        var wildcardId = undefined;
-                        ids.forEach(function (pageId) {
-                            var pageConfig = pages[pageId];
-                            if (pageConfig.controls) {
-                                pageConfig.controls.forEach(function (name) {
-                                    if (name === '*') {
-                                        if (singlePage) {
-                                            _.forIn(controls, function (control, controlId) {
-                                                if (_.any(pageConfig.controls, function (id) { return id === controlId; })) {
-                                                    return;
-                                                }
-                                                else {
-                                                    pageConfig.parent.append(control);
-                                                    delete controls[controlId];
-                                                }
-                                            });
-                                        }
-                                        else {
-                                            wildcardId = pageId;
-                                        }
+                    }
+                    else if ('controls' in config) {
+                        pages['$main'] = {
+                            'controls': config.controls,
+                            'el': form,
+                            'parent': parent
+                        };
+                        singlePage = true;
+                    }
+                    else {
+                        pages['$main'] = {
+                            'controls': ['*'],
+                            'el': form,
+                            'parent': parent
+                        };
+                        singlePage = true;
+                    }
+                    _.forIn(config.properties, function (control, name) {
+                        // Set up typeahead if data is provided
+                        var typeaheadData = Core.pathGet(control, ['typeaheadData']);
+                        if (typeaheadData && !Core.pathGet(control, ['input-attributes', 'typeahead'])) {
+                            Core.pathSet(control, ['input-attributes', 'typeahead'], 'item for item in config.properties.' + name + '.typeaheadData');
+                        }
+                        // set up an initial value if set in the input attributes
+                        var value = Core.pathGet(control, ['input-attributes', 'value']);
+                        if (value) {
+                            entity[name] = value;
+                        }
+                        // set the initial value if set as a default for the property
+                        var _default = Core.pathGet(control, ['default']);
+                        if (_default) {
+                            entity[name] = _default;
+                        }
+                        // log.debug("control: ", control);
+                        var template = HawtioForms.getTemplate(context, config, name, control);
+                        if (template) {
+                            template = HawtioForms.interpolateTemplate(context, config, name, control, template, 'entity.' + name);
+                            controls[name] = template;
+                        }
+                    });
+                    /*
+                       log.debug("pages: ", pages);
+                       log.debug("controls: ", controls);
+                     */
+                    var ids = _.keys(pages);
+                    var wildcardId = undefined;
+                    ids.forEach(function (pageId) {
+                        var pageConfig = pages[pageId];
+                        if (pageConfig.controls) {
+                            pageConfig.controls.forEach(function (name) {
+                                if (name === '*') {
+                                    if (singlePage) {
+                                        _.forIn(controls, function (control, controlId) {
+                                            if (_.any(pageConfig.controls, function (id) { return id === controlId; })) {
+                                                return;
+                                            }
+                                            else {
+                                                pageConfig.parent.append(control);
+                                                delete controls[controlId];
+                                            }
+                                        });
                                     }
                                     else {
-                                        if (name in controls) {
-                                            pageConfig.parent.append(controls[name]);
-                                            delete controls[name];
-                                        }
-                                        else {
-                                            HawtioForms.log.debug("Control with name ", name, " not found");
-                                        }
+                                        wildcardId = pageId;
                                     }
-                                });
-                            }
-                        });
-                        // take care of leftover controls
-                        if (_.keys(controls).length > 0) {
-                            if (!wildcardId) {
-                                wildcardId = _.last(ids);
-                            }
-                            _.forIn(controls, function (control, controlId) {
-                                pages[wildcardId].parent.append(control);
-                                delete controls[controlId];
+                                }
+                                else {
+                                    if (name in controls) {
+                                        pageConfig.parent.append(controls[name]);
+                                        delete controls[name];
+                                    }
+                                    else {
+                                        HawtioForms.log.debug("Control with name ", name, " not found");
+                                    }
+                                }
                             });
                         }
-                        /*
-                           form.append('<pre>{{entity}}</pre>');
-                           form.append('<pre>{{config}}</pre>');
-                         */
-                        _.forIn(pages, function (pageConfig, id) {
-                            if (id !== '$main') {
-                                parent.append(pageConfig.el);
-                            }
+                    });
+                    // take care of leftover controls
+                    if (_.keys(controls).length > 0) {
+                        if (!wildcardId) {
+                            wildcardId = _.last(ids);
+                        }
+                        _.forIn(controls, function (control, controlId) {
+                            pages[wildcardId].parent.append(control);
+                            delete controls[controlId];
                         });
-                        _.forIn(context.preCompileActions, function (value, name) {
-                            _.forEach(value, function (func) {
-                                func();
-                            });
-                        });
-                        element.append($compile(form)(s));
                     }
+                    /*
+                       form.append('<pre>{{entity}}</pre>');
+                       form.append('<pre>{{config}}</pre>');
+                     */
+                    _.forIn(pages, function (pageConfig, id) {
+                        if (id !== '$main') {
+                            parent.append(pageConfig.el);
+                        }
+                    });
+                    _.forIn(context.preCompileActions, function (value, name) {
+                        _.forEach(value, function (func) {
+                            func();
+                        });
+                    });
+                    element.append($compile(form)(s));
                 }, true);
             }
         };
