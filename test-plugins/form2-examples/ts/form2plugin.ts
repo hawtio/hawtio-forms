@@ -135,6 +135,10 @@ module Forms2Tests {
       "disableHumanizeLabel": false,
       hideLegend: false,
       "properties": {
+        "booleanThing": {
+          "type": "boolean",
+          "default": "true"
+        },
         "fromSchemaRegistry": {
           "type": "testObject"
         },

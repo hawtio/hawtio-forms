@@ -190,6 +190,9 @@ module HawtioForms {
             if (_default) {
               entity[name] = _default;
             }
+            if (mappings.getMapping(control.type) === "checkbox") {
+              entity[name] = Core.parseBooleanValue(_default);
+            }
             // log.debug("control: ", control);
             var template = getTemplate(context, config, name, control);
             if (template) {
