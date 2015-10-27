@@ -31,7 +31,9 @@ module HawtioForms {
       } else {
         answer = schemas.getSchema(type);
       }
-      answer.control = control;
+      if (angular.isObject(answer)) {
+        answer.control = control;
+      }
       return answer;
     }
 

@@ -3308,7 +3308,9 @@ var HawtioForms;
             else {
                 answer = schemas.getSchema(type);
             }
-            answer.control = control;
+            if (angular.isObject(answer)) {
+                answer.control = control;
+            }
             return answer;
         }
         function buildMap(context, entity, keySchema, valueSchema, body) {
