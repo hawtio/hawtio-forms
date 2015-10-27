@@ -119,7 +119,9 @@ module HawtioForms {
           var interpolate = context.$interpolate(template);
           _.forEach(control.enum, (config:any) => {
             var newOption = angular.element(interpolate(config));
-            newOption.attr(config.attributes);
+            if (config.attributes) {
+              newOption.attr(config.attributes);
+            }
             select.append(newOption);
           });
         } else {
