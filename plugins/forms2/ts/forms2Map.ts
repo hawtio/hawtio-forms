@@ -120,9 +120,16 @@ module HawtioForms {
           s.entity = entity;
           s.keySchema = _.cloneDeep(keySchema);
           s.valueSchema = _.cloneDeep(valueSchema);
-          s.keySchema.mode = s.valueSchema.mode = FormMode.VIEW;
-          s.keySchema.style = s.valueSchema.style = FormStyle.UNWRAPPED;
-          s.keySchema.hideLegend = s.valueSchema.hideLegend = true;
+          if (s.keySchema) {
+            s.keySchema.mode = FormMode.VIEW;
+            s.keySchema.style =  FormStyle.UNWRAPPED;
+            s.keySchema.hideLegend = true;
+          }
+          if (s.valueSchema) {
+            s.valueSchema.mode = FormMode.VIEW;
+            s.valueSchema.style = FormStyle.UNWRAPPED;
+            s.valueSchema.hideLegend = true;
+          }
 
           function initSchema(schema) {
             var answer = _.cloneDeep(schema);
