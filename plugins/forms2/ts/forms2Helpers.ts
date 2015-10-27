@@ -158,17 +158,24 @@ module HawtioForms {
     var configName = 'config.properties.' + name;
     if ('javaType' in control) {
       configName = control.javaType;
-
     }
     addPostInterpolateAction(context, name, (el) => {
-      el.find('.inline-object').attr({
+      var attr = {
         'hawtio-form-2': configName,
         'entity': 'entity.' + name,
         'no-wrap': 'true',
         'mode': config.mode,
         'style': config.style,
         'label': control.label || context.maybeHumanize(name)
-      });
+      };
+      var groupAttr = {};
+      if ('control-group-attributes' in control) {
+        _.forIn(control['control-group-attributes'], (value, key) => {
+          groupAttr[key] = value;
+        });
+      }
+      el.attr(groupAttr);
+      el.find('.inline-object').attr(attr);
     });
     return context.$templateCache.get(Constants.OBJECT);
   }
