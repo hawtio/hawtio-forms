@@ -2506,7 +2506,7 @@ var HawtioForms;
             }
             else if (isFunction) {
                 context.scope.enum = control.enum;
-                select.attr('ng-options', 'item as item.label for item in enum() track by $index');
+                select.attr('ng-options', 'item.value as item.label for item in enum()');
                 select.removeAttr('hawtio-combobox');
             }
             else {
