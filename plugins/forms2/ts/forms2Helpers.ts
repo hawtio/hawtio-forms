@@ -107,12 +107,12 @@ module HawtioForms {
         break;
       default:
         template = context.$templateCache.get(Constants.SELECT);
-
     }
     addPostInterpolateAction(context, name, (el) => {
       var select = el.find('select');
       var propName = 'config.properties[\'' + name + '\'].enum';
       var isArray = _.isArray(control.enum);
+      var isFunction = _.isFunction(control.enum);
       if (isArray) {
         if (_.isObject(_.first(control.enum))) {
           var template = context.$templateCache.get(Constants.OPTION_CONFIG_OBJECT);
@@ -133,6 +133,10 @@ module HawtioForms {
             }));
           });
         }
+      } else if (isFunction) {
+        context.scope.enum = control.enum;
+        select.attr('ng-options', 'item as item.label for item in enum() track by $index');
+        select.removeAttr('hawtio-combobox');
       } else {
         var template = context.$templateCache.get(Constants.OPTION_OBJECT);
         var interpolate = context.$interpolate(template);
