@@ -9,7 +9,7 @@ module HawtioForms {
         listener(name, schema);
       });
     }
-    function getTypeConfig(type:string) {
+    function getTypeConfig(type:string):any {
       if (mappings.getMapping(type) === type) {
         return {
           type: 'object',
