@@ -3914,6 +3914,43 @@ var UI;
     UI.HorizontalViewport = HorizontalViewport;
 })(UI || (UI = {}));
 
+/// <reference path="uiPlugin.ts"/>
+//
+var UI;
+(function (UI) {
+    UI._module.directive('hawtioWindowHeight', ['$window', function ($window) {
+            return {
+                restrict: 'A',
+                replace: false,
+                link: function (scope, element, attrs) {
+                    var viewportHeight = $window.innerHeight;
+                    function processElement(el) {
+                        var offset = el.offset();
+                        if (!offset) {
+                            return;
+                        }
+                        var top = offset.top;
+                        var height = viewportHeight - top;
+                        if (height > 0) {
+                            el.attr({
+                                'style': 'height: ' + height + 'px;'
+                            });
+                        }
+                    }
+                    function layout() {
+                        viewportHeight = $window.innerHeight;
+                        element.parents().each(function (index, el) {
+                            el = $(el);
+                            processElement(el);
+                        });
+                        processElement(element);
+                    }
+                    scope.$watch(_.debounce(layout, 1000, { trailing: true }));
+                }
+            };
+        }]);
+})(UI || (UI = {}));
+
 /**
  * @module UI
  */

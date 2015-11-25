@@ -19,6 +19,7 @@ var config = {
   main: '.',
   ts: ['plugins/**/*.ts'],
   testTs: ['test-plugins/**/*.ts'],
+  less: ['plugins/**/*.less'],
   templates: ['plugins/**/*.html'],
   testTemplates: ['test-plugins/**/*.html'],
   templateModule: pkg.name + '-templates',
@@ -68,7 +69,7 @@ gulp.task('example-tsc', ['tsc'], function() {
   var tsResult = gulp.src(config.testTs)
     .pipe(plugins.typescript(config.testTsProject))
     .on('error', plugins.notify.onError({
-      message: '#{ error.message }',
+      message: '<%= error.message %>',
       title: 'Typescript compilation error - test'
     }));
 
@@ -105,7 +106,7 @@ gulp.task('tsc', ['clean-defs'], function() {
   var tsResult = gulp.src(config.ts)
     .pipe(plugins.typescript(config.tsProject))
     .on('error', plugins.notify.onError({
-      message: '#{ error.message }',
+      message: '<%= error.message %>',
       title: 'Typescript compilation error'
     }));
 
@@ -124,6 +125,20 @@ gulp.task('tsc', ['clean-defs'], function() {
           return buf;
         }));
 });
+
+gulp.task('less', function () {
+  return gulp.src(config.less)
+    .pipe(plugins.less({
+      paths: [ path.join(__dirname, 'less', 'includes') ]
+    }))
+    .on('error', plugins.notify.onError({
+      message: '<%= error.message %>',
+      title: 'less file compilation error'
+    }))
+    .pipe(plugins.concat(config.css))
+    .pipe(gulp.dest('./dist'));
+});
+
 
 gulp.task('template', ['tsc'], function() {
   return gulp.src(config.templates)
@@ -148,7 +163,13 @@ gulp.task('clean', ['concat'], function() {
     .pipe(plugins.clean());
 });
 
-gulp.task('watch', ['build', 'build-example'], function() {
+gulp.task('watch-less', function() {
+  plugins.watch(config.less, function() {
+    gulp.start('less');
+  });
+});
+
+gulp.task('watch', ['build', 'build-example', 'watch-less'], function() {
   plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
     gulp.start(['tsc', 'template', 'concat', 'clean']);
   });
@@ -267,7 +288,7 @@ gulp.task('deploy', function() {
     }));
 });
 
-gulp.task('build', ['bower', 'path-adjust', 'tsc', 'template', 'concat', 'clean', 'embed-images']);
+gulp.task('build', ['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat', 'clean', 'embed-images']);
 
 gulp.task('build-example', ['example-tsc', 'example-template', 'example-concat', 'example-clean']);
 
