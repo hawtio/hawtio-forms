@@ -1,0 +1,30 @@
+<script type="text/ng-template" id="markup.html">
+  <div hawtio-form-2="config" entity="model"></div>
+</script>
+
+<div ng-controller="Forms2Tests.SimpleExample">
+  <div class="row-fluid">
+    <div class="col-md-4">
+      <h5>Example Javascript</h5>
+      <p>This is a fairly basic example form configuration showing a few features that make it easy to create a custom form with a simple javascript object.  It's possible to add extra attributes to an input, or a label or the entire control group via 'input-attributes', 'label-attributes' or 'control-attributes'.  For even more control take a look at the 'Selector Example' page.</p>
+      <div hawtio-editor="configStr" mode="javascript"></div>
+      <p></p>
+      <h5>Markup</h5>
+      <div hawtio-editor="markup" mode="html"></div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>In Action</h5>
+        <div class="directive-example">
+          <div compile="markup"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>Model</h5>
+        <div hawtio-editor="modelStr" mode="javascript"></div>
+      </div>
+    </div>
+  </div>
+</div>

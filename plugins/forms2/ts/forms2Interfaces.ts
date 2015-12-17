@@ -20,6 +20,8 @@ module HawtioForms {
     label?: string;
     hidden?: boolean;
     javaType?: string;
+    value?: any;
+    default?: any;
     enum?: any;
     items?: any;
     'input-attributes'?: AttributeMap;
@@ -27,6 +29,7 @@ module HawtioForms {
     'label-attributes'?: AttributeMap;
     formTemplate?: string;
     selectors?: FormSelectors;
+    [key:string]: any;
   }
 
   /**
