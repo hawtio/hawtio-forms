@@ -3387,8 +3387,9 @@ var Forms2Tests;
                 .rank(2)
                 .title(function () { return "Forms2"; })
                 .href(function () { return "/forms2"; })
-                .subPath("Selector Example", "selector_example", builder.join(tp, "selectorExample.html"), 10)
-                .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 9)
+                .subPath("Selector Example", "selector_example", builder.join(tp, "selectorExample.html"), 9)
+                .subPath("Simple Example", 'simple_example', builder.join(tp, "simpleExample.html"), 10)
+                .subPath("Kitchen Sink", "simple_form", builder.join(tp, "simpleForm2.html"), 0)
                 .subPath("Map", "map", builder.join(tp, "map.html"), 9)
                 .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
                 .subPath("Wizard Form", "wizard_form", builder.join(tp, "wizardForm2.html"), 7)
@@ -4124,6 +4125,77 @@ var Forms2Tests;
         }]);
 })(Forms2Tests || (Forms2Tests = {}));
 
+/// <reference path="form2Plugin.ts"/>
+var Forms2Tests;
+(function (Forms2Tests) {
+    var log = Logger.get('forms2-simple-example');
+    Forms2Tests._module.controller("Forms2Tests.SimpleExample", ["$scope", "$templateCache", function ($scope, $templateCache) {
+            var configStr = "\n    var config = {\n      // Standard bootstrap form with the label and control stacked\n      style: HawtioForms.FormStyle.STANDARD,\n      // Controls are editable, can also set to 'VIEW' to just show values\n      mode: HawtioForms.FormMode.EDIT,\n      properties: {\n        \"Name\": {\n          type: \"string\",\n          // Most controls support setting arbitrary attributes via 'input-attributes'\n          'input-attributes': {\n            'placeholder': 'Enter some name'\n          }\n        },\n        \"Amount\": {\n          type: \"string\",\n          'default': 2,\n          // Add an object of name/value pairs to turn a field into a select box\n          enum: {\n            \"One\": 1,\n            \"Two\": 2,\n            \"Three\": 3,\n            \"Four\": 4,\n            \"Five\": 5,\n            \"Six\": 6\n          },\n          description: 'Pick some amount'\n        },\n        \"Number\": {\n          type: 'number',\n          'default': 5,\n          // it's also possible via 'input-attributes' to use html5 attributes like min/max\n          'input-attributes': {\n            'max': 10,\n            'min': 5\n          }\n\n        },\n        \"Maybe\": {\n          type: 'boolean',\n          // if you want to customize the label for a control, use 'label'\n          label: \"Maybe?\",\n          'default': true\n        }\n      }\n    };\n    ";
+            var config = {
+                // Standard bootstrap form with the label and control stacked
+                style: HawtioForms.FormStyle.STANDARD,
+                // Controls are editable, can also set to 'VIEW' to just show values
+                mode: HawtioForms.FormMode.EDIT,
+                properties: {
+                    "Name": {
+                        type: "string",
+                        // Most controls support setting arbitrary attributes via 'input-attributes'
+                        'input-attributes': {
+                            'placeholder': 'Enter some name'
+                        }
+                    },
+                    "Amount": {
+                        type: "string",
+                        'default': 2,
+                        // Add an object of name/value pairs to turn a field into a select box
+                        enum: {
+                            "One": 1,
+                            "Two": 2,
+                            "Three": 3,
+                            "Four": 4,
+                            "Five": 5,
+                            "Six": 6
+                        },
+                        description: 'Pick some amount'
+                    },
+                    "Number": {
+                        type: 'number',
+                        'default': 5,
+                        // it's also possible via 'input-attributes' to use html5 attributes like min/max
+                        'input-attributes': {
+                            'max': 10,
+                            'min': 5
+                        }
+                    },
+                    "Maybe": {
+                        type: 'boolean',
+                        // if you want to customize the label for a control, use 'label'
+                        label: "Maybe?",
+                        'default': true
+                    }
+                }
+            };
+            var model = {};
+            $scope.config = config;
+            $scope.model = model;
+            $scope.configStr = configStr;
+            $scope.markup = $templateCache.get("markup.html");
+            $scope.$watch('model', _.debounce(function () {
+                $scope.modelStr = angular.toJson($scope.model, true);
+                Core.$apply($scope);
+            }, 500), true);
+            $scope.$watch('configStr', _.debounce(function () {
+                try {
+                    $scope.config = angular.fromJson($scope.configStr);
+                    log.debug("Updated config...");
+                    Core.$apply($scope);
+                }
+                catch (e) {
+                }
+            }, 1000));
+        }]);
+})(Forms2Tests || (Forms2Tests = {}));
+
 angular.module("hawtio-forms-test-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("test-plugins/form1-examples/html/test.html","<div ng-controller=\'Forms.FormTestController\'>\n\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h3>Basic form</h3>\n      <p>Here\'s a basic form generated from some JSON schema</p>\n      <p>Here\'s some example JSON schema definition</p>\n      <div hawtio-editor=\"basicFormEx1Schema\" mode=\"javascript\"></div>\n      <button class=\'btn\' ng-click=\"updateSchema()\"><i class=\"icon-save\"></i> Update form</button>\n    </div>\n    <div class=\"col-md-4\">\n      <p>You can define an entity object to have default values filled in</p>\n      <div hawtio-editor=\"basicFormEx1EntityString\" mode=\"javascript\"></div>\n      <button class=\'btn\' ng-click=\"updateEntity()\"><i class=\"icon-save\"></i> Update form</button>\n      <p>And here is the code for the form</p>\n      <div hawtio-editor=\"basicFormEx1\" mode=\"html\"></div>\n      <h3>The resulting form</h3>\n      <div class=\"directive-example\">\n        <div compile=\"basicFormEx1\"></div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <h3>Form related controls</h3>\n      <p>There\'s also directives to take care of resetting or submitting a form</p>\n      <p></p>\n      <p>Clearing a form is done using the hawtio-reset directive</p>\n      <div hawtio-editor=\"hawtioResetEx\" mode=\"html\"></div>\n      <p>Click the button below to clear the above form</p>\n      <div class=\"directive-example\">\n        <div compile=\"hawtioResetEx\"></div>\n      </div>\n      <p>And to submit a form use hawtio-submit</p>\n      <div hawtio-editor=\"hawtioSubmitEx\" mode=\"html\"></div>\n      <div class=\"directive-example\">\n        <div compile=\"hawtioSubmitEx\"></div>\n      </div>\n      <p>Fill in the form and click the submit button above to see what the form produces</p>\n      <div hawtio-editor=\"basicFormEx1Result\" mode=\"javascript\"></div>\n      <p></p>\n      <p></p>\n    </div>\n  </div>\n\n  <!--\n\n  <h3>Form Testing</h3>\n\n  <div>\n    <div class=\"control-group\">\n      <a class=\'btn\' ng-href=\"\" hawtio-submit=\'form-with-inline-arguments\'><i class=\"icon-save\"></i> Save</a>\n      <a class=\'btn\' ng-href=\"\" hawtio-reset=\'form-with-inline-arguments\'><i class=\"icon-refresh\"></i> Clear</a>\n    </div>\n    Form with inline arguments\n    <div simple-form name=\'form-with-inline-arguments\' action=\'#/forms/test\' method=\'post\' data=\'setVMOption\' entity=\'cheese\' onSubmit=\"derp()\"></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Read Only Form with config object\n    <div class=\"row-fluid\">\n      <button class=\"btn\" ng-click=\"toggleEdit()\">Edit</button>\n    </div>\n    <div simple-form data=\'setVMOption\' entity=\'cheese\' mode=\'view\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Form with config object\n    <div simple-form=\'config\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    form with inline json config\n    <div simple-form name=\'form-with-inline-json-config\' action=\'#/forms/test\' method=\'post\' showTypes=\'false\' json=\'\n    {\n      \"properties\": {\n        \"key\": { \"description\": \"Argument key\", \"type\": \"java.lang.String\" },\n        \"value\": { \"description\": \"Argument value\", \"type\": \"java.lang.String\" },\n        \"longArg\": { \"description\": \"Long argument\", \"type\": \"Long\" },\n        \"intArg\": { \"description\": \"Int argument\", \"type\": \"Integer\" }},\n       \"description\": \"Show some stuff in a form from JSON\",\n       \"type\": \"java.lang.String\"\n    }\'></div>\n  </div>\n\n  -->\n</div>\n");
 $templateCache.put("test-plugins/form1-examples/html/testTable.html","<div ng-controller=\'Forms.FormTestController\'>\n\n  <h3>Input Table Testing</h3>\n\n  <div>\n    input table with config object\n    <div hawtio-input-table=\"inputTableConfig\" entity=\"inputTableData\" data=\"inputTableConfig\" property=\"rows\"></div>\n  </div>\n\n</div>\n");
 $templateCache.put("test-plugins/form1-examples/html/wizard.html","\n<script type=\"text/ng-template\" id=\"wizardMarkup.html\">\n  <div hawtio-form data=\"wizardConfig\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.WizardController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-6\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"wizardConfigStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"wizardMarkup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-6\">\n      <h5>In Action</h5>\n      <div class=\"directive-example\">\n        <div compile=\"wizardMarkup\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
@@ -4131,6 +4203,7 @@ $templateCache.put("test-plugins/form2-examples/html/fromSchema.html","<script t
 $templateCache.put("test-plugins/form2-examples/html/map.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2MapController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/nestedForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2NestedController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/selectorExample.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"Forms2Tests.SelectorExample\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>Config</h5>\n      <p>In this case we\'re passing a \'selectors\' property for the FormElement, hawtio-forms2 will do a jquery \'find\' on the control element for each selector instance and pass the result of \'find\' into the selector function provided here.  This will happen before interpolation and compilation of the entire form template, so it\'s possible to add Angular directives on the fly etc.  Use \'el\' to get the entire form-group for that element.  In this example, changing the \'select\' value to anything other than \'Two\' will hide the \'Name\' element.\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
+$templateCache.put("test-plugins/form2-examples/html/simpleExample.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"Forms2Tests.SimpleExample\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>Example Javascript</h5>\n      <p>This is a fairly basic example form configuration showing a few features that make it easy to create a custom form with a simple javascript object.  It\'s possible to add extra attributes to an input, or a label or the entire control group via \'input-attributes\', \'label-attributes\' or \'control-attributes\'.  For even more control take a look at the \'Selector Example\' page.</p>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/simpleForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2Controller\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/tabbedForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2TabsController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/welcome.html","<div class=\"row\" ng-controller=\"WelcomePageController\">\n  <div class=\"col-md-2\">\n  </div>\n  <div class=\"col-md-8\">\n    <div ng-bind-html=\"readme\"></div>\n  </div>\n  <div class=\"col-md-2\">\n  </div>\n\n</div>\n");
