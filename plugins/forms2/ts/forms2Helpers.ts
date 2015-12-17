@@ -73,7 +73,7 @@ module HawtioForms {
     }
     if ('control-group-attributes' in control) {
       el.attr(control['control-group-attributes']);
-    } 
+    }
     if ('label-attributes' in control) {
       el.find('label').attr(control['label-attributes']);
     }
@@ -83,6 +83,16 @@ module HawtioForms {
       }
     if ('input-attributes' in control) {
       input.attr(control['input-attributes']);
+    }
+    if ('selectors' in control) {
+      _.forIn(control.selectors, (func: (el:any) => void, selector: string) => {
+        log.debug("Found selector: ", selector, " for control: ", control, " applying");
+        if (selector === 'el') {
+          func(el);
+        } else {
+          func($(el.find(selector)));
+        }
+      });
     }
     return el.prop('outerHTML');
   }
@@ -97,6 +107,7 @@ module HawtioForms {
   }
 
   export function setSelectOptions(isArray:boolean, propName:string, select) {
+
   }
 
   export function getSelectTemplate(context, config:FormConfiguration, name:string, control:FormElement):string {
@@ -346,4 +357,3 @@ module HawtioForms {
 
 
 }
-

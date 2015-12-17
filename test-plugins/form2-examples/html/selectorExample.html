@@ -1,0 +1,30 @@
+<script type="text/ng-template" id="markup.html">
+  <div hawtio-form-2="config" entity="model"></div>
+</script>
+
+<div ng-controller="Forms2Tests.SelectorExample">
+  <div class="row-fluid">
+    <div class="col-md-4">
+      <h5>Config</h5>
+      <p>In this case we're passing a 'selectors' property for the FormElement, hawtio-forms2 will do a jquery 'find' on the control element for each selector instance and pass the result of 'find' into the selector function provided here.  This will happen before interpolation and compilation of the entire form template, so it's possible to add Angular directives on the fly etc.  Use 'el' to get the entire form-group for that element.  In this example, changing the 'select' value to anything other than 'Two' will hide the 'Name' element.
+      <div hawtio-editor="configStr" mode="javascript"></div>
+      <p></p>
+      <h5>Markup</h5>
+      <div hawtio-editor="markup" mode="html"></div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>In Action</h5>
+        <div class="directive-example">
+          <div compile="markup"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>Model</h5>
+        <div hawtio-editor="modelStr" mode="javascript"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,14 +5,21 @@ module HawtioForms {
       return {
         restrict: 'A',
         link: (scope, element, attrs) => {
-          scope.$watch(_.debounce(() => {
-            if (element.prop('disabled')) {
-              return;
-            }
-            if (element.children().length > 5) {
+          // TODO - disable the bootstrap combobox until we can have it properly display a drop-down
+          /*
+          var isComboboxAlready = false;
+          scope.$children = element.children();
+          scope.$watchCollection('$children', (children) => {
+            if (!isComboboxAlready && children.length > 5) {
+              isComboboxAlready = true;
               (<any>element).combobox();
             }
-          }, 100, { trailing: true }));
+            setTimeout(() => {
+              console.log("Refreshing");
+              (<any>element).combobox('refresh');
+            }, 10);
+          });
+          */
         }
       }
     }]);

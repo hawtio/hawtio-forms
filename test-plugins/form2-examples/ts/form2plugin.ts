@@ -5,7 +5,7 @@ module Forms2Tests {
   var pluginName = 'hawtio-forms2-tests';
   var log:Logging.Logger = Logger.get(pluginName);
   var tp = 'test-plugins/form2-examples/html';
-  var _module = angular.module(pluginName, []);
+  export var _module = angular.module(pluginName, []);
   var welcomeTab = null;
   var tab2 = null;
 
@@ -22,6 +22,7 @@ module Forms2Tests {
               .rank(2)
               .title( function() { return "Forms2"; } )
               .href( function() { return "/forms2"; } )
+              .subPath("Selector Example", "selector_example", builder.join(tp, "selectorExample.html"), 10)
               .subPath("Simple Form", "simple_form", builder.join(tp, "simpleForm2.html"), 9)
               .subPath("Map", "map", builder.join(tp, "map.html"), 9)
               .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
@@ -30,8 +31,8 @@ module Forms2Tests {
               .subPath("Schema Test", "from_schema", builder.join(tp, "fromSchema.html"), 3)
               .build();
 
-    builder.configureRouting($routeProvider, welcomeTab);        
-    builder.configureRouting($routeProvider, tab2);        
+    builder.configureRouting($routeProvider, welcomeTab);
+    builder.configureRouting($routeProvider, tab2);
   }]);
 
   _module.run(["HawtioNav", "SchemaRegistry", function(nav, schemas) {
@@ -247,7 +248,7 @@ module Forms2Tests {
             'Attribute2': {
               type: 'java.lang.Integer',
               label: 'A Number'
-            } 
+            }
           }
         },
         "ObjectSelect": {
@@ -327,12 +328,12 @@ module Forms2Tests {
           "Field1": "test2",
           "Field2": "test2",
           "Field3": "value3"
-        }, 
+        },
         {
           "Field1": "test3",
           "Field2": "test3",
           "Field3": "value1"
-        } 
+        }
       ]
     };
 
@@ -342,10 +343,10 @@ module Forms2Tests {
         log.debug("Fetched README.md, data: ", data);
         $scope.readme = marked(data);
       }).error(function(data) {
-        log.debug("Failed to fetch README.md: ", data); 
+        log.debug("Failed to fetch README.md: ", data);
       });
     }, 500);
-    
+
   }]);
 
   _module.controller("HawtioFormsTests.Forms2SchemaController", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
@@ -369,7 +370,7 @@ module Forms2Tests {
       }
     }, 1000));
   }]);
-  
+
   _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
     var config:any = _.clone(baseConfig, true);
     config.wizard = {
@@ -468,12 +469,12 @@ module Forms2Tests {
           "Field1": "test2",
           "Field2": "test2",
           "Field3": "value3"
-        }, 
+        },
         {
           "Field1": "test3",
           "Field2": "test3",
           "Field3": "value1"
-        } 
+        }
       ]
     };
     $scope.model = model;
@@ -551,7 +552,7 @@ module Forms2Tests {
                 type: 'string'
               }
             }
-          } 
+          }
         },
         mapWithArrayOfObject: {
           type: 'map',
@@ -585,12 +586,12 @@ module Forms2Tests {
           "Field1": "test2",
           "Field2": "test2",
           "Field3": "value3"
-        }, 
+        },
         Three: {
           "Field1": "test3",
           "Field2": "test3",
           "Field3": "value1"
-        } 
+        }
       },
       mapWithArrayObject: {
         one: {
@@ -615,12 +616,12 @@ module Forms2Tests {
           "Field1": "test2",
           "Field2": "test2",
           "Field3": "value3"
-        }, 
+        },
         {
           "Field1": "test3",
           "Field2": "test3",
           "Field3": "value1"
-        } 
+        }
       ],
         two: [
         {
@@ -632,12 +633,12 @@ module Forms2Tests {
           "Field1": "test2",
           "Field2": "test2",
           "Field3": "value3"
-        }, 
+        },
         {
           "Field1": "test3",
           "Field2": "test3",
           "Field3": "value1"
-        } 
+        }
       ]
 
       }
@@ -711,4 +712,3 @@ module Forms2Tests {
 
   hawtioPluginLoader.addModule(pluginName);
 }
-

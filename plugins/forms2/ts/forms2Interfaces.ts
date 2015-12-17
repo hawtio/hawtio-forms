@@ -7,6 +7,10 @@ module HawtioForms {
     [key:string]: string;
   }
 
+  export interface FormSelectors {
+    [key:string]: (el:any) => void;
+  }
+
   /**
    * Element in a FormConfiguration's 'properties' attribute
    */
@@ -22,6 +26,7 @@ module HawtioForms {
     'control-group-attributes'?: AttributeMap;
     'label-attributes'?: AttributeMap;
     formTemplate?: string;
+    selectors?: FormSelectors;
   }
 
   /**

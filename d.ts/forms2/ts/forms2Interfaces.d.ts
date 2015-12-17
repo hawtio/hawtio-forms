@@ -3,6 +3,9 @@ declare module HawtioForms {
     interface AttributeMap {
         [key: string]: string;
     }
+    interface FormSelectors {
+        [key: string]: (el: any) => void;
+    }
     /**
      * Element in a FormConfiguration's 'properties' attribute
      */
@@ -18,6 +21,7 @@ declare module HawtioForms {
         'control-group-attributes'?: AttributeMap;
         'label-attributes'?: AttributeMap;
         formTemplate?: string;
+        selectors?: FormSelectors;
     }
     /**
      * Type for the FormConfiguration's 'properties' attribute
