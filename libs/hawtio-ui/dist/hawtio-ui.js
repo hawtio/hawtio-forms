@@ -28,7 +28,7 @@ var DataTable;
                 link: function ($scope, $element, $attrs) {
                     var defaultPrimaryKeyFn = function (entity, idx) {
                         // default function to use id/_id/name as primary key, and fallback to use index
-                        return entity["id"] || entity["_id"] || entity["name"] || idx;
+                        return entity["id"] || entity["_id"] || entity["_key"] || entity["name"] || idx;
                     };
                     var config = $scope.config;
                     var dataName = config.data || "data";
@@ -1025,7 +1025,7 @@ var UI;
  */
 var UI;
 (function (UI) {
-    UI._module = angular.module(UI.pluginName, []);
+    UI._module = angular.module(UI.pluginName, ['patternfly']);
     UI._module.factory('UI', function () {
         return UI;
     });
