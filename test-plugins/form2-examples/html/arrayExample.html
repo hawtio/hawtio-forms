@@ -1,0 +1,30 @@
+<script type="text/ng-template" id="markup.html">
+  <div hawtio-form-2="config" entity="model"></div>
+</script>
+
+<div ng-controller="Forms2Tests.ArrayExample">
+  <div class="row-fluid">
+    <div class="col-md-4">
+      <h5>Example Javascript</h5>
+      <p>With hawtio-forms2 it's easy to create a form for building up a list or array of values.  Just specify 'array' as the type, then add an 'items' attribute to the form element configuration, which designates what type should be used for array items.  For more complex array types use the SchemaRegistry service to add a schema, hawtio-forms2 will then look that up as it builds the form markup.</p>
+      <div hawtio-editor="configStr" mode="javascript"></div>
+      <p></p>
+      <h5>Markup</h5>
+      <div hawtio-editor="markup" mode="html"></div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>In Action</h5>
+        <div class="directive-example">
+          <div compile="markup"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row-fluid">
+        <h5>Model</h5>
+        <div hawtio-editor="modelStr" mode="javascript"></div>
+      </div>
+    </div>
+  </div>
+</div>
