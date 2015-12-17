@@ -3390,6 +3390,7 @@ var Forms2Tests;
                 .subPath("Selector Example", "selector_example", builder.join(tp, "selectorExample.html"), 9)
                 .subPath("Simple Example", 'simple_example', builder.join(tp, "simpleExample.html"), 10)
                 .subPath("Array Example", 'array_example', builder.join(tp, "arrayExample.html"), 8)
+                .subPath("Typeahead Example", 'typeahead_example', builder.join(tp, "typeaheadExample.html"), 8)
                 .subPath("Kitchen Sink", "simple_form", builder.join(tp, "simpleForm2.html"), 0)
                 .subPath("Map", "map", builder.join(tp, "map.html"), 8)
                 .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
@@ -4264,6 +4265,68 @@ var Forms2Tests;
         }]);
 })(Forms2Tests || (Forms2Tests = {}));
 
+/// <reference path="form2Plugin.ts"/>
+var Forms2Tests;
+(function (Forms2Tests) {
+    var log = Logger.get('forms2-typeahead-example');
+    Forms2Tests._module.controller("Forms2Tests.TypeaheadExample", ["$scope", "$templateCache", 'SchemaRegistry', '$q', '$timeout', function ($scope, $templateCache, SchemaRegistry, $q, $timeout) {
+            var configStr = "\n    var config = {\n      properties: {\n        \"InputWithTypeahead\": {\n          type: \"string\",\n          getWords: () => {\n            return $q((resolve, reject) => {\n              setTimeout(() => {\n                resolve(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']);\n              }, 10)\n            })\n          } ,\n          \"input-attributes\": {\n            \"typeahead\": \"word for word in config.properties.InputWithTypeahead.getWords()\"\n          }\n        },\n        \"InputWithInlineTypeahead\": {\n          \"type\": \"text\",\n          \"typeaheadData\": [\n            \"one\",\n            \"two\",\n            \"three\",\n            \"four\",\n            \"five\",\n            \"six\",\n            \"seven\",\n            \"eight\",\n            \"nine\",\n            \"ten\"\n          ],\n          \"input-attributes\": {\n            \"typeahead\": \"number for number in config.properties.InputWithInlineTypeahead.typeaheadData\"\n          }\n        },\n      }\n    };\n    ";
+            var config = {
+                properties: {
+                    "InputWithTypeahead": {
+                        type: "string",
+                        getWords: function () {
+                            return $q(function (resolve, reject) {
+                                setTimeout(function () {
+                                    resolve(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']);
+                                }, 10);
+                            });
+                        },
+                        "input-attributes": {
+                            "typeahead": "word for word in config.properties.InputWithTypeahead.getWords()"
+                        }
+                    },
+                    "InputWithInlineTypeahead": {
+                        "type": "text",
+                        "typeaheadData": [
+                            "one",
+                            "two",
+                            "three",
+                            "four",
+                            "five",
+                            "six",
+                            "seven",
+                            "eight",
+                            "nine",
+                            "ten"
+                        ],
+                        "input-attributes": {
+                            "typeahead": "number for number in config.properties.InputWithInlineTypeahead.typeaheadData"
+                        }
+                    },
+                }
+            };
+            var model = {};
+            $scope.config = config;
+            $scope.model = model;
+            $scope.configStr = configStr;
+            $scope.markup = $templateCache.get("markup.html");
+            $scope.$watch('model', _.debounce(function () {
+                $scope.modelStr = angular.toJson($scope.model, true);
+                Core.$apply($scope);
+            }, 500), true);
+            $scope.$watch('configStr', _.debounce(function () {
+                try {
+                    $scope.config = angular.fromJson($scope.configStr);
+                    log.debug("Updated config...");
+                    Core.$apply($scope);
+                }
+                catch (e) {
+                }
+            }, 1000));
+        }]);
+})(Forms2Tests || (Forms2Tests = {}));
+
 angular.module("hawtio-forms-test-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("test-plugins/form1-examples/html/test.html","<div ng-controller=\'Forms.FormTestController\'>\n\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h3>Basic form</h3>\n      <p>Here\'s a basic form generated from some JSON schema</p>\n      <p>Here\'s some example JSON schema definition</p>\n      <div hawtio-editor=\"basicFormEx1Schema\" mode=\"javascript\"></div>\n      <button class=\'btn\' ng-click=\"updateSchema()\"><i class=\"icon-save\"></i> Update form</button>\n    </div>\n    <div class=\"col-md-4\">\n      <p>You can define an entity object to have default values filled in</p>\n      <div hawtio-editor=\"basicFormEx1EntityString\" mode=\"javascript\"></div>\n      <button class=\'btn\' ng-click=\"updateEntity()\"><i class=\"icon-save\"></i> Update form</button>\n      <p>And here is the code for the form</p>\n      <div hawtio-editor=\"basicFormEx1\" mode=\"html\"></div>\n      <h3>The resulting form</h3>\n      <div class=\"directive-example\">\n        <div compile=\"basicFormEx1\"></div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <h3>Form related controls</h3>\n      <p>There\'s also directives to take care of resetting or submitting a form</p>\n      <p></p>\n      <p>Clearing a form is done using the hawtio-reset directive</p>\n      <div hawtio-editor=\"hawtioResetEx\" mode=\"html\"></div>\n      <p>Click the button below to clear the above form</p>\n      <div class=\"directive-example\">\n        <div compile=\"hawtioResetEx\"></div>\n      </div>\n      <p>And to submit a form use hawtio-submit</p>\n      <div hawtio-editor=\"hawtioSubmitEx\" mode=\"html\"></div>\n      <div class=\"directive-example\">\n        <div compile=\"hawtioSubmitEx\"></div>\n      </div>\n      <p>Fill in the form and click the submit button above to see what the form produces</p>\n      <div hawtio-editor=\"basicFormEx1Result\" mode=\"javascript\"></div>\n      <p></p>\n      <p></p>\n    </div>\n  </div>\n\n  <!--\n\n  <h3>Form Testing</h3>\n\n  <div>\n    <div class=\"control-group\">\n      <a class=\'btn\' ng-href=\"\" hawtio-submit=\'form-with-inline-arguments\'><i class=\"icon-save\"></i> Save</a>\n      <a class=\'btn\' ng-href=\"\" hawtio-reset=\'form-with-inline-arguments\'><i class=\"icon-refresh\"></i> Clear</a>\n    </div>\n    Form with inline arguments\n    <div simple-form name=\'form-with-inline-arguments\' action=\'#/forms/test\' method=\'post\' data=\'setVMOption\' entity=\'cheese\' onSubmit=\"derp()\"></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Read Only Form with config object\n    <div class=\"row-fluid\">\n      <button class=\"btn\" ng-click=\"toggleEdit()\">Edit</button>\n    </div>\n    <div simple-form data=\'setVMOption\' entity=\'cheese\' mode=\'view\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    Form with config object\n    <div simple-form=\'config\'></div>\n  </div>\n\n  <hr>\n\n  <div>\n    form with inline json config\n    <div simple-form name=\'form-with-inline-json-config\' action=\'#/forms/test\' method=\'post\' showTypes=\'false\' json=\'\n    {\n      \"properties\": {\n        \"key\": { \"description\": \"Argument key\", \"type\": \"java.lang.String\" },\n        \"value\": { \"description\": \"Argument value\", \"type\": \"java.lang.String\" },\n        \"longArg\": { \"description\": \"Long argument\", \"type\": \"Long\" },\n        \"intArg\": { \"description\": \"Int argument\", \"type\": \"Integer\" }},\n       \"description\": \"Show some stuff in a form from JSON\",\n       \"type\": \"java.lang.String\"\n    }\'></div>\n  </div>\n\n  -->\n</div>\n");
 $templateCache.put("test-plugins/form1-examples/html/testTable.html","<div ng-controller=\'Forms.FormTestController\'>\n\n  <h3>Input Table Testing</h3>\n\n  <div>\n    input table with config object\n    <div hawtio-input-table=\"inputTableConfig\" entity=\"inputTableData\" data=\"inputTableConfig\" property=\"rows\"></div>\n  </div>\n\n</div>\n");
 $templateCache.put("test-plugins/form1-examples/html/wizard.html","\n<script type=\"text/ng-template\" id=\"wizardMarkup.html\">\n  <div hawtio-form data=\"wizardConfig\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.WizardController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-6\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"wizardConfigStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"wizardMarkup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-6\">\n      <h5>In Action</h5>\n      <div class=\"directive-example\">\n        <div compile=\"wizardMarkup\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
@@ -4275,5 +4338,6 @@ $templateCache.put("test-plugins/form2-examples/html/selectorExample.html","<scr
 $templateCache.put("test-plugins/form2-examples/html/simpleExample.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"Forms2Tests.SimpleExample\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>Example Javascript</h5>\n      <p>This is a fairly basic example form configuration showing a few features that make it easy to create a custom form with a simple javascript object.  It\'s possible to add extra attributes to an input, or a label or the entire control group via \'input-attributes\', \'label-attributes\' or \'control-attributes\'.  For even more control take a look at the \'Selector Example\' page.</p>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/simpleForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2Controller\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/tabbedForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2TabsController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
+$templateCache.put("test-plugins/form2-examples/html/typeaheadExample.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"Forms2Tests.TypeaheadExample\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>Example Javascript</h5>\n      <p>For some fields it\'s nice to try and auto-fill values as users fill in the details.  It\'s possible to add typeahead support to input fields via \'input-attributes\'.  Seems to work best to attach the typeahead data to the config object.</p>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/welcome.html","<div class=\"row\" ng-controller=\"WelcomePageController\">\n  <div class=\"col-md-2\">\n  </div>\n  <div class=\"col-md-8\">\n    <div ng-bind-html=\"readme\"></div>\n  </div>\n  <div class=\"col-md-2\">\n  </div>\n\n</div>\n");
 $templateCache.put("test-plugins/form2-examples/html/wizardForm2.html","<script type=\"text/ng-template\" id=\"markup.html\">\n  <div hawtio-form-2=\"config\" entity=\"model\"></div>\n</script>\n\n<div ng-controller=\"HawtioFormsTests.Forms2WizardController\">\n  <div class=\"row-fluid\">\n    <div class=\"col-md-4\">\n      <h5>JSON Config</h5>\n      <div hawtio-editor=\"configStr\" mode=\"javascript\"></div>\n      <p></p>\n      <h5>Markup</h5>\n      <div hawtio-editor=\"markup\" mode=\"html\"></div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>In Action</h5>\n        <div class=\"directive-example\">\n          <div compile=\"markup\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-4\">\n      <div class=\"row-fluid\">\n        <h5>Model</h5>\n        <div hawtio-editor=\"modelStr\" mode=\"javascript\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-test-templates");

@@ -25,6 +25,7 @@ module Forms2Tests {
               .subPath("Selector Example", "selector_example", builder.join(tp, "selectorExample.html"), 9)
               .subPath("Simple Example", 'simple_example', builder.join(tp, "simpleExample.html"), 10)
               .subPath("Array Example", 'array_example', builder.join(tp, "arrayExample.html"), 8)
+              .subPath("Typeahead Example", 'typeahead_example', builder.join(tp, "typeaheadExample.html"), 8)
               .subPath("Kitchen Sink", "simple_form", builder.join(tp, "simpleForm2.html"), 0)
               .subPath("Map", "map", builder.join(tp, "map.html"), 8)
               .subPath("Tabbed Form", "tabbed_form", builder.join(tp, "tabbedForm2.html"), 8)
