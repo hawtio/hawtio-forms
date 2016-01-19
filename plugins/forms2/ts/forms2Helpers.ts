@@ -288,9 +288,12 @@ module HawtioForms {
   }
 
   export function interpolateTemplate(context, config:FormConfiguration, name, control:FormElement, template:string, model:string):string {
-    // log.debug("template: ", template);
+    if (control.formTemplate) {
+      //log.debug("template: ", template);
+      //log.debug("name: ", name, " control: ", control);
+      return control.formTemplate;
+    }
     var interpolateFunc = context.$interpolate(template);
-    // log.debug("name: ", name, " control: ", control);
     var answer = interpolateFunc({
       maybeHumanize: context.maybeHumanize,
       control: control,
