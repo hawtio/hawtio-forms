@@ -3637,7 +3637,8 @@ var Forms2Tests;
                 "description": "This is some static text, use this type to add a description in your form that's properly formatted"
             },
             "templatedThing": {
-                "formTemplate": "<p class=\"alert alert-info\">Hi, I'm a custom template and I like warm hugs!</p>"
+                "formTemplate": "<p class=\"alert alert-info\">Hi, I'm a custom template and I like warm {{entity.templatedThing}}</p>",
+                "default": "hugs!"
             },
             "passwordField": {
                 "type": "password",
