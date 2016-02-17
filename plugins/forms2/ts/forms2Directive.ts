@@ -8,7 +8,8 @@ module HawtioForms {
       templateUrl: UrlHelpers.join(templatePath, 'forms2Directive.html'),
       scope: {
         config: '=' + directiveName,
-        entity: '=?'
+        entity: '=?',
+        name: '@?'
       },
       link: (scope, element, attrs) => {
         scope.$watch('config', () => {
@@ -45,6 +46,7 @@ module HawtioForms {
           // create our child scope here
           var s = context.scope = scope.$new();
           s.config = config;
+          s.name = scope.name || 'hawtio-form';
           // s.entity = entity;
           s.maybeHumanize = context.maybeHumanize;
 
@@ -260,6 +262,10 @@ module HawtioForms {
             });
           }); 
           element.append($compile(form)(s));
+          s.$emit('hawtio-form2-form', {
+            name: s.name,
+            form: s.$eval(s.name)
+          });
         }, true);
       }
     }
