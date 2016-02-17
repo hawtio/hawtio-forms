@@ -193,3 +193,15 @@ To use a custom control use the **formTemplate** entry on a property to define t
 
 For example if you search for **formTemplate** in the [code generated Camel json schema file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/lib/camelModel.js#L120) you will see how the **description** property uses a _textarea_
 
+#### Install the bower package
+
+`bower install --save hawtio-forms`
+
+#### Output build to a different directory
+
+When developing this plugin in a dependent console you can change the output directory where the compiled .js and .css go.  Just use the 'out' flag to set a different output directory, for example:
+
+`gulp watch --out=../fabric8-console/libs/hawtio-forms/dist/`
+
+Whenever the build completes the compiled .js file will be put into the target directory.  Don't forget to first do a `gulp build` without this flag before committing changes!
+
