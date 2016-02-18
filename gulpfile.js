@@ -92,7 +92,7 @@ gulp.task('example-clean', ['example-concat'], function() {
 });
 
 
-gulp.task('tsc', ['clean-defs'], function() {
+gulp.task('tsc', ['path-adjust', 'clean-defs'], function() {
   var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
     .pipe(plugins.typescript(config.tsProject))
