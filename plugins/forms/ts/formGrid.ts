@@ -47,7 +47,7 @@ module Forms {
         function newHeaderRow() {
           var header = element.find('thead');
           header.empty();
-          return header.append($templateCache.get('rowTemplate.html')).find('tr');
+          return header.append($templateCache.get<string>('rowTemplate.html')).find('tr');
         }
 
         function buildTableHeader(columns:Array<FormGridElement>) {
@@ -59,11 +59,11 @@ module Forms {
             if (!scope.configuration.rowSchema.disableHumanizeLabel) {
               headingName = headingName.titleize();
             }
-            var headerTemplate = property.headerTemplate || $templateCache.get('headerCellTemplate.html');
+            var headerTemplate = property.headerTemplate || $templateCache.get<string>('headerCellTemplate.html');
             var interpolateFunc = $interpolate(headerTemplate);
             headerRow.append(interpolateFunc({label: headingName}));
           });
-          headerRow.append($templateCache.get("emptyHeaderCellTemplate.html"));
+          headerRow.append($templateCache.get<string>("emptyHeaderCellTemplate.html"));
         }
 
         function clearBody() {
@@ -73,7 +73,7 @@ module Forms {
         }
 
         function newBodyRow() {
-          return angular.element($templateCache.get('rowTemplate.html'));
+          return angular.element($templateCache.get<string>('rowTemplate.html'));
         }
 
         function buildTableBody(columns:Array<FormGridElement>, parent:ng.IAugmentedJQuery) {
@@ -83,7 +83,7 @@ module Forms {
             columns.forEach((property:FormGridElement) => {
               var type = Forms.mapType(property.type);
               if (type === "number" && "input-attributes" in property) {
-                var template = property.template || $templateCache.get('cellNumberTemplate.html');
+                var template = property.template || $templateCache.get<string>('cellNumberTemplate.html');
                 var interpolateFunc = $interpolate(template);
 
                 var conf = {
@@ -95,7 +95,7 @@ module Forms {
                 };
                 tr.append(interpolateFunc(conf));
               } else {
-                var template = property.template || $templateCache.get('cellTemplate.html');
+                var template = property.template || $templateCache.get<string>('cellTemplate.html');
                 var interpolateFunc = $interpolate(template);
                 tr.append(interpolateFunc({
                   row: 'configuration.rows[' + index + ']',
@@ -104,7 +104,7 @@ module Forms {
                 }));
               }
             });
-            var func = $interpolate($templateCache.get("deleteRowTemplate.html"));
+            var func = $interpolate($templateCache.get<string>("deleteRowTemplate.html"));
             tr.append(func({
               index: index
             }));
@@ -128,7 +128,7 @@ module Forms {
         };
 
         scope.$watch('configuration.noDataTemplate', (newValue, oldValue) => {
-          var noDataTemplate = scope.configuration.noDataTemplate || $templateCache.get('heroUnitTemplate.html');
+          var noDataTemplate = scope.configuration.noDataTemplate || $templateCache.get<string>('heroUnitTemplate.html');
           element.find('.nodata').html(<any>$compile(noDataTemplate)(scope));
         });
 
