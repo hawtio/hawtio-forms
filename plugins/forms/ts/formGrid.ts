@@ -57,7 +57,7 @@ module Forms {
             //log.debug("Adding heading for : ", property);
             var headingName = property.label || property.key;
             if (!scope.configuration.rowSchema.disableHumanizeLabel) {
-              headingName = headingName.titleize();
+              headingName = _.startCase(headingName);
             }
             var headerTemplate = property.headerTemplate || $templateCache.get<string>('headerCellTemplate.html');
             var interpolateFunc = $interpolate(headerTemplate);
@@ -113,7 +113,7 @@ module Forms {
         }
 
         scope.removeThing = (index:number) => {
-          scope.configuration.rows.removeAt(index);
+          scope.configuration.rows.slice(index, index + 1);
         };
 
         scope.addThing = () => {
@@ -122,9 +122,10 @@ module Forms {
 
         scope.getHeading = ():String => {
           if (Core.isBlank(<string>scope.configuration.rowName)) {
-            return 'items'.titleize();
+            return 'Items';
           }
-          return scope.configuration.rowName.pluralize().titleize();
+          // TODO
+          return _.startCase(scope.configuration.rowName + 's');
         };
 
         scope.$watch('configuration.noDataTemplate', (newValue, oldValue) => {
