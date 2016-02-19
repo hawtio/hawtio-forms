@@ -2121,7 +2121,7 @@ var Forms;
                             //log.debug("Adding heading for : ", property);
                             var headingName = property.label || property.key;
                             if (!scope.configuration.rowSchema.disableHumanizeLabel) {
-                                headingName = headingName.titleize();
+                                headingName = _.startCase(headingName);
                             }
                             var headerTemplate = property.headerTemplate || $templateCache.get('headerCellTemplate.html');
                             var interpolateFunc = $interpolate(headerTemplate);
@@ -2173,16 +2173,17 @@ var Forms;
                         });
                     }
                     scope.removeThing = function (index) {
-                        scope.configuration.rows.removeAt(index);
+                        scope.configuration.rows.slice(index, index + 1);
                     };
                     scope.addThing = function () {
                         scope.configuration.rows.push(scope.configuration.onAdd());
                     };
                     scope.getHeading = function () {
                         if (Core.isBlank(scope.configuration.rowName)) {
-                            return 'items'.titleize();
+                            return 'Items';
                         }
-                        return scope.configuration.rowName.pluralize().titleize();
+                        // TODO
+                        return _.startCase(scope.configuration.rowName + 's');
                     };
                     scope.$watch('configuration.noDataTemplate', function (newValue, oldValue) {
                         var noDataTemplate = scope.configuration.noDataTemplate || $templateCache.get('heroUnitTemplate.html');
