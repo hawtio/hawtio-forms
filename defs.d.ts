@@ -1,4 +1,13 @@
 /// <reference path="d.ts/includes.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Interfaces.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Helpers.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Plugin.d.ts"/>
+/// <reference path="d.ts/forms2/ts/combobox.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Array.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Directive.d.ts"/>
+/// <reference path="d.ts/forms2/ts/forms2Map.d.ts"/>
+/// <reference path="d.ts/forms2/ts/schemaRegistry.d.ts"/>
+/// <reference path="d.ts/forms2/ts/typeRegistry.d.ts"/>
 /// <reference path="d.ts/forms/ts/formHelpers.d.ts"/>
 /// <reference path="d.ts/forms/ts/mappingRegistry.d.ts"/>
 /// <reference path="d.ts/forms/ts/baseDirectives.d.ts"/>
@@ -11,12 +20,3 @@
 /// <reference path="d.ts/forms/ts/formInterfaces.d.ts"/>
 /// <reference path="d.ts/forms/ts/formGrid.d.ts"/>
 /// <reference path="d.ts/forms/ts/formMapDirective.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Interfaces.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Helpers.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Plugin.d.ts"/>
-/// <reference path="d.ts/forms2/ts/combobox.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Array.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Directive.d.ts"/>
-/// <reference path="d.ts/forms2/ts/forms2Map.d.ts"/>
-/// <reference path="d.ts/forms2/ts/schemaRegistry.d.ts"/>
-/// <reference path="d.ts/forms2/ts/typeRegistry.d.ts"/>

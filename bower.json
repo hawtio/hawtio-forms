@@ -33,6 +33,5 @@
     "hawtio-template-cache": "~2.0.2"
   },
   "resolutions": {
-    "lodash": "~3.2.0"
   }
 }
