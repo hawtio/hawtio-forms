@@ -76,6 +76,13 @@ module Forms {
   }]);
   */
 
+  _module.run(['$rootScope', ($rootScope) => {
+    if (!$rootScope._) {
+      // Add lodash for views if it's not already added
+      $rootScope._ = _;
+    }
+  }]);
+
 
   hawtioPluginLoader.addModule(pluginName);
 }

@@ -56,7 +56,7 @@
       </table>
     </div>
     <div ng-click="addThing()" class="centered mouse-pointer">
-      <i class="icon-plus green"></i><span ng-show="configuration.rowName"> Add {{configuration.rowName.titleize()}}</span>
+      <i class="icon-plus green"></i><span ng-show="configuration.rowName"> Add {{_.startCase(configuration.rowName)}}</span>
     </div>
   </div>
 </div>
