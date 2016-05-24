@@ -80,6 +80,16 @@ module HawtioForms {
               'back': 'Back',
               'finish': 'Finish'
             }
+            s.isValid = () => {
+              log.debug("scope: ", scope);
+              return true;
+            };
+            s.isDisabled = (form) => {
+              return form.$invalid;
+            };
+            s.isBackDisabled = (form) => {
+              return false;
+            };
             _.forIn(wizard, (attr, key) => {
               s[key] = attr;
             });
@@ -102,39 +112,38 @@ module HawtioForms {
               addPreCompileAction(context, _.camelCase(id), () => {
                 var buttons = angular.element($templateCache.get('wizardButtons.html'));
                 var disabled = <any> {
-                  'ng-disabled': _.camelCase(id) + '.$invalid'
+                  'ng-disabled': 'isDisabled(' +_.camelCase(id) + ')'
                 }
                 buttons.find('.next').attr(disabled);
                 buttons.find('.finish').attr(disabled);
+                buttons.find('.back').attr({ 'ng-disabled': 'isBackDisabled(' + _.camelCase(id) + ')' });
                 pageConfig.parent.append(buttons);
-
               });
               pages[id] = pageConfig;
               s.pageIds.push(id);
             });
-            s.currentPageIndex = 0
-              s.gotoPage = (index, current) => {
-                if (index < 0 || index > s.pageIds.length) {
+            s.currentPageIndex = 0;
+            s.gotoPage = (index, current) => {
+              if (index < 0 || index > s.pageIds.length) {
+                if (index < 0 && s.onCancel) {
+                  s.onCancel();
+                }
+                return;
+              }
+              if (s.onChange) {
+                var idx = s.onChange(current, index, s.pageIds);
+                if (idx) {
+                  s.currentPageIndex = idx;
                   return;
                 }
-                if (s.onChange) {
-                  var idx = s.onChange(current, index, s.pageIds);
-                  if (idx) {
-                    s.currentPageIndex = idx;
-                    return;
-                  }
-                }
-                s.currentPageIndex = index;
               }
-            s.isValid = () => {
-              log.debug("scope: ", scope);
-              return true;
-            };
+              s.currentPageIndex = index;
+            }
             s.getCurrentPageId = () => {
               return s.pageIds[s.currentPageIndex];
             };
             s.atFront = () => {
-              return s.currentPageIndex === 0;
+              return s.currentPageIndex === 0 && !s.onCancel;
             }
             s.atBack = () => {
               return s.currentPageIndex === s.pageIds.length - 1;
