@@ -750,7 +750,7 @@ var Forms;
             return this.getMode() === "view";
         };
         return InputBaseConfig;
-    })();
+    }());
     Forms.InputBaseConfig = InputBaseConfig;
     var InputBase = (function () {
         function InputBase($compile) {
@@ -813,7 +813,7 @@ var Forms;
             return rc;
         };
         return InputBase;
-    })();
+    }());
     Forms.InputBase = InputBase;
     var TextInput = (function (_super) {
         __extends(TextInput, _super);
@@ -844,7 +844,7 @@ var Forms;
             return rc;
         };
         return TextInput;
-    })(InputBase);
+    }(InputBase));
     Forms.TextInput = TextInput;
     var HiddenText = (function (_super) {
         __extends(HiddenText, _super);
@@ -864,7 +864,7 @@ var Forms;
             return rc;
         };
         return HiddenText;
-    })(TextInput);
+    }(TextInput));
     Forms.HiddenText = HiddenText;
     var PasswordInput = (function (_super) {
         __extends(PasswordInput, _super);
@@ -874,7 +874,7 @@ var Forms;
             this.type = "password";
         }
         return PasswordInput;
-    })(TextInput);
+    }(TextInput));
     Forms.PasswordInput = PasswordInput;
     var CustomInput = (function (_super) {
         __extends(CustomInput, _super);
@@ -898,7 +898,7 @@ var Forms;
             return rc;
         };
         return CustomInput;
-    })(InputBase);
+    }(InputBase));
     Forms.CustomInput = CustomInput;
     var SelectInput = (function (_super) {
         __extends(SelectInput, _super);
@@ -947,7 +947,7 @@ var Forms;
             return rc;
         };
         return SelectInput;
-    })(InputBase);
+    }(InputBase));
     Forms.SelectInput = SelectInput;
     var NumberInput = (function (_super) {
         __extends(NumberInput, _super);
@@ -992,7 +992,7 @@ var Forms;
             return rc;
         };
         return NumberInput;
-    })(InputBase);
+    }(InputBase));
     Forms.NumberInput = NumberInput;
     /**
      * Generates a list of strings which can be added / edited / removed
@@ -1075,7 +1075,7 @@ var Forms;
             }
         };
         return StringArrayInput;
-    })(InputBase);
+    }(InputBase));
     Forms.StringArrayInput = StringArrayInput;
     var ArrayInput = (function (_super) {
         __extends(ArrayInput, _super);
@@ -1142,7 +1142,7 @@ var Forms;
             $(element).append(this.$compile(table)(scope));
         };
         return ArrayInput;
-    })(InputBase);
+    }(InputBase));
     Forms.ArrayInput = ArrayInput;
     var BooleanInput = (function (_super) {
         __extends(BooleanInput, _super);
@@ -1178,7 +1178,7 @@ var Forms;
             return rc;
         };
         return BooleanInput;
-    })(InputBase);
+    }(InputBase));
     Forms.BooleanInput = BooleanInput;
 })(Forms || (Forms = {}));
 
@@ -1233,7 +1233,7 @@ var Forms;
             return this.getMode() === "view";
         };
         return SimpleFormConfig;
-    })();
+    }());
     Forms.SimpleFormConfig = SimpleFormConfig;
     var SimpleForm = (function () {
         function SimpleForm($compile) {
@@ -1550,7 +1550,7 @@ var Forms;
             return '';
         };
         return SimpleForm;
-    })();
+    }());
     Forms.SimpleForm = SimpleForm;
 })(Forms || (Forms = {}));
 
@@ -1593,7 +1593,7 @@ var Forms;
             return this.tableConfig || "tableConfig";
         };
         return InputTableConfig;
-    })();
+    }());
     Forms.InputTableConfig = InputTableConfig;
     var InputTable = (function () {
         function InputTable($compile) {
@@ -1913,7 +1913,7 @@ var Forms;
             return rc;
         };
         return InputTable;
-    })();
+    }());
     Forms.InputTable = InputTable;
 })(Forms || (Forms = {}));
 
@@ -1938,7 +1938,7 @@ var Forms;
             });
         };
         return SubmitForm;
-    })();
+    }());
     Forms.SubmitForm = SubmitForm;
 })(Forms || (Forms = {}));
 
@@ -1966,7 +1966,7 @@ var Forms;
             });
         };
         return ResetForm;
-    })();
+    }());
     Forms.ResetForm = ResetForm;
 })(Forms || (Forms = {}));
 
@@ -2401,7 +2401,7 @@ var HawtioForms;
             configurable: true
         });
         return Constants;
-    })();
+    }());
     HawtioForms.Constants = Constants;
     function addPostInterpolateAction(context, name, func) {
         if (!(name in context.postInterpolateActions)) {
@@ -3109,6 +3109,16 @@ var HawtioForms;
                                 'back': 'Back',
                                 'finish': 'Finish'
                             };
+                            s.isValid = function () {
+                                HawtioForms.log.debug("scope: ", scope);
+                                return true;
+                            };
+                            s.isDisabled = function (form) {
+                                return form.$invalid;
+                            };
+                            s.isBackDisabled = function (form) {
+                                return false;
+                            };
                             _.forIn(wizard, function (attr, key) {
                                 s[key] = attr;
                             });
@@ -3131,10 +3141,11 @@ var HawtioForms;
                                 HawtioForms.addPreCompileAction(context, _.camelCase(id), function () {
                                     var buttons = angular.element($templateCache.get('wizardButtons.html'));
                                     var disabled = {
-                                        'ng-disabled': _.camelCase(id) + '.$invalid'
+                                        'ng-disabled': 'isDisabled(' + _.camelCase(id) + ')'
                                     };
                                     buttons.find('.next').attr(disabled);
                                     buttons.find('.finish').attr(disabled);
+                                    buttons.find('.back').attr({ 'ng-disabled': 'isBackDisabled(' + _.camelCase(id) + ')' });
                                     pageConfig.parent.append(buttons);
                                 });
                                 pages[id] = pageConfig;
@@ -3143,6 +3154,9 @@ var HawtioForms;
                             s.currentPageIndex = 0;
                             s.gotoPage = function (index, current) {
                                 if (index < 0 || index > s.pageIds.length) {
+                                    if (index < 0 && s.onCancel) {
+                                        s.onCancel();
+                                    }
                                     return;
                                 }
                                 if (s.onChange) {
@@ -3154,15 +3168,11 @@ var HawtioForms;
                                 }
                                 s.currentPageIndex = index;
                             };
-                            s.isValid = function () {
-                                HawtioForms.log.debug("scope: ", scope);
-                                return true;
-                            };
                             s.getCurrentPageId = function () {
                                 return s.pageIds[s.currentPageIndex];
                             };
                             s.atFront = function () {
-                                return s.currentPageIndex === 0;
+                                return s.currentPageIndex === 0 && !s.onCancel;
                             };
                             s.atBack = function () {
                                 return s.currentPageIndex === s.pageIds.length - 1;
@@ -3665,7 +3675,7 @@ $templateCache.put("plugins/forms2/html/form-standard.html","<form class=\"hawti
 $templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"hawtio-form-2 hawtio-form-2-unwrapped\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend || config.label == \'false\'\">{{config.label || config.description}}</h4>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/form2Map.html","<div>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
-$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardParent.html\">\n    <div>\n      <div class=\"wizardParent\" ng-switch=\"getCurrentPageId()\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardButtons.html\">\n    <div class=\"wizardButtons align-right\">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class=\"btn\" ng-click=\"back()\" ng-hide=\"atFront()\">{{buttons.back}}</button>\n      <button class=\"btn btn-primary next\" ng-click=\"next()\" ng-hide=\"atBack()\">{{buttons.next}}</button>\n      <button class=\"btn btn-primary finish\" ng-click=\"onFinish()\" ng-show=\"atBack()\">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
+$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardParent.html\">\n    <div>\n      <div class=\"wizardParent\" ng-switch=\"getCurrentPageId()\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardButtons.html\">\n    <div class=\"wizardButtons align-right\">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class=\"btn btn-default back\" ng-click=\"back()\" ng-hide=\"atFront()\">{{buttons.back}}</button>\n      <button class=\"btn btn-primary next\" ng-click=\"next()\" ng-hide=\"atBack()\">{{buttons.next}}</button>\n      <button class=\"btn btn-primary finish\" ng-click=\"onFinish()\" ng-show=\"atBack()\">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
 $templateCache.put("plugins/forms2/html/forms2Map.html","<div>\n  <script type=\"text/ng-template\" id=\"mapItemModal.html\">\n    <div class=\"modal-header\">\n      <h3 class=\"modal-title\">{{header}}</h3>\n    </div>\n    <div class=\"modal-body\">\n      <div class=\"row\">\n        <div ng-show=\"description\" ng-bind-html=\"description\"></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"keySchema\" entity=\"newKeyEntity\"></div>\n        </div>\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"valueSchema\" entity=\"newValueEntity\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"modal-footer\">\n      <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n      <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n    </div>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n        <tr>\n          <th>\n            Key\n          </th>\n          <th>\n            Value\n          </th>\n          <th class=\"align-right\">\n            <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createRow()\">\n              <i class=\"fa fa-plus green\" ></i>\n            </button>\n          </th>\n        </tr>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n  <script type=\"text/ng-template\" id=\"mapRowTemplate.html\">\n    <tr>\n      <td>\n        <div class=\"inline form-map-key\" hawtio-form-2=\"keySchema\" entity=\"keys[\'{{key}}\']\"></div>\n      </td>\n      <td>\n        <div class=\"inline form-map-value\" hawtio-form-2=\"valueSchema\" entity=\"values[\'{{key}}\']\"></div>\n      </td>\n      <td class=\"align-right\">\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-edit button button-warning\" ng-click=\"editRow(\'{{key}}\')\">\n          <i class=\"fa fa-pencil yellow\"></i>\n        </button>\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-remove button button-danger\" ng-click=\"deleteRow(\'{{key}}\')\">\n          <i class=\"fa fa-remove red\"></i>\n        </button>\n      </td>\n    </tr>\n  </script>\n\n</div>\n");
 $templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\" name=\"{{name}}\">\n</div>\n");
 $templateCache.put("plugins/forms2/html/map.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-map\"></div>\n    </div>\n  </div>\n</div>\n");

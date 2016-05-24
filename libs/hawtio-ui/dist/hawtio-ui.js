@@ -57,7 +57,7 @@ var DataTable;
                             }
                             config['sortInfo'] = {
                                 sortBy: sortField,
-                                ascending: true
+                                ascending: isFieldSortedAscendingByDefault(sortField, config)
                             };
                         }
                         // any custom sort function on the field?
@@ -70,10 +70,15 @@ var DataTable;
                         if (angular.isDefined(customSort)) {
                             customSort = customSort['customSortField'];
                         }
+                        // sort data
                         var sortInfo = $scope.config.sortInfo || { sortBy: '', ascending: true };
+                        var sortedData = _.sortBy(value || [], customSort || (function (item) { return ((item[sortInfo.sortBy] || '') + '').toLowerCase(); }));
+                        if (!sortInfo.ascending) {
+                            sortedData.reverse();
+                        }
                         // enrich the rows with information about their index
                         var idx = -1;
-                        var rows = _.map(_.sortBy(value || [], customSort || sortInfo.sortBy, !sortInfo.ascending), function (entity) {
+                        var rows = _.map(sortedData, function (entity) {
                             idx++;
                             return {
                                 entity: entity,
@@ -180,7 +185,7 @@ var DataTable;
                         }
                         else {
                             $scope.config.sortInfo.sortBy = field;
-                            $scope.config.sortInfo.ascending = true;
+                            $scope.config.sortInfo.ascending = isFieldSortedAscendingByDefault(field, $scope.config);
                         }
                         scope.$broadcast("hawtio.datatable." + dataName);
                     };
@@ -299,6 +304,24 @@ var DataTable;
         });
         return answer;
     }
+    /**
+     * Returns true if the field's default sorting is ascending
+     *
+     * @param field the name of the field
+     * @param config the config object, which contains the columnDefs values
+     * @return true if the field's default sorting is ascending, false otherwise
+     */
+    function isFieldSortedAscendingByDefault(field, config) {
+        if (config.columnDefs) {
+            for (var _i = 0, _a = config.columnDefs; _i < _a.length; _i++) {
+                var columnDef = _a[_i];
+                if (columnDef.field === field && columnDef.ascending !== undefined) {
+                    return columnDef.ascending;
+                }
+            }
+        }
+        return true;
+    }
 })(DataTable || (DataTable = {}));
 
 /// <reference path="../../includes.ts"/>
@@ -337,8 +360,8 @@ var CodeEditor;
         var answer = "text";
         if (value) {
             answer = "javascript";
-            var trimmed = value.toString().trimLeft().trimRight();
-            if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+            var trimmed = _.trim(value);
+            if (trimmed && _.startsWith(trimmed, '<') && _.endsWith(trimmed, '>')) {
                 answer = "xml";
             }
         }
@@ -474,6 +497,7 @@ var HawtioEditor;
             scope: {
                 text: '=hawtioEditor',
                 mode: '=',
+                readOnly: '=?',
                 outputEditor: '@',
                 name: '@'
             },
@@ -484,10 +508,13 @@ var HawtioEditor;
                     UI.observe($scope, $attrs, 'name', 'editor');
                     $scope.applyOptions = function () {
                         if ($scope.codeMirror) {
-                            $scope.options.each(function (option) {
-                                $scope.codeMirror.setOption(option.key, option['value']);
+                            _.forEach($scope.options, function (option) {
+                                try {
+                                    $scope.codeMirror.setOption(option.key, option.value);
+                                }
+                                catch (err) {
+                                }
                             });
-                            $scope.options = [];
                         }
                     };
                     $scope.$watch(_.debounce(function () {
@@ -505,19 +532,6 @@ var HawtioEditor;
                             });
                         }
                     });
-                    $scope.$watch('text', function (oldValue, newValue) {
-                        if ($scope.codeMirror && $scope.doc) {
-                            if (!$scope.codeMirror.hasFocus()) {
-                                var text = $scope.text || "";
-                                if (angular.isArray(text) || angular.isObject(text)) {
-                                    text = JSON.stringify(text, null, "  ");
-                                    $scope.mode = "javascript";
-                                    $scope.codeMirror.setOption("mode", "javascript");
-                                }
-                                $scope.doc.setValue(text);
-                            }
-                        }
-                    });
                 }],
             link: function ($scope, $element, $attrs) {
                 if ('dirty' in $attrs) {
@@ -529,6 +543,7 @@ var HawtioEditor;
                     });
                 }
                 var config = _.cloneDeep($attrs);
+                delete config['$$observers'];
                 delete config['$$element'];
                 delete config['$attr'];
                 delete config['class'];
@@ -567,13 +582,27 @@ var HawtioEditor;
                         }
                     }
                 });
-                $scope.$watch('dirty', function (newValue, oldValue) {
-                    if ($scope.dirty && !$scope.doc.isClean()) {
-                        $scope.doc.markClean();
+                $scope.$watch('readOnly', function (readOnly) {
+                    var val = Core.parseBooleanValue(readOnly, false);
+                    if ($scope.codeMirror) {
+                        $scope.codeMirror.setOption('readOnly', val);
                     }
-                    if (newValue !== oldValue && 'dirtyTarget' in $scope) {
-                        $scope.$parent[$scope.dirtyTarget] = $scope.dirty;
+                    else {
+                        $scope.options.push({
+                            key: 'readOnly',
+                            value: val
+                        });
                     }
+                });
+                function getEventName(type) {
+                    var name = $scope.name || 'default';
+                    return "hawtioEditor_" + name + "_" + type;
+                }
+                $scope.$watch('dirty', function (dirty) {
+                    if ('dirtyTarget' in $scope) {
+                        $scope.$parent[$scope.dirtyTarget] = dirty;
+                    }
+                    $scope.$emit(getEventName('dirty'), dirty);
                 });
                 /*
                 $scope.$watch(() => { return $element.is(':visible'); }, (newValue, oldValue) => {
@@ -582,10 +611,13 @@ var HawtioEditor;
                   }
                 });
                 */
-                $scope.$watch('text', function () {
+                $scope.$watch('text', function (text) {
+                    if (!text) {
+                        return;
+                    }
                     if (!$scope.codeMirror) {
                         var options = {
-                            value: $scope.text
+                            value: text
                         };
                         options = CodeEditor.createEditorSettings(options);
                         $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
@@ -595,6 +627,20 @@ var HawtioEditor;
                             Core.pathSet(outputScope, outputEditor, $scope.codeMirror);
                         }
                         $scope.applyOptions();
+                        $scope.$emit(getEventName('instance'), $scope.codeMirror);
+                    }
+                    else if ($scope.doc) {
+                        if (!$scope.codeMirror.hasFocus()) {
+                            var text = $scope.text || "";
+                            if (angular.isArray(text) || angular.isObject(text)) {
+                                text = JSON.stringify(text, null, "  ");
+                                $scope.mode = "javascript";
+                                $scope.codeMirror.setOption("mode", "javascript");
+                            }
+                            $scope.doc.setValue(text);
+                            $scope.doc.markClean();
+                            $scope.dirty = false;
+                        }
                     }
                 });
             }
@@ -848,7 +894,7 @@ var ForceGraph;
             };
         }
         return ForceGraphDirective;
-    })();
+    }());
     ForceGraph.ForceGraphDirective = ForceGraphDirective;
 })(ForceGraph || (ForceGraph = {}));
 
@@ -962,7 +1008,7 @@ var ForceGraph;
             };
         };
         return GraphBuilder;
-    })();
+    }());
     ForceGraph.GraphBuilder = GraphBuilder;
 })(ForceGraph || (ForceGraph = {}));
 
@@ -1114,7 +1160,7 @@ var UI;
             this.restrict = 'A';
             this.link = function ($scope, $element, $attr) {
                 var selector = UI.getIfSet('hawtioAutoColumns', $attr, 'div');
-                var minMargin = UI.getIfSet('minMargin', $attr, '3').toNumber();
+                var minMargin = Core.parseIntValue(UI.getIfSet('minMargin', $attr, '3'));
                 var go = Core.throttled(function () {
                     var containerWidth = $element.innerWidth();
                     var childWidth = 0;
@@ -1159,7 +1205,7 @@ var UI;
             };
         }
         return AutoColumns;
-    })();
+    }());
     UI.AutoColumns = AutoColumns;
 })(UI || (UI = {}));
 
@@ -1387,11 +1433,11 @@ var UI;
                 restrict: 'AC',
                 link: function (scope, element, attr) {
                     $timeout(function () {
-                        var parent = $('#main');
+                        var parent = $('body');
                         //console.log("Parent: ", parent);
-                        parent.addClass('cards-pf container-cards-pf');
+                        parent.addClass('cards-pf');
                         element.on('$destroy', function () {
-                            parent.removeClass('cards-pf container-cards-pf');
+                            parent.removeClass('cards-pf');
                         });
                     }, 10);
                 }
@@ -1479,7 +1525,7 @@ var UI;
                 }];
         }
         return ColorPicker;
-    })();
+    }());
     UI.ColorPicker = ColorPicker;
 })(UI || (UI = {}));
 
@@ -1574,7 +1620,7 @@ var UI;
                 }];
         }
         return ConfirmDialog;
-    })();
+    }());
     UI.ConfirmDialog = ConfirmDialog;
 })(UI || (UI = {}));
 
@@ -1638,7 +1684,7 @@ var UI;
             $("div.modal-backdrop").remove();
         };
         return Dialog;
-    })();
+    }());
     UI.Dialog = Dialog;
     function multiItemConfirmActionDialog(options) {
         var $dialog = HawtioCore.injector.get("$dialog");
@@ -1931,7 +1977,7 @@ var UI;
             };
         }
         return EditableProperty;
-    })();
+    }());
     UI.EditableProperty = EditableProperty;
 })(UI || (UI = {}));
 
@@ -2051,7 +2097,7 @@ var UI;
             });
         };
         return Expandable;
-    })();
+    }());
     UI.Expandable = Expandable;
     function isOpen(expandable) {
         return expandable.hasClass('opened') || !expandable.hasClass("closed");
@@ -2181,23 +2227,6 @@ var UI;
                 var gridSize = [150, 150];
                 var extraRows = 10;
                 var extraCols = 6;
-                /*
-                if (angular.isDefined($attrs['dimensions'])) {
-                  var dimension = $attrs['dimensions'].toNumber();
-                  widgetBaseDimensions = [dimension, dimension];
-                }
-          
-          
-                if (angular.isDefined($attrs['margins'])) {
-                  var margins = $attrs['margins'].toNumber();
-                  widgetMargins = [margins, margins];
-                }
-          
-                if (angular.isDefined($attrs['gridSize'])) {
-                  var size = $attrs['gridSize'].toNumber();
-                  gridSize = [size, size];
-                }
-                */
                 if (angular.isDefined($attrs['extraRows'])) {
                     extraRows = $attrs['extraRows'].toNumber();
                 }
@@ -2218,7 +2247,7 @@ var UI;
             };
         }
         return GridsterDirective;
-    })();
+    }());
     UI.GridsterDirective = GridsterDirective;
 })(UI || (UI = {}));
 
@@ -2227,7 +2256,7 @@ var UI;
 (function (UI) {
     function groupBy() {
         return function (list, group) {
-            if (list.length === 0) {
+            if (!list || list.length === 0) {
                 return list;
             }
             if (Core.isBlank(group)) {
@@ -2262,7 +2291,7 @@ var UI;
                         else {
                             createGroup = false;
                             targetGroup.forEach(function (item) {
-                                if (!createGroup && !currentGroup.any(function (i) { return i === item; })) {
+                                if (!createGroup && !_.some(currentGroup, function (i) { return i === item; })) {
                                     createGroup = true;
                                 }
                             });
@@ -2618,9 +2647,7 @@ var UI;
                 $scope.$watch('rows', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         $scope.config.selectedItems.length = 0;
-                        var selected = $scope.rows.findAll(function (row) {
-                            return row.selected;
-                        });
+                        var selected = _.filter($scope.rows, function (row) { return row.selected; });
                         selected.forEach(function (row) {
                             $scope.config.selectedItems.push(row.entity);
                         });
@@ -2632,7 +2659,7 @@ var UI;
                 var fieldName = 'name';
                 var displayName = 'Name';
                 if (columnDefs && columnDefs.length > 0) {
-                    var def = columnDefs.first();
+                    var def = _.first(columnDefs);
                     fieldName = def['field'] || fieldName;
                     displayName = def['displayName'] || displayName;
                     if (def['cellTemplate']) {
@@ -2812,7 +2839,7 @@ var UI;
                                 }
                             }
                             else if (StringHelpers.isDate(value)) {
-                                el.append(renderDateAttribute(path + '/' + key, key, Date.create(value), config));
+                                el.append(renderDateAttribute(path + '/' + key, key, new Date(value), config));
                             }
                             else {
                                 el.append(renderPrimitiveAttribute(path + '/' + key, key, value, config));
@@ -3121,7 +3148,7 @@ var UI;
             };
         }
         return MessagePanel;
-    })();
+    }());
     UI.MessagePanel = MessagePanel;
     UI._module.directive('hawtioInfoPanel', function () {
         return new UI.InfoPanel();
@@ -3197,7 +3224,7 @@ var UI;
             };
         }
         return InfoPanel;
-    })();
+    }());
     UI.InfoPanel = InfoPanel;
 })(UI || (UI = {}));
 
@@ -3232,7 +3259,7 @@ var UI;
             };
         }
         return DivRow;
-    })();
+    }());
     UI.DivRow = DivRow;
 })(UI || (UI = {}));
 
@@ -3297,7 +3324,7 @@ var UI;
             };
         }
         return SlideOut;
-    })();
+    }());
     UI.SlideOut = SlideOut;
 })(UI || (UI = {}));
 
@@ -3380,7 +3407,7 @@ var UI;
             }
         };
         return TablePager;
-    })();
+    }());
     UI.TablePager = TablePager;
 })(UI || (UI = {}));
 
@@ -3450,7 +3477,7 @@ var UI;
                                     count: $scope.filteredCollection.map(function (c) {
                                         return c[$scope.collectionProperty];
                                     }).reduce(function (count, c) {
-                                        if (c.any(t)) {
+                                        if (_.some(c, t)) {
                                             return count + 1;
                                         }
                                         return count;
@@ -3468,7 +3495,7 @@ var UI;
                         });
                         $scope.visibleTags = [];
                         $scope.filteredCollection.forEach(function (c) {
-                            $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
+                            $scope.visibleTags = _.union($scope.visibleTags, c[$scope.collectionProperty]);
                         });
                     }
                     $scope.$watchCollection('collection', function (collection) {
@@ -3907,7 +3934,7 @@ var UI;
                     var start = neighbor.position().top + neighbor.height();
                     var myHeight = container.height() - start;
                     if (angular.isDefined($attrs['heightAdjust'])) {
-                        var heightAdjust = $attrs['heightAdjust'].toNumber();
+                        var heightAdjust = Core.parseIntValue($attrs['heightAdjust']);
                     }
                     myHeight = myHeight + heightAdjust;
                     $element.css({
@@ -3929,7 +3956,7 @@ var UI;
             };
         }
         return ViewportHeight;
-    })();
+    }());
     UI.ViewportHeight = ViewportHeight;
     UI._module.directive('hawtioHorizontalViewport', function () {
         return new UI.HorizontalViewport();
@@ -3949,7 +3976,7 @@ var UI;
             };
         }
         return HorizontalViewport;
-    })();
+    }());
     UI.HorizontalViewport = HorizontalViewport;
 })(UI || (UI = {}));
 
