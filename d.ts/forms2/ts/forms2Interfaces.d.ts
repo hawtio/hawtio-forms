@@ -76,6 +76,8 @@ declare module HawtioForms {
         wizard?: FormWizardPages;
         controls?: Array<string>;
         label?: string;
+        debug?: boolean;
+        [key: string]: any;
     }
     function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
     interface ControlMappingRegistry {

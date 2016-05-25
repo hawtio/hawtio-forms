@@ -88,6 +88,8 @@ module HawtioForms {
     wizard?: FormWizardPages;
     controls?: Array<string>;
     label?: string;
+    debug?: boolean;
+    [key:string]: any;
   }
 
   export function createFormConfiguration(options?: FormConfiguration):FormConfiguration {

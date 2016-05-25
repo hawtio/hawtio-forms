@@ -12,8 +12,24 @@ module HawtioForms {
         name: '@?'
       },
       link: (scope, element, attrs) => {
-        scope.$watch('config', () => {
+        var configCache:string = '';
+        var configChanges = 0;
+        scope.$watch('config', (config) => {
+          var stringified = angular.toJson(config);
+          if (stringified === configCache) {
+            return;
+          } else {
+            configCache = stringified;
+          }
+          updateConfig(config);
+        }, true);
+        function updateConfig(config:FormConfiguration) {
+          // track how many times this function fires
+          configChanges = configChanges + 1;
+          scope.configChanges = configChanges;
           element.empty();
+          // Store everything in here so we can pass
+          // around all this info to functions
           var context = {
             postInterpolateActions: {
 
@@ -32,8 +48,8 @@ module HawtioForms {
             $interpolate: $interpolate,
             $compile: $compile,
             directiveName: directiveName
-          }
-          var config = initConfig(context, _.cloneDeep(scope.config));
+          };
+          config = initConfig(context, _.cloneDeep(config));
           context.config = config;
           context.maybeHumanize = createMaybeHumanize(context);
           if (!scope.entity) {
@@ -255,10 +271,6 @@ module HawtioForms {
               delete controls[controlId];
             });
           }
-          /*
-             form.append('<pre>{{entity}}</pre>');
-             form.append('<pre>{{config}}</pre>');
-           */
           _.forIn(pages, (pageConfig, id) => {
             if (id !== '$main') {
               parent.append(pageConfig.el);
@@ -270,12 +282,17 @@ module HawtioForms {
               func();
             });
           }); 
+          if (config.debug) {
+            form.append('<div><h4>Config Update Count</h4><pre>{{configChanges}}</pre></div>');
+            form.append('<div><h4>Entity</h4><pre>{{entity | json}}</pre></div>');
+            form.append('<div><h4>Config</h4><pre>{{config | json}}</pre></div>');
+          }
           element.append($compile(form)(s));
           s.$emit('hawtio-form2-form', {
             name: s.name,
             form: s.$eval(s.name)
           });
-        }, true);
+        }
       }
     }
   }]);
