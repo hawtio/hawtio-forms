@@ -3048,8 +3048,25 @@ var HawtioForms;
                     name: '@?'
                 },
                 link: function (scope, element, attrs) {
-                    scope.$watch('config', function () {
+                    var configCache = '';
+                    var configChanges = 0;
+                    scope.$watch('config', function (config) {
+                        var stringified = angular.toJson(config);
+                        if (stringified === configCache) {
+                            return;
+                        }
+                        else {
+                            configCache = stringified;
+                        }
+                        updateConfig(config);
+                    }, true);
+                    function updateConfig(config) {
+                        // track how many times this function fires
+                        configChanges = configChanges + 1;
+                        scope.configChanges = configChanges;
                         element.empty();
+                        // Store everything in here so we can pass
+                        // around all this info to functions
                         var context = {
                             postInterpolateActions: {},
                             preCompileActions: {},
@@ -3065,7 +3082,7 @@ var HawtioForms;
                             $compile: $compile,
                             directiveName: directiveName
                         };
-                        var config = HawtioForms.initConfig(context, _.cloneDeep(scope.config));
+                        config = HawtioForms.initConfig(context, _.cloneDeep(config));
                         context.config = config;
                         context.maybeHumanize = HawtioForms.createMaybeHumanize(context);
                         if (!scope.entity) {
@@ -3291,10 +3308,6 @@ var HawtioForms;
                                 delete controls[controlId];
                             });
                         }
-                        /*
-                           form.append('<pre>{{entity}}</pre>');
-                           form.append('<pre>{{config}}</pre>');
-                         */
                         _.forIn(pages, function (pageConfig, id) {
                             if (id !== '$main') {
                                 parent.append(pageConfig.el);
@@ -3305,12 +3318,17 @@ var HawtioForms;
                                 func();
                             });
                         });
+                        if (config.debug) {
+                            form.append('<div><h4>Config Update Count</h4><pre>{{configChanges}}</pre></div>');
+                            form.append('<div><h4>Entity</h4><pre>{{entity | json}}</pre></div>');
+                            form.append('<div><h4>Config</h4><pre>{{config | json}}</pre></div>');
+                        }
                         element.append($compile(form)(s));
                         s.$emit('hawtio-form2-form', {
                             name: s.name,
                             form: s.$eval(s.name)
                         });
-                    }, true);
+                    }
                 }
             };
         }]);
