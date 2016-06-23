@@ -3056,7 +3056,7 @@ var HawtioForms;
                             return;
                         }
                         else {
-                            scope.diff = diffString(configCache, stringified);
+                            scope.diff = diffString(configCache || '', stringified || '');
                             configCache = stringified;
                         }
                         updateConfig(config);
