@@ -5,6 +5,7 @@
     "hawtio"
   ],
   "main": [
+    "dist/jsdiff.js",
     "dist/hawtio-forms.js",
     "dist/bootstrap-combobox.js",
     "dist/hawtio-forms.css",

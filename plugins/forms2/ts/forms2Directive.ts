@@ -15,10 +15,11 @@ module HawtioForms {
         var configCache:string = '';
         var configChanges = 0;
         scope.$watch('config', (config) => {
-          var stringified = angular.toJson(config);
+          var stringified = angular.toJson(config, true);
           if (stringified === configCache) {
             return;
           } else {
+            scope.diff = diffString(configCache, stringified);
             configCache = stringified;
           }
           updateConfig(config);
@@ -286,6 +287,7 @@ module HawtioForms {
             form.append('<div><h4>Config Update Count</h4><pre>{{configChanges}}</pre></div>');
             form.append('<div><h4>Entity</h4><pre>{{entity | json}}</pre></div>');
             form.append('<div><h4>Config</h4><pre>{{config | json}}</pre></div>');
+            form.append('<div><h4>Last Change</h4><pre ng-bind-html="diff"></pre></div>');
           }
           element.append($compile(form)(s));
           s.$emit('hawtio-form2-form', {
