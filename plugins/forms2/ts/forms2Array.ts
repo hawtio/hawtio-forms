@@ -75,13 +75,13 @@ module HawtioForms {
   }
 
   function newBodyRow(context) {
-    return angular.element(context.$templateCache.get('rowTemplate.html'));
+    return angular.element(context.$templateCache.get('arrayRowTemplate.html'));
   }
 
   function newHeaderRow(context, table) {
     var header = table.find('thead');
     header.empty();
-    return header.append(context.$templateCache.get('rowTemplate.html')).find('tr');
+    return header.append(context.$templateCache.get('arrayRowTemplate.html')).find('tr');
   }
 
   function buildTableHeader(context, table, columnSchema) {
