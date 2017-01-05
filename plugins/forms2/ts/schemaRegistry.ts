@@ -5,7 +5,7 @@ module HawtioForms {
     var listeners = {};
     function addSchemaInternal(name: string, schema: any):void {
       schemaMap[name] = schema;
-      _.forIn(listeners, (listener, id) => {
+      _.forIn(listeners, (listener: Function, id) => {
         listener(name, schema);
       });
     }

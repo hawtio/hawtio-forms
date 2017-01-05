@@ -274,7 +274,7 @@ module HawtioForms {
           }
           _.forIn(pages, (pageConfig, id) => {
             if (id !== '$main') {
-              parent.append(pageConfig.el);
+              parent.append(pageConfig['el']);
             }
           });
 

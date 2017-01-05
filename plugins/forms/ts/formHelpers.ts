@@ -216,9 +216,9 @@ module Forms {
 
   export function getLabel(config, arg, label, required = false) {
     if (required) {
-      return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
+      return angular.element('<label class="strong ' + config.labelclass + '">' + label + '</label>');
     } else {
-      return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+      return angular.element('<label class="' + config.labelclass + '">' + label + '</label>');
     }
   }
 
