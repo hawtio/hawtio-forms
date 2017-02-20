@@ -540,7 +540,7 @@ var Forms;
                         Core.pathSet(scope, modelName, numberValue);
                     }
                 };
-                return '<input type="number" class="form-input"/>';
+                return '<input type="number" class="form-control"/>';
             // collections or arrays
             case "array":
             case "java.lang.array":
@@ -565,14 +565,14 @@ var Forms;
                 };
                 return '<input type="checkbox" class="form-input"/>';
             case "password":
-                return '<input type="password" class="form-input"/>';
+                return '<input type="password" class="form-control"/>';
             case "hidden":
                 return '<input type="hidden" class="form-input"/>';
             case "map":
                 return null;
             default:
                 // lets check if this name is an alias to a definition in the schema
-                return '<input type="text" class="form-input"/>';
+                return '<input type="text" class="form-control"/>';
         }
     }
     Forms.createStandardWidgetMarkup = createStandardWidgetMarkup;
@@ -717,9 +717,9 @@ var Forms;
             this.mode = 'edit';
             // the name of the full schema
             this.schemaName = "schema";
-            this.controlgroupclass = 'control-group';
-            this.controlclass = 'controls';
-            this.labelclass = 'control-label';
+            this.controlgroupclass = 'form-group';
+            this.controlclass = 'col-sm-10';
+            this.labelclass = 'col-sm-2 control-label';
             this.showtypes = 'false';
             /**
              * Custom template for custom form controls
@@ -1214,7 +1214,7 @@ var Forms;
             this.scopeName = null;
             this.properties = [];
             this.action = '';
-            this.formclass = 'hawtio-form form-horizontal no-bottom-margin';
+            this.formclass = 'hawtio-form form-horizontal';
             this.controlgroupclass = 'form-group';
             this.controlclass = 'col-sm-10';
             this.labelclass = 'col-sm-2 control-label';
