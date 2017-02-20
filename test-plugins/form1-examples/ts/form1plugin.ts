@@ -149,8 +149,8 @@ module Forms1Tests {
     $scope.updateEntity = function () {
       $scope.basicFormEx1Entity = angular.fromJson($scope.basicFormEx1EntityString);
     };
-    $scope.hawtioResetEx = '<a class="btn" href="" hawtio-reset="some-form"><i class="icon-refresh"></i> Clear</a>';
-    $scope.hawtioSubmitEx = '      <a class="btn" href="" hawtio-submit="some-form"><i class="icon-save"></i> Save</a>';
+    $scope.hawtioResetEx = '<a class="btn btn-default" href="" hawtio-reset="some-form">Clear</a>';
+    $scope.hawtioSubmitEx = '<a class="btn btn-default" href="" hawtio-submit="some-form">Save</a>';
     $scope.callThis = function (json, form) {
       $scope.basicFormEx1Result = angular.toJson(json, true);
       Core.notification('success', 'Form "' + form.get(0).name + '" submitted...');

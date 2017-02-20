@@ -1,43 +1,47 @@
 <div ng-controller='Forms.FormTestController'>
 
   <div class="row-fluid">
-    <div class="col-md-4">
-      <h3>Basic form</h3>
-      <p>Here's a basic form generated from some JSON schema</p>
-      <p>Here's some example JSON schema definition</p>
+    <div class="col-md-12">
+      <h1>Simple Form</h1>
+      <p>Here's a simple form generated from some JSON schema.</p>
+      
+      <h3>Form definition</h3>
       <div hawtio-editor="basicFormEx1Schema" mode="javascript"></div>
-      <button class='btn' ng-click="updateSchema()"><i class="icon-save"></i> Update form</button>
-    </div>
-    <div class="col-md-4">
-      <p>You can define an entity object to have default values filled in</p>
+      <button class='btn btn-default' ng-click="updateSchema()">Update form</button>
+      
+      <h3>Default values</h3>
       <div hawtio-editor="basicFormEx1EntityString" mode="javascript"></div>
-      <button class='btn' ng-click="updateEntity()"><i class="icon-save"></i> Update form</button>
-      <p>And here is the code for the form</p>
+      <button class='btn btn-default' ng-click="updateEntity()">Update form</button>
+      
+      <h3>HTML</h3>
       <div hawtio-editor="basicFormEx1" mode="html"></div>
-      <h3>The resulting form</h3>
+      
+      <h3>Result</h3>
       <div class="directive-example">
         <div compile="basicFormEx1"></div>
       </div>
-    </div>
-    <div class="col-md-4">
+
       <h3>Form related controls</h3>
-      <p>There's also directives to take care of resetting or submitting a form</p>
-      <p></p>
-      <p>Clearing a form is done using the hawtio-reset directive</p>
-      <div hawtio-editor="hawtioResetEx" mode="html"></div>
-      <p>Click the button below to clear the above form</p>
-      <div class="directive-example">
-        <div compile="hawtioResetEx"></div>
-      </div>
-      <p>And to submit a form use hawtio-submit</p>
-      <div hawtio-editor="hawtioSubmitEx" mode="html"></div>
-      <div class="directive-example">
-        <div compile="hawtioSubmitEx"></div>
-      </div>
-      <p>Fill in the form and click the submit button above to see what the form produces</p>
-      <div hawtio-editor="basicFormEx1Result" mode="javascript"></div>
-      <p></p>
-      <p></p>
+      <p>There's also directives to take care of resetting or submitting a form.</p>
+      <ol>
+        <li>
+          <p>Clearing a form is done using the hawtio-reset directive</p>
+          <div hawtio-editor="hawtioResetEx" mode="html"></div>
+          <p>Click the button below to clear the above form</p>
+          <div class="directive-example">
+            <div compile="hawtioResetEx"></div>
+          </div>
+        </li>
+        <li>
+          <p>And to submit a form use hawtio-submit</p>
+          <div hawtio-editor="hawtioSubmitEx" mode="html"></div>
+          <div class="directive-example">
+            <div compile="hawtioSubmitEx"></div>
+          </div>
+          <p>Fill in the form and click the submit button above to see what the form produces</p>
+          <div hawtio-editor="basicFormEx1Result" mode="javascript"></div>
+        </li>
+      </ol>
     </div>
   </div>
 

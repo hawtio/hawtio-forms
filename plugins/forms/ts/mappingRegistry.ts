@@ -307,7 +307,7 @@ module Forms {
             Core.pathSet(scope, modelName, numberValue);
           }
         };
-        return '<input type="number" class="form-input"/>';
+        return '<input type="number" class="form-control"/>';
 
       // collections or arrays
       case "array":
@@ -335,7 +335,7 @@ module Forms {
         return '<input type="checkbox" class="form-input"/>';
 
       case "password":
-        return '<input type="password" class="form-input"/>';
+        return '<input type="password" class="form-control"/>';
 
       case "hidden":
         return '<input type="hidden" class="form-input"/>';
@@ -345,7 +345,7 @@ module Forms {
 
       default:
         // lets check if this name is an alias to a definition in the schema
-        return '<input type="text" class="form-input"/>';
+        return '<input type="text" class="form-control"/>';
     }
   }
 

@@ -22,9 +22,9 @@ module Forms {
     // the name of the full schema
     public schemaName = "schema";
 
-    public controlgroupclass = 'control-group';
-    public controlclass = 'controls';
-    public labelclass = 'control-label';
+    public controlgroupclass = 'form-group';
+    public controlclass = 'col-sm-10';
+    public labelclass = 'col-sm-2 control-label';
     public showtypes = 'false';
 
 
