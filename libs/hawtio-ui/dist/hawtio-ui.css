@@ -440,37 +440,6 @@ table.table thead .sorting_desc:after {
 .bundle-item a.toggle-action .icon-play-circle {
   color: green;
 }
-div.hawtio-form-tabs div.tab-content {
-  border: 1px solid #d4d4d4;
-  border-radius: 4px;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-}
-div.hawtio-form-tabs ul.nav-tabs {
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  background: inherit;
-  background-color: inherit !important;
-  background-image: inherit !important;
-  border-top: none !important;
-}
-div.hawtio-form-tabs ul.nav-tabs li {
-  border: 1px solid #d4d4d4 !important;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  background-color: inherit;
-  box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.08) !important;
-}
-div.hawtio-form-tabs ul.nav-tabs li.active {
-  border-bottom: 1px solid white !important;
-  background-color: white;
-  box-shadow: 0 -10px 10px -10px rgba(0, 0, 0, 0.1) !important;
-}
-div.hawtio-form-tabs ul.nav-tabs li.active a {
-  box-shadow: none !important;
-  text-shadow: none !important;
-  background-color: inherit !important;
-}
 .slideout {
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #d4d4d4;
@@ -987,6 +956,11 @@ strong.new,
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
 }
+.hawtio-dropdown > ul > li:hover > a {
+  color: #ffffff;
+  background-color: unset;
+  border-color: transparent;
+}
 .hawtio-dropdown > ul > li:hover > span > ul.sub-menu > li {
   color: #333333;
 }
@@ -1169,6 +1143,9 @@ img.nodeIcon:hover {
   border: 4px dashed #aaffaa;
   background: #ddffdd;
   min-height: 150px;
+}
+textarea {
+  resize: none;
 }
 
 @media (min-width: 1600px) {
@@ -1497,10 +1474,8 @@ ol.zebra-list > li:before {
   padding-top: 2px;
   padding-bottom: 2px;
 }
-.hawtio-form textarea {
-  margin-left: 90px;
-  width: 20em;
-  min-height: 5em;
+.toolbar-pf .form-group:first-child {
+  padding-left: 0;
 }
 
 body {
@@ -2873,6 +2848,10 @@ span:not(.dynatree-has-children) .dynatree-icon:before {
   color: gray;
 }
 
+.dropdown.overflow {
+  visibility: hidden;
+}
+
 .badge {
   display: inline-block;
   padding: 2px 4px;
@@ -2935,6 +2914,14 @@ span:not(.dynatree-has-children) .dynatree-icon:before {
 .hawtio-breadcrumbs .hawtio-breadcrumbs-divider {
   margin-left: 7px;
   margin-right: 7px;
+}
+
+.input-group-button {
+  padding: 0;
+}
+.input-group-button .btn-clipboard {
+  padding: 3px 7px;
+  border-width: 0;
 }
 
 .color-picker {
@@ -3024,7 +3011,7 @@ h4 > .contained {
   width: 100%;
 }
 
-.dropdown-menu {
+.hawtio-dropdown .dropdown-menu {
   padding-top: 0;
   padding-bottom: 0;
   margin-top: 0;
@@ -3033,24 +3020,21 @@ h4 > .contained {
   right: 0;
   border-radius: 0;
 }
-.dropdown-menu > li:hover > a {
-  text-shadow: 0px 0px 1px white;
-}
-.dropdown-menu:before {
+.hawtio-dropdown .dropdown-menu:before {
   display: none !important;
 }
-.dropdown-menu:after {
+.hawtio-dropdown .dropdown-menu:after {
   display: none !important;
 }
-.dropdown-menu.right {
+.hawtio-dropdown .dropdown-menu.right {
   left: auto;
   right: 0;
 }
-.dropdown-menu.right:before {
+.hawtio-dropdown .dropdown-menu.right:before {
   left: auto !important;
   right: 9px;
 }
-.dropdown-menu.right:after {
+.hawtio-dropdown .dropdown-menu.right:after {
   left: auto !important;
   right: 10px;
 }
@@ -3080,17 +3064,20 @@ h4 > .contained {
   top: 0;
   right: -2px;
 }
-.dropdown-menu .sub-menu {
+.hawtio-dropdown .dropdown-menu .sub-menu {
   position: absolute;
   left: 195px;
   top: -8px;
 }
-.dropdown-menu .dropdown .caret {
+.hawtio-dropdown .dropdown-menu .dropdown .caret {
   display: none;
 }
 span.hawtio-dropdown {
   position: relative;
   display: block;
+  cursor: pointer;
+}
+li.hawtio-dropdown {
   cursor: pointer;
 }
 span.hawtio-dropdown .dropdown-menu {
@@ -3104,15 +3091,15 @@ span.hawtio-dropdown .dropdown-menu {
   margin-top: 5px;
   text-align: left;
 }
-.dropdown.perspective-selector > .dropdown-menu {
+.hawtio-dropdown .dropdown.perspective-selector > .dropdown-menu {
   min-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dropdown.perspective-selector .dropdown-menu > div {
+.hawtio-dropdown .dropdown.perspective-selector .dropdown-menu > div {
   display: block;
 }
-.dropdown.perspective-selector .dropdown-menu > div > p,
+.hawtio-dropdown .dropdown.perspective-selector .dropdown-menu > div > p,
 .hawtio-dropdown p {
   font-size: smaller;
   padding-left: 3px;
@@ -3122,10 +3109,10 @@ span.hawtio-dropdown .dropdown-menu {
 .nav .hawtio-dropdown {
   margin-top: 2px;
 }
-.dropdown.perspective-selector .dropdown-menu > div > ul {
+.hawtio-dropdown .dropdown.perspective-selector .dropdown-menu > div > ul {
   margin-top: 0;
 }
-.dropdown.perspective-selector .dropdown-menu > div > ul > li.clear-recent > a {
+.hawtio-dropdown .dropdown.perspective-selector .dropdown-menu > div > ul > li.clear-recent > a {
   padding: 3px 5px;
 }
 .nav.nav-tabs li .hawtio-dropdown .dropdown-menu {
