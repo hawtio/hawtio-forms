@@ -2,7 +2,7 @@
 module HawtioForms {
   var directiveName = "hawtioForms2Map";
 
-  _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$modal', ($compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, $interpolate:ng.IInterpolateService, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $modal) => {
+  _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$uibModal', ($compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, $interpolate:ng.IInterpolateService, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $uibModal) => {
 
     function clearBody(context, table) {
       var body = table.find('tbody');
@@ -153,15 +153,15 @@ module HawtioForms {
 
           s.createRow = () => {
             log.debug("create row");
-            var modal = $modal.open({
+            $uibModal.open({
               templateUrl: "mapItemModal.html",
-              controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
+              controller: ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) => {
                 $scope.header = "Create Entry";
                 $scope.description = "<p>Add a new entry to the map by filling in the details for the key and value</p>";
                 $scope.keySchema = initSchema(keySchema);
                 $scope.valueSchema = initSchema(valueSchema);
                 $scope.ok = () => {
-                  modal.close();
+                  $uibModalInstance.close();
                   var key = $scope.newKeyEntity.key;
                   var value = $scope.newValueEntity;
                   if (valueSchema.control.items || mappings.hasMapping(valueSchema.control.type)) {
@@ -172,7 +172,7 @@ module HawtioForms {
                   entity[key] = value;
                 }
                 $scope.cancel = () => {
-                  modal.dismiss();
+                  $uibModalInstance.dismiss();
                 }
               }]
             });

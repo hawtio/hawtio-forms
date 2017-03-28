@@ -241,7 +241,7 @@ module HawtioForms {
                 if (name === '*') {
                   if (singlePage) {
                     _.forIn(controls, (control, controlId) => {
-                      if (_.any(pageConfig.controls, (id) => id === controlId)) {
+                      if (_.some(pageConfig.controls, (id) => id === controlId)) {
                         return;
                       } else {
                         pageConfig.parent.append(control);

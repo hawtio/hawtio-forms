@@ -18,12 +18,13 @@
     "plugins"
   ],
   "dependencies": {
-    "hawtio-core": "~3.0.0",
-    "hawtio-core-navigation": "~3.0.0",
-    "hawtio-utilities": "~3.0.0",
     "hawtio-ui": "~3.0.0"
   },
   "devDependencies": {
     "hawtio-core-dts": "~2.0.0"
+  },
+  "resolutions": {
+    "jquery": "~2.1.0",
+    "lodash": "^4.0.0"
   }
 }

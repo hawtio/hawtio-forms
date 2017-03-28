@@ -97,7 +97,7 @@ module HawtioForms {
     return headerRow;
   }
 
-  _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$modal', ($compile, $templateCache, $interpolate, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $modal) => {
+  _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$uibModal', ($compile, $templateCache, $interpolate, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $uibModal) => {
     return {
       restrict: 'A',
       replace: true,
@@ -175,9 +175,9 @@ module HawtioForms {
           }
 
           s.deleteRow = (index) => {
-            var modal = $modal.open({
+            $uibModal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
-              controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
+              controller: ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) => {
                 $scope.schema = initSchema(columnSchema);
                 $scope.schema.mode = FormMode.VIEW;
                 $scope.header = "Delete Entry?";
@@ -190,20 +190,20 @@ module HawtioForms {
                   $scope.newEntity = _.clone(entity[index]);
                 }
                 $scope.ok = () => {
-                  modal.close();
+                  $uibModalInstance.close();
                   entity.splice(index, 1);
                 }
                 $scope.cancel = () => {
-                  modal.dismiss();
+                  $uibModalInstance.dismiss();
                 }
               }]
             });
           }
 
           s.editRow = (index) => {
-            var modal = $modal.open({
+            $uibModal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
-              controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
+              controller: ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) => {
                 $scope.schema = initSchema(columnSchema);
                 $scope.header = "Edit Entry";
                 if (columnSchema.properties.$items) {
@@ -214,7 +214,7 @@ module HawtioForms {
                   $scope.newEntity = _.clone(entity[index]);
                 }
                 $scope.ok = () => {
-                  modal.close();
+                  $uibModalInstance.close();
                   if ('$items' in $scope.newEntity) {
                     entity[index] = $scope.newEntity.$items;
                   } else {
@@ -222,21 +222,21 @@ module HawtioForms {
                   }
                 }
                 $scope.cancel = () => {
-                  modal.dismiss();
+                  $uibModalInstance.dismiss();
                 }
               }]
             });
           }
 
           s.createNewRow = () => {
-            var modal = $modal.open({
+            $uibModal.open({
               templateUrl: UrlHelpers.join(templatePath, 'arrayItemModal.html'),
-              controller: ['$scope', '$modalInstance', ($scope, $modalInstance) => {
+              controller: ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) => {
                 $scope.schema = initSchema(columnSchema);
                 $scope.newEntity = undefined;
                 $scope.header = "Add New Entry";
                 $scope.ok = () => {
-                  modal.close();
+                  $uibModalInstance.close();
                   if ('$items' in $scope.newEntity) {
                     entity.push($scope.newEntity.$items);
                   } else {
@@ -244,7 +244,7 @@ module HawtioForms {
                   }
                 }
                 $scope.cancel = () => {
-                  modal.dismiss();
+                  $uibModalInstance.dismiss();
                 }
               }]
             });
