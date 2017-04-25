@@ -315,7 +315,7 @@ module Forms {
       // lets coerce any string values to numbers so that they work properly with the UI
       var scope = config.scope;
       if (scope) {
-        function onModelChange() {
+        const onModelChange = function() {
           var value = Core.pathGet(scope, modelName);
           if (value && angular.isString(value))  {
             var numberValue = Number(value);
@@ -377,7 +377,7 @@ module Forms {
 
         // we maintain a separate object of all the keys (indices) of the array
         // and use that to lookup the values
-        function updateKeys() {
+        const updateKeys = function() {
           var value = Core.pathGet(scope, modelName);
           scope[itemKeys] = value ? Object.keys(value) : [];
           scope.$emit("hawtio.form.modelChange", modelName, value);
@@ -520,7 +520,7 @@ module Forms {
       // lets coerce any string values to boolean so that they work properly with the UI
       var scope = config.scope;
       if (scope) {
-        function onModelChange() {
+        const onModelChange = function() {
           var value = Core.pathGet(scope, modelName);
           if (value && "true" === value)  {
             //console.log("coercing String to boolean for " + modelName);
