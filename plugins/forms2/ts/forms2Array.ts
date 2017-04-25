@@ -107,23 +107,21 @@ module HawtioForms {
         entity: '=?'
       },
       link: (scope, element, attrs) => {
-        scope.$watch('config', (newConfig) => {
+        scope.$watch('config', (newConfig: FormConfiguration) => {
           var context = {
-            postInterpolateActions: {
-
-            },
+            postInterpolateActions: {},
             maybeHumanize: undefined,
             config: undefined,
             element: element,
             attrs: attrs,
             mappings: mappings,
             schemas: schemas,
-              $templateCache: $templateCache,
-              $interpolate: $interpolate,
-                $compile: $compile,
-            directiveName: directiveName        
+            $templateCache: $templateCache,
+            $interpolate: $interpolate,
+            $compile: $compile,
+            directiveName: directiveName
           };
-          var config = <any> initConfig(context, _.cloneDeep(newConfig), false);
+          var config = initConfig(context, _.cloneDeep(newConfig), false);
           context.config = config;
           context.maybeHumanize = createMaybeHumanize(context);
           if (!scope.entity) {
@@ -164,7 +162,7 @@ module HawtioForms {
           s.entity = entity;
 
           function initSchema(schema) {
-            var answer = _.clone(schema, true);
+            var answer = _.cloneDeep(schema);
             answer.style = FormStyle.STANDARD;
             if ('$items' in answer.properties) {
               answer.properties.$items['label-attributes'] = {

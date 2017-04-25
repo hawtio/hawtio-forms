@@ -322,7 +322,7 @@ module HawtioForms {
     }
   }
 
-  export function initConfig(context, config:FormConfiguration, lookup = true) {
+  export function initConfig(context, config: FormConfiguration, lookup = true) {
     var answer = <any> config;
     if (!answer && lookup) {
       // look in schema registry

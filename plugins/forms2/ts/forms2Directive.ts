@@ -14,7 +14,7 @@ module HawtioForms {
       link: (scope, element, attrs) => {
         var configCache:string = '';
         var configChanges = 0;
-        scope.$watch('config', (config) => {
+        scope.$watch('config', (config: FormConfiguration) => {
           var stringified = angular.toJson(config, true);
           if (stringified === configCache) {
             return;
