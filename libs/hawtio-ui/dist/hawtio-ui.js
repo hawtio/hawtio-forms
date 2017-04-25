@@ -1,5 +1,4 @@
 /// <reference path="../libs/hawtio-utilities/defs.d.ts"/>
-
 /// <reference path="../../includes.ts"/>
 /**
  * @module DataTable
@@ -12,7 +11,6 @@ var DataTable;
     DataTable._module = angular.module(DataTable.pluginName, []);
     hawtioPluginLoader.addModule(DataTable.pluginName);
 })(DataTable || (DataTable = {}));
-
 /// <reference path="datatablePlugin.ts"/>
 /**
  * @module DataTable
@@ -432,7 +430,6 @@ var DataTable;
         }
     }
 })(DataTable || (DataTable = {}));
-
 /// <reference path="../../includes.ts"/>
 /**
  * Module that contains several helper functions related to hawtio's code editor
@@ -573,7 +570,6 @@ var CodeEditor;
     }
     CodeEditor.createEditorSettings = createEditorSettings;
 })(CodeEditor || (CodeEditor = {}));
-
 /// <reference path="../../includes.ts"/>
 var HawtioEditor;
 (function (HawtioEditor) {
@@ -581,7 +577,6 @@ var HawtioEditor;
     HawtioEditor.templatePath = "plugins/editor/html";
     HawtioEditor.log = Logger.get(HawtioEditor.pluginName);
 })(HawtioEditor || (HawtioEditor = {}));
-
 /// <reference path="editorGlobals.ts"/>
 /// <reference path="CodeEditor.ts"/>
 var HawtioEditor;
@@ -592,7 +587,6 @@ var HawtioEditor;
     });
     hawtioPluginLoader.addModule(HawtioEditor.pluginName);
 })(HawtioEditor || (HawtioEditor = {}));
-
 /// <reference path="editorPlugin.ts"/>
 /// <reference path="CodeEditor.ts"/>
 /**
@@ -759,7 +753,6 @@ var HawtioEditor;
     }
     HawtioEditor.Editor = Editor;
 })(HawtioEditor || (HawtioEditor = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="forceGraphDirective.ts"/>
 /**
@@ -776,7 +769,6 @@ var ForceGraph;
     });
     hawtioPluginLoader.addModule(pluginName);
 })(ForceGraph || (ForceGraph = {}));
-
 ///<reference path="forceGraphPlugin.ts"/>
 var ForceGraph;
 (function (ForceGraph) {
@@ -1008,7 +1000,6 @@ var ForceGraph;
     }());
     ForceGraph.ForceGraphDirective = ForceGraphDirective;
 })(ForceGraph || (ForceGraph = {}));
-
 /// <reference path="../../includes.ts"/>
 var ForceGraph;
 (function (ForceGraph) {
@@ -1122,7 +1113,6 @@ var ForceGraph;
     }());
     ForceGraph.GraphBuilder = GraphBuilder;
 })(ForceGraph || (ForceGraph = {}));
-
 /// <reference path="../../includes.ts"/>
 var Toastr;
 (function (Toastr) {
@@ -1164,266 +1154,6 @@ var Core;
     }
     Core.clearNotifications = clearNotifications;
 })(Core || (Core = {}));
-
-/// <reference path="../../includes.ts"/>
-/**
- * @module Tree
- * @main Tree
- */
-var Tree;
-(function (Tree) {
-    Tree.pluginName = 'tree';
-    Tree.log = Logger.get("Tree");
-    function expandAll(el) {
-        treeAction(el, true);
-    }
-    Tree.expandAll = expandAll;
-    function contractAll(el) {
-        treeAction(el, false);
-    }
-    Tree.contractAll = contractAll;
-    function treeAction(el, expand) {
-        $(el).dynatree("getRoot").visit(function (node) {
-            node.expand(expand);
-        });
-    }
-    /**
-     * @function sanitize
-     * @param tree
-     *
-     * Use to HTML escape all entries in a tree before passing it
-     * over to the dynatree plugin to avoid cross site scripting
-     * issues.
-     *
-     */
-    function sanitize(tree) {
-        if (!tree) {
-            return;
-        }
-        if (angular.isArray(tree)) {
-            tree.forEach(function (folder) {
-                Tree.sanitize(folder);
-            });
-        }
-        var title = tree['title'];
-        if (title) {
-            tree['title'] = _.escape(_.unescape(title));
-        }
-        if (tree.children) {
-            Tree.sanitize(tree.children);
-        }
-    }
-    Tree.sanitize = sanitize;
-    Tree._module = angular.module(Tree.pluginName, []);
-    Tree._module.directive('hawtioTree', ["workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
-            // return the directive link function. (compile function not needed)
-            return function (scope, element, attrs) {
-                var tree = null;
-                var data = null;
-                var widget = null;
-                var timeoutId = null;
-                var onSelectFn = lookupFunction("onselect");
-                var onDragStartFn = lookupFunction("ondragstart");
-                var onDragEnterFn = lookupFunction("ondragenter");
-                var onDropFn = lookupFunction("ondrop");
-                function lookupFunction(attrName) {
-                    var answer = null;
-                    var fnName = attrs[attrName];
-                    if (fnName) {
-                        answer = Core.pathGet(scope, fnName);
-                        if (!angular.isFunction(answer)) {
-                            answer = null;
-                        }
-                    }
-                    return answer;
-                }
-                // watch the expression, and update the UI on change.
-                var data = attrs.hawtioTree;
-                var queryParam = data;
-                scope.$watch(data, onWidgetDataChange);
-                // lets add a separate event so we can force updates
-                // if we find cases where the delta logic doesn't work
-                scope.$on("hawtio.tree." + data, function (args) {
-                    var value = Core.pathGet(scope, data);
-                    onWidgetDataChange(value);
-                });
-                // listen on DOM destroy (removal) event, and cancel the next UI update
-                // to prevent updating ofter the DOM element was removed.
-                element.bind('$destroy', function () {
-                    $timeout.cancel(timeoutId);
-                });
-                updateLater(); // kick off the UI update process.
-                // used to update the UI
-                function updateWidget() {
-                    // console.log("updating the grid!!");
-                    Core.$applyNowOrLater(scope);
-                }
-                function onWidgetDataChange(value) {
-                    tree = value;
-                    if (tree) {
-                        Tree.sanitize(tree);
-                    }
-                    if (tree && !widget) {
-                        // lets find a child table element
-                        // or lets add one if there's not one already
-                        var treeElement = $(element);
-                        var children = Core.asArray(tree);
-                        var hideRoot = attrs["hideroot"];
-                        var imagePath = null;
-                        if (attrs['relativeiconpaths']) {
-                            // yay, hack to allow relative path locations
-                            imagePath = [];
-                        }
-                        if ("true" === hideRoot) {
-                            children = tree['children'];
-                        }
-                        var config = {
-                            imagePath: imagePath,
-                            clickFolderMode: 3,
-                            /*
-                              * The event handler called when a different node in the tree is selected
-                              */
-                            onActivate: function (node) {
-                                var data = node.data;
-                                if (onSelectFn) {
-                                    onSelectFn(data, node);
-                                }
-                                else {
-                                    workspace.updateSelectionNode(data);
-                                }
-                                Core.$apply(scope);
-                            },
-                            /*
-                              onLazyRead: function(treeNode) {
-                              var folder = treeNode.data;
-                              var plugin = null;
-                              if (folder) {
-                              plugin = Jmx.findLazyLoadingFunction(workspace, folder);
-                              }
-                              if (plugin) {
-                              console.log("Lazy loading folder " + folder.title);
-                              var oldChildren = folder.childen;
-                              plugin(workspace, folder, () => {
-                              treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-                              var newChildren = folder.children;
-                              if (newChildren !== oldChildren) {
-                              treeNode.removeChildren();
-                              angular.forEach(newChildren, newChild => {
-                              treeNode.addChild(newChild);
-                              });
-                              }
-                              });
-                              } else {
-                              treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-                              }
-                              },
-                              */
-                            onClick: function (node, event) {
-                                if (event["metaKey"]) {
-                                    event.preventDefault();
-                                    var url = $location.absUrl();
-                                    if (node && node.data) {
-                                        var key = node.data["key"];
-                                        if (key) {
-                                            var hash = $location.search();
-                                            hash[queryParam] = key;
-                                            // TODO this could maybe be a generic helper function?
-                                            // lets trim after the ?
-                                            var idx = url.indexOf('?');
-                                            if (idx <= 0) {
-                                                url += "?";
-                                            }
-                                            else {
-                                                url = url.substring(0, idx + 1);
-                                            }
-                                            url += $.param(hash);
-                                        }
-                                    }
-                                    window.open(url, '_blank');
-                                    window.focus();
-                                    return false;
-                                }
-                                return true;
-                            },
-                            persist: false,
-                            debugLevel: 0,
-                            children: children,
-                            dnd: {
-                                onDragStart: onDragStartFn ? onDragStartFn : function (node) {
-                                    /* This function MUST be defined to enable dragging for the tree.
-                                      *  Return false to cancel dragging of node.
-                                      */
-                                    console.log("onDragStart!");
-                                    return true;
-                                },
-                                onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
-                                    console.log("onDragEnter!");
-                                    return true;
-                                },
-                                onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
-                                    console.log("onDrop!");
-                                    /* This function MUST be defined to enable dropping of items on
-                                      *  the tree.
-                                      */
-                                    sourceNode.move(node, hitMode);
-                                    return true;
-                                }
-                            }
-                        };
-                        if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
-                            delete config["dnd"];
-                        }
-                        widget = treeElement.dynatree(config);
-                        var activatedNode = false;
-                        var activateNodeName = attrs["activatenodes"];
-                        if (activateNodeName) {
-                            var values = scope[activateNodeName];
-                            var tree = treeElement.dynatree("getTree");
-                            if (values && tree) {
-                                angular.forEach(Core.asArray(values), function (value) {
-                                    //tree.selectKey(value, true);
-                                    tree.activateKey(value);
-                                    activatedNode = true;
-                                });
-                            }
-                        }
-                        var root = treeElement.dynatree("getRoot");
-                        if (root) {
-                            var onRootName = attrs["onroot"];
-                            if (onRootName) {
-                                var fn = scope[onRootName];
-                                if (fn) {
-                                    fn(root);
-                                }
-                            }
-                            // select and activate first child if we have not activated any others
-                            if (!activatedNode) {
-                                var children = root['getChildren']();
-                                if (children && children.length) {
-                                    var child = children[0];
-                                    child.expand(true);
-                                    child.activate(true);
-                                }
-                            }
-                        }
-                    }
-                    updateWidget();
-                }
-                // schedule update in one second
-                function updateLater() {
-                    // save the timeoutId for canceling
-                    timeoutId = $timeout(function () {
-                        updateWidget(); // update DOM
-                    }, 300);
-                }
-            };
-        }]);
-    Tree._module.run(["helpRegistry", function (helpRegistry) {
-            helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
-        }]);
-    hawtioPluginLoader.addModule(Tree.pluginName);
-})(Tree || (Tree = {}));
-
 /**
  * @module UI
  */
@@ -1435,7 +1165,6 @@ var UI;
     UI.pluginName = 'hawtio-ui';
     UI.templatePath = 'plugins/ui/html/';
 })(UI || (UI = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="uiHelpers.ts"/>
 /**
@@ -1466,7 +1195,7 @@ var UI;
             return function (scope, element, attrs) {
                 scope.$watch(function (scope) {
                     // watch the 'compile' expression for changes
-                    return scope.$eval(attrs.compile);
+                    return scope.$eval(attrs['compile']);
                 }, function (value) {
                     // when the 'compile' expression changes
                     // assign it into the current DOM
@@ -1510,7 +1239,6 @@ var UI;
         }]);
     hawtioPluginLoader.addModule(UI.pluginName);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -1599,7 +1327,6 @@ var UI;
         }
     };
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -1698,7 +1425,6 @@ var UI;
     UI.hawtioBreadcrumbs = hawtioBreadcrumbs;
     UI._module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -1719,7 +1445,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 var UI;
 (function (UI) {
     setTimeout(function () {
@@ -1742,7 +1467,6 @@ var UI;
         });
     }, 1000);
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -1757,7 +1481,6 @@ var UI;
         "#DBADFF", "#E1E1E1"];
     UI._module.constant('UIColors', UI.colors);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -1828,7 +1551,6 @@ var UI;
     }());
     UI.ColorPicker = ColorPicker;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -1930,7 +1652,6 @@ var UI;
     }());
     UI.ConfirmDialog = ConfirmDialog;
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 /**
  * @module UI
@@ -1950,7 +1671,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="uiHelpers.ts"/>
 /**
@@ -2014,7 +1734,6 @@ var UI;
     }
     UI.multiItemConfirmActionDialog = multiItemConfirmActionDialog;
 })(UI || (UI = {}));
-
 ///<reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -2106,7 +1825,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2189,7 +1907,6 @@ var UI;
     UI.hawtioDropDown = hawtioDropDown;
     UI._module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 /**
  * @module UI
@@ -2289,7 +2006,6 @@ var UI;
     }());
     UI.EditableProperty = EditableProperty;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2415,7 +2131,6 @@ var UI;
         return value ? true : false;
     }
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -2455,7 +2170,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2517,7 +2231,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2562,7 +2275,6 @@ var UI;
     }());
     UI.GridsterDirective = GridsterDirective;
 })(UI || (UI = {}));
-
 /// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -2623,7 +2335,6 @@ var UI;
     UI.groupBy = groupBy;
     UI._module.filter('hawtioGroupBy', UI.groupBy);
 })(UI || (UI = {}));
-
 var UI;
 (function (UI) {
     UI._module.directive('httpSrc', ['$http', function ($http) {
@@ -2665,7 +2376,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2717,7 +2427,6 @@ var UI;
     UI.hawtioIcon = hawtioIcon;
     UI._module.directive('hawtioIcon', UI.hawtioIcon);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -2815,7 +2524,6 @@ var UI;
     UI.hawtioList = hawtioList;
     UI._module.directive('hawtioList', ["$templateCache", "$compile", UI.hawtioList]);
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -2861,7 +2569,7 @@ var UI;
                                     }
                                     else {
                                         // log.debug("Set config");
-                                        answer = _.clone(config, true);
+                                        answer = _.cloneDeep(config);
                                     }
                                 }
                             });
@@ -3076,7 +2784,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3192,7 +2899,6 @@ var UI;
     UI.hawtioPane = hawtioPane;
     UI._module.directive('hawtioPane', UI.hawtioPane);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3321,7 +3027,6 @@ var UI;
     }());
     UI.InfoPanel = InfoPanel;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3356,7 +3061,6 @@ var UI;
     }());
     UI.DivRow = DivRow;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3421,7 +3125,6 @@ var UI;
     }());
     UI.SlideOut = SlideOut;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3508,7 +3211,6 @@ var UI;
     }());
     UI.TablePager = TablePager;
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3631,7 +3333,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -3676,7 +3377,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -3755,7 +3455,6 @@ var UI;
     UI.TemplatePopover = TemplatePopover;
     UI._module.directive('hawtioTemplatePopover', ["$templateCache", "$compile", "$document", UI.TemplatePopover]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -4008,7 +3707,6 @@ var UI;
     UI.HawtioTocDisplay = HawtioTocDisplay;
     UI._module.directive('hawtioTocDisplay', ["marked", "$location", "$anchorScroll", "$compile", UI.HawtioTocDisplay]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -4074,7 +3772,6 @@ var UI;
     }());
     UI.HorizontalViewport = HorizontalViewport;
 })(UI || (UI = {}));
-
 /// <reference path="uiPlugin.ts"/>
 //
 var UI;
@@ -4111,7 +3808,6 @@ var UI;
             };
         }]);
 })(UI || (UI = {}));
-
 /**
  * @module UI
  */
@@ -4145,7 +3841,6 @@ var UI;
     }
     UI.ZeroClipboardDirective = ZeroClipboardDirective;
 })(UI || (UI = {}));
-
 /// <reference path="../../includes.ts"/>
 var UIBootstrap;
 (function (UIBootstrap) {

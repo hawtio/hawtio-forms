@@ -1,5 +1,14 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /// <reference path="../libs/hawtio-ui/defs.d.ts"/>
-
 /// <reference path="../../includes.ts"/>
 /**
  * @module Forms
@@ -253,7 +262,6 @@ var Forms;
     }
     Forms.getHelpSpan = getHelpSpan;
 })(Forms || (Forms = {}));
-
 /**
  * @module Forms
  */
@@ -412,6 +420,7 @@ var Forms;
             }
         }
         catch (e) {
+            // ignore missing read only function
         }
         if (required) {
             // don't mark checkboxes as required
@@ -690,17 +699,11 @@ var Forms;
     }
     Forms.normalize = normalize;
 })(Forms || (Forms = {}));
-
 /**
  * @module Forms
  */
 /// <reference path="../../includes.ts"/>
 /// <reference path="mappingRegistry.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Forms;
 (function (Forms) {
     /**
@@ -818,9 +821,10 @@ var Forms;
     var TextInput = (function (_super) {
         __extends(TextInput, _super);
         function TextInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "text";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "text";
+            return _this;
         }
         /*public getControlGroup(config1, config2, id) {
           return super.getControlGroup(config1, config2, id);
@@ -849,9 +853,10 @@ var Forms;
     var HiddenText = (function (_super) {
         __extends(HiddenText, _super);
         function HiddenText($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "hidden";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "hidden";
+            return _this;
         }
         HiddenText.prototype.getControlGroup = function (config1, config2, id) {
             var group = _super.prototype.getControlGroup.call(this, config1, config2, id);
@@ -869,9 +874,10 @@ var Forms;
     var PasswordInput = (function (_super) {
         __extends(PasswordInput, _super);
         function PasswordInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "password";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "password";
+            return _this;
         }
         return PasswordInput;
     }(TextInput));
@@ -879,8 +885,9 @@ var Forms;
     var CustomInput = (function (_super) {
         __extends(CustomInput, _super);
         function CustomInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         CustomInput.prototype.getInput = function (config, arg, id, modelName) {
             var template = arg.formtemplate;
@@ -903,8 +910,9 @@ var Forms;
     var SelectInput = (function (_super) {
         __extends(SelectInput, _super);
         function SelectInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         SelectInput.prototype.getInput = function (config, arg, id, modelName) {
             if (config.isReadOnly()) {
@@ -952,8 +960,9 @@ var Forms;
     var NumberInput = (function (_super) {
         __extends(NumberInput, _super);
         function NumberInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         NumberInput.prototype.getInput = function (config, arg, id, modelName) {
             if (config.isReadOnly()) {
@@ -979,13 +988,13 @@ var Forms;
             // lets coerce any string values to numbers so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                function onModelChange() {
+                var onModelChange = function () {
                     var value = Core.pathGet(scope, modelName);
                     if (value && angular.isString(value)) {
                         var numberValue = Number(value);
                         Core.pathSet(scope, modelName, numberValue);
                     }
-                }
+                };
                 scope.$watch(modelName, onModelChange);
                 onModelChange();
             }
@@ -1001,8 +1010,9 @@ var Forms;
     var StringArrayInput = (function (_super) {
         __extends(StringArrayInput, _super);
         function StringArrayInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         StringArrayInput.prototype.getInput = function (config, arg, id, modelName) {
             var rowScopeName = "_" + id;
@@ -1037,17 +1047,17 @@ var Forms;
                 var removeMethod = methodPrefix + "remove";
                 // we maintain a separate object of all the keys (indices) of the array
                 // and use that to lookup the values
-                function updateKeys() {
+                var updateKeys_1 = function () {
                     var value = Core.pathGet(scope, modelName);
                     scope[itemKeys] = value ? Object.keys(value) : [];
                     scope.$emit("hawtio.form.modelChange", modelName, value);
-                }
-                updateKeys();
+                };
+                updateKeys_1();
                 scope[addMethod] = function () {
                     var value = Core.pathGet(scope, modelName) || [];
                     value.push("");
                     Core.pathSet(scope, modelName, value);
-                    updateKeys();
+                    updateKeys_1();
                 };
                 scope[removeMethod] = function (idx) {
                     var value = Core.pathGet(scope, modelName) || [];
@@ -1055,7 +1065,7 @@ var Forms;
                         value.splice(idx, 1);
                     }
                     Core.pathSet(scope, modelName, value);
-                    updateKeys();
+                    updateKeys_1();
                 };
                 // the expression for an item value
                 var itemId = modelName + "[" + rowScopeName + "]";
@@ -1080,8 +1090,9 @@ var Forms;
     var ArrayInput = (function (_super) {
         __extends(ArrayInput, _super);
         function ArrayInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         ArrayInput.prototype.doLink = function (scope, element, attrs) {
             var config = new InputBaseConfig;
@@ -1147,8 +1158,9 @@ var Forms;
     var BooleanInput = (function (_super) {
         __extends(BooleanInput, _super);
         function BooleanInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         BooleanInput.prototype.getInput = function (config, arg, id, modelName) {
             var rc = $('<input class="hawtio-checkbox" type="checkbox">');
@@ -1165,13 +1177,13 @@ var Forms;
             // lets coerce any string values to boolean so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                function onModelChange() {
+                var onModelChange = function () {
                     var value = Core.pathGet(scope, modelName);
                     if (value && "true" === value) {
                         //console.log("coercing String to boolean for " + modelName);
                         Core.pathSet(scope, modelName, true);
                     }
-                }
+                };
                 scope.$watch(modelName, onModelChange);
                 onModelChange();
             }
@@ -1181,7 +1193,6 @@ var Forms;
     }(InputBase));
     Forms.BooleanInput = BooleanInput;
 })(Forms || (Forms = {}));
-
 /// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
@@ -1189,7 +1200,6 @@ var Forms;
     Forms.templateUrl = 'plugins/forms/html/';
     Forms.log = Logger.get(Forms.pluginName);
 })(Forms || (Forms = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
@@ -1553,7 +1563,6 @@ var Forms;
     }());
     Forms.SimpleForm = SimpleForm;
 })(Forms || (Forms = {}));
-
 ///<reference path="formHelpers.ts"/>
 var Forms;
 (function (Forms) {
@@ -1916,7 +1925,6 @@ var Forms;
     }());
     Forms.InputTable = InputTable;
 })(Forms || (Forms = {}));
-
 var Forms;
 (function (Forms) {
     var SubmitForm = (function () {
@@ -1941,7 +1949,6 @@ var Forms;
     }());
     Forms.SubmitForm = SubmitForm;
 })(Forms || (Forms = {}));
-
 var Forms;
 (function (Forms) {
     var ResetForm = (function () {
@@ -1969,7 +1976,6 @@ var Forms;
     }());
     Forms.ResetForm = ResetForm;
 })(Forms || (Forms = {}));
-
 /// <reference path="formHelpers.ts"/>
 /// <reference path="simpleFormDirective.ts"/>
 /// <reference path="inputTableDirective.ts"/>
@@ -2039,10 +2045,10 @@ var Forms;
         }]);
     hawtioPluginLoader.addModule(Forms.pluginName);
 })(Forms || (Forms = {}));
-
 /// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
+    // add some type interfaces for hawtio-form's config
     /**
      * Factory method to create a FormElement object
      * @returns {FormElement}
@@ -2079,7 +2085,6 @@ var Forms;
     }
     Forms.createFormGridConfiguration = createFormGridConfiguration;
 })(Forms || (Forms = {}));
-
 /// <reference path="formPlugin.ts"/>
 /// <reference path="formInterfaces.ts"/>
 var Forms;
@@ -2215,7 +2220,6 @@ var Forms;
             };
         }]);
 })(Forms || (Forms = {}));
-
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 /// <reference path="formPlugin.ts"/>
@@ -2240,6 +2244,7 @@ var Forms;
                         }
                         catch (e) {
                             Forms.log.debug("failed to delete key: ", key, " from entity: ", scope.entity);
+                            // nothing to do
                         }
                     };
                     scope.addItem = function (newItem) {
@@ -2262,28 +2267,27 @@ var Forms;
             };
         }]);
 })(Forms || (Forms = {}));
-
 /// <reference path="../../includes.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
     /**
      * Enum for form mode attribute
      */
+    var FormMode;
     (function (FormMode) {
         FormMode[FormMode["VIEW"] = 0] = "VIEW";
         FormMode[FormMode["EDIT"] = 1] = "EDIT";
-    })(HawtioForms.FormMode || (HawtioForms.FormMode = {}));
-    var FormMode = HawtioForms.FormMode;
+    })(FormMode = HawtioForms.FormMode || (HawtioForms.FormMode = {}));
     /**
      * Enum for the overall form style
      */
+    var FormStyle;
     (function (FormStyle) {
         FormStyle[FormStyle["STANDARD"] = 0] = "STANDARD";
         FormStyle[FormStyle["INLINE"] = 1] = "INLINE";
         FormStyle[FormStyle["HORIZONTAL"] = 2] = "HORIZONTAL";
         FormStyle[FormStyle["UNWRAPPED"] = 3] = "UNWRAPPED";
-    })(HawtioForms.FormStyle || (HawtioForms.FormStyle = {}));
-    var FormStyle = HawtioForms.FormStyle;
+    })(FormStyle = HawtioForms.FormStyle || (HawtioForms.FormStyle = {}));
     function createFormConfiguration(options) {
         var answer = options || { properties: {} };
         _.defaults(answer, {
@@ -2294,7 +2298,6 @@ var HawtioForms;
     }
     HawtioForms.createFormConfiguration = createFormConfiguration;
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="forms2Interfaces.ts"/>
 var HawtioForms;
@@ -2740,7 +2743,6 @@ var HawtioForms;
     }
     HawtioForms.initConfig = initConfig;
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Helpers.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2750,7 +2752,6 @@ var HawtioForms;
     });
     hawtioPluginLoader.addModule(HawtioForms.pluginName);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2777,7 +2778,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3032,7 +3032,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3335,7 +3334,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3518,7 +3516,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3614,7 +3611,6 @@ var HawtioForms;
             return registry;
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {

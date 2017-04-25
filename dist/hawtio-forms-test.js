@@ -1,5 +1,4 @@
 /// <reference path="../defs.d.ts"/>
-
 /// <reference path="../../includes.ts"/>
 var Forms1Tests;
 (function (Forms1Tests) {
@@ -211,7 +210,6 @@ var Forms1Tests;
         }]);
     hawtioPluginLoader.addModule(pluginName);
 })(Forms1Tests || (Forms1Tests = {}));
-
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.schema = {
@@ -3363,7 +3361,6 @@ var Kubernetes;
         "type": "object"
     };
 })(Kubernetes || (Kubernetes = {}));
-
 /// <reference path="../../includes.ts"/>
 /// <reference path="schema.ts"/>
 var Forms2Tests;
@@ -4068,7 +4065,6 @@ var Forms2Tests;
         }]);
     hawtioPluginLoader.addModule(pluginName);
 })(Forms2Tests || (Forms2Tests = {}));
-
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
@@ -4135,7 +4131,6 @@ var Forms2Tests;
             }, 1000));
         }]);
 })(Forms2Tests || (Forms2Tests = {}));
-
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
@@ -4194,7 +4189,6 @@ var Forms2Tests;
             }, 1000));
         }]);
 })(Forms2Tests || (Forms2Tests = {}));
-
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
@@ -4265,7 +4259,6 @@ var Forms2Tests;
             }, 1000));
         }]);
 })(Forms2Tests || (Forms2Tests = {}));
-
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
