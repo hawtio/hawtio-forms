@@ -376,7 +376,7 @@ module Forms2Tests {
   }]);
 
   _module.controller("HawtioFormsTests.Forms2WizardController", ["$scope", "$templateCache", function($scope, $templateCache) {
-    var config:any = _.clone(baseConfig, true);
+    var config:any = _.cloneDeep(baseConfig);
     config.wizard = {
         onChange: function(current, next, pageIds) {
           log.debug("page changed, current page: ", current, " next: ", next);
@@ -408,7 +408,7 @@ module Forms2Tests {
         }
       };
     $scope.config = config;
-    var model = _.clone(baseModel, true);
+    var model = _.cloneDeep(baseModel);
     $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
@@ -666,13 +666,13 @@ module Forms2Tests {
   }]);
 
   _module.controller("HawtioFormsTests.Forms2TabsController", ["$scope", "$templateCache", function($scope, $templateCache) {
-    var config:any = _.clone(baseConfig, true);
+    var config:any = _.cloneDeep(baseConfig);
     config.tabs = {
         "Tab One": ["scheme", "array3", "key", "value"],
         "Tab Two": ["*"],
         "Tab Three": ["booleanArg"]
       };
-    var model = _.clone(baseModel, true);
+    var model = _.cloneDeep(baseModel);
     $scope.config = config;
     $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
@@ -692,10 +692,10 @@ module Forms2Tests {
   }]);
 
   _module.controller("HawtioFormsTests.Forms2Controller", ["$scope", "$templateCache", "SchemaRegistry", function($scope, $templateCache, schemas) {
-    var config:any = _.clone(baseConfig, true);
+    var config:any = _.cloneDeep(baseConfig);
     config.controls = ["scheme", "nestedObject", "fromSchemaRegistry", "*", "array2", "array1"];
     $scope.config = config;
-    var model = _.clone(baseModel, true);
+    var model = _.cloneDeep(baseModel);
     $scope.model = model;
     $scope.configStr = angular.toJson($scope.config, true);
     $scope.markup = $templateCache.get("markup.html");
