@@ -1674,9 +1674,9 @@ var Forms;
                 angular.forEach(scope.config.selectedItems, function (selected) {
                     var id = selected["_id"];
                     if (angular.isArray(data)) {
-                        data = data.remove(function (value) { return _.isEqual(value, selected); });
+                        data = _.remove(data, function (value) { return _.isEqual(value, selected); });
                         delete selected["_id"];
-                        data = data.remove(function (value) { return _.isEqual(value, selected); });
+                        data = _.remove(data, function (value) { return _.isEqual(value, selected); });
                     }
                     else {
                         delete selected["_id"];
@@ -2933,7 +2933,7 @@ var HawtioForms;
                         s.config = config;
                         s.entity = entity;
                         function initSchema(schema) {
-                            var answer = _.clone(schema, true);
+                            var answer = _.cloneDeep(schema);
                             answer.style = HawtioForms.FormStyle.STANDARD;
                             if ('$items' in answer.properties) {
                                 answer.properties.$items['label-attributes'] = {
@@ -3588,9 +3588,7 @@ var HawtioForms;
                 getSchema: function (name) {
                     return schemaMap[name];
                 },
-                cloneSchema: function (name) {
-                    return _.clone(schemaMap[name], true);
-                },
+                cloneSchema: function (name) { return _.cloneDeep(schemaMap[name]); },
                 removeSchema: function (name) {
                     var answer = undefined;
                     if (name in schemaMap) {
