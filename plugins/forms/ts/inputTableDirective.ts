@@ -133,9 +133,9 @@ module Forms {
         angular.forEach(scope.config.selectedItems, (selected) => {
           var id = selected["_id"];
           if (angular.isArray(data)) {
-            data = data.remove((value) => _.isEqual(value, selected));
+            data = _.remove(data, value => _.isEqual(value, selected));
             delete selected["_id"];
-            data = data.remove((value) => _.isEqual(value, selected));
+            data = _.remove(data, value => _.isEqual(value, selected));
           }
           else {
             delete selected["_id"];
