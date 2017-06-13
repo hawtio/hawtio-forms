@@ -123,7 +123,7 @@ module HawtioForms {
                 $compile: $compile,
             directiveName: directiveName        
           };
-          var config = <any> initConfig(context, _.cloneDeep(newConfig), false);
+          var config = <any> initConfig(context, <FormConfiguration>_.cloneDeep(newConfig), false);
           context.config = config;
           context.maybeHumanize = createMaybeHumanize(context);
           if (!scope.entity) {
@@ -164,7 +164,7 @@ module HawtioForms {
           s.entity = entity;
 
           function initSchema(schema) {
-            var answer = _.clone(schema, true);
+            var answer = _.cloneDeep(schema);
             answer.style = FormStyle.STANDARD;
             if ('$items' in answer.properties) {
               answer.properties.$items['label-attributes'] = {

@@ -69,7 +69,7 @@ module HawtioForms {
         return schemaMap[name];
       },
       cloneSchema: (name: string):FormConfiguration => {
-        return _.clone(schemaMap[name], true);
+        return _.cloneDeep(schemaMap[name]);
       },
       removeSchema: (name:string):any => {
         var answer = <any> undefined;

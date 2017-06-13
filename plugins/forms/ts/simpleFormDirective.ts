@@ -1,4 +1,3 @@
-/// <reference path="../../includes.ts"/>
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 module Forms {

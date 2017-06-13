@@ -1,1 +1,1 @@
-/// <reference path="../defs.d.ts"/>
+/// <reference path="../dist/hawtio-forms.d.ts"/>

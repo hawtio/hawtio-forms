@@ -1,5 +1,4 @@
 var gulp = require('gulp'),
-    wiredep = require('wiredep').stream,
     eventStream = require('event-stream'),
     gulpLoadPlugins = require('gulp-load-plugins'),
     del = require('del'),
@@ -10,64 +9,34 @@ var gulp = require('gulp'),
     s = require('underscore.string');
 
 var plugins = gulpLoadPlugins({});
-var pkg = require('./package.json');
 
 var config = {
-  main: '.',
   ts: ['plugins/**/*.ts'],
   testTs: ['test-plugins/**/*.ts'],
   less: ['plugins/**/*.less'],
   templates: ['plugins/**/*.html'],
   testTemplates: ['test-plugins/**/*.html'],
-  templateModule: pkg.name + '-templates',
-  testTemplateModule: pkg.name + '-test-templates',
-  dist: argv.out || './dist/',
-  js: pkg.name + '.js',
-  testJs: pkg.name + '-test.js',
-  css: pkg.name + '.css',
-  tsProject: plugins.typescript.createProject({
-    target: 'ES5',
-    module: 'commonjs',
-    declarationFiles: true,
-    noResolve: false
-  }),
-  testTsProject: plugins.typescript.createProject({
-    target: 'ES5',
-    module: 'commonjs',
-    declarationFiles: false,
-    noResolve: false
-  })
+  templateModule: 'hawtio-forms-templates',
+  testTemplateModule: 'hawtio-forms-test-templates',
+  dist: argv.out || 'dist/',
+  testDist: 'test-dist/',
+  js: 'hawtio-forms.js',
+  testJs: 'hawtio-forms-test.js',
+  css: 'hawtio-forms.css',
+  tsProject: plugins.typescript.createProject('tsconfig.json'),
+  testTsProject: plugins.typescript.createProject('test-tsconfig.json'),
+  vendorJs: 'vendor/*.js'
 };
 
-gulp.task('bower', function() {
-  return gulp.src('index.html')
-    .pipe(wiredep({}))
-    .pipe(gulp.dest('.'));
-});
-
-/** Adjust the reference path of any typescript-built plugin this project depends on */
-gulp.task('path-adjust', function() {
-  return gulp.src('libs/**/includes.d.ts')
-    .pipe(plugins.replace(/"\.\.\/libs/gm, '"../../../libs'))
-    .pipe(gulp.dest('libs'));
-});
-
 gulp.task('clean-defs', function() {
-  return del('defs.d.ts');
+  return del(config.dist + '*.d.ts');
 });
 
 gulp.task('example-tsc', ['tsc'], function() {
-  var tsResult = gulp.src(config.testTs)
-    .pipe(plugins.typescript(config.testTsProject))
-    .on('error', plugins.notify.onError({
-      onLast: true,
-      message: '<%= error.message %>',
-      title: 'Typescript compilation error - test'
-    }));
-
-    return tsResult.js
-        .pipe(plugins.concat('test-compiled.js'))
-        .pipe(gulp.dest('.'));
+  return gulp.src(config.testTs)
+    .pipe(config.testTsProject())
+    .js
+    .pipe(gulp.dest('.'));
 });
 
 gulp.task('example-template', ['example-tsc'], function() {
@@ -85,7 +54,7 @@ gulp.task('example-template', ['example-tsc'], function() {
 gulp.task('example-concat', ['example-template'], function() {
   return gulp.src(['test-compiled.js', 'test-templates.js'])
     .pipe(plugins.concat(config.testJs))
-    .pipe(gulp.dest(config.dist));
+    .pipe(gulp.dest(config.testDist));
 });
 
 gulp.task('example-clean', ['example-concat'], function() {
@@ -94,39 +63,21 @@ gulp.task('example-clean', ['example-concat'], function() {
 
 
 gulp.task('tsc', ['clean-defs'], function() {
-  var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
-    .pipe(plugins.typescript(config.tsProject))
-    .on('error', plugins.notify.onError({
-      onLast: true,
-      message: '<%= error.message %>',
-      title: 'Typescript compilation error'
-    }));
-
-    return eventStream.merge(
-      tsResult.js
-        .pipe(plugins.concat('compiled.js'))
-        .pipe(gulp.dest('.')),
-      tsResult.dts
-        .pipe(gulp.dest('d.ts')))
-        .pipe(plugins.filter('**/*.d.ts'))
-        .pipe(plugins.concatFilenames('defs.d.ts', {
-          root: cwd,
-          prepend: '/// <reference path="',
-          append: '"/>'
-        }))
-        .pipe(gulp.dest('.'));
+    .pipe(config.tsProject());
+  return eventStream.merge(
+    tsResult.js
+      .pipe(gulp.dest('.')),
+    tsResult.dts
+      .pipe(plugins.rename('hawtio-forms.d.ts'))
+      .pipe(gulp.dest(config.dist))
+  );
 });
 
 gulp.task('less', function () {
   return gulp.src(config.less)
     .pipe(plugins.less({
       paths: [ path.join(__dirname, 'less', 'includes') ]
-    }))
-    .on('error', plugins.notify.onError({
-      onLast: true,
-      message: '<%= error.message %>',
-      title: 'less file compilation error'
     }))
     .pipe(plugins.concat(config.css))
     .pipe(gulp.dest(config.dist));
@@ -145,7 +96,7 @@ gulp.task('template', ['tsc'], function() {
 });
 
 gulp.task('concat', ['template'], function() {
-  return gulp.src(['compiled.js', 'templates.js'])
+  return gulp.src(['compiled.js', 'templates.js', config.vendorJs])
     .pipe(plugins.concat(config.js))
     .pipe(gulp.dest(config.dist));
 });
@@ -155,29 +106,20 @@ gulp.task('clean', ['concat'], function() {
 });
 
 gulp.task('watch-less', function() {
-  plugins.watch(config.less, function() {
-    gulp.start('less');
-  });
+  gulp.watch(config.less, ['less']);
 });
 
 gulp.task('watch', ['build', 'build-example', 'watch-less'], function() {
-  plugins.watch(['libs/**/*.js', 'libs/**/*.css', 'index.html', urljoin(config.dist, '*')], function() {
-    gulp.start('reload');
-  });
-  plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
-    gulp.start(['tsc', 'template', 'concat', 'clean']);
-  });
-  plugins.watch([config.testTs, config.testTemplates], function() {
-    gulp.start([ 'example-template', 'example-concat', 'example-clean']);
-  });
+  gulp.watch(['index.html', urljoin(config.dist, '*')], ['reload']);
+  gulp.watch([config.ts, config.templates], ['tsc', 'template', 'concat', 'clean']);
+  gulp.watch([config.testTs, config.testTemplates], ['example-template', 'example-concat', 'example-clean']);
 });
 
 gulp.task('connect', ['watch'], function() {
   plugins.connect.server({
     root: '.',
     livereload: true,
-    port: 2772,
-    fallback: 'index.html'
+    port: 2772
   });
 });
 
@@ -220,11 +162,6 @@ gulp.task('deploy', ['build', 'build-example', 'site'], function() {
     }));
 });
 
-
-gulp.task('build', ['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat', 'clean']);
+gulp.task('build', ['tsc', 'less', 'template', 'concat', 'clean']);
 gulp.task('build-example', ['example-tsc', 'example-template', 'example-concat', 'example-clean']);
-
 gulp.task('default', ['connect']);
-
-
-

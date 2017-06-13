@@ -1,6 +1,13 @@
-/// <reference path="../libs/hawtio-ui/defs.d.ts"/>
-
-/// <reference path="../../includes.ts"/>
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /**
  * @module Forms
  */
@@ -253,7 +260,6 @@ var Forms;
     }
     Forms.getHelpSpan = getHelpSpan;
 })(Forms || (Forms = {}));
-
 /**
  * @module Forms
  */
@@ -390,10 +396,10 @@ var Forms;
                 input.attr('data', configScopeName);
             }
             if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-                input.attr('ignore-prefix-in-label', true);
+                input.attr('ignore-prefix-in-label', 'true');
             }
             if (disableHumanizeLabel || property.disableHumanizeLabel) {
-                input.attr('disable-humanize-label', true);
+                input.attr('disable-humanize-label', 'true');
             }
             input.attr('name', id);
         }
@@ -412,6 +418,7 @@ var Forms;
             }
         }
         catch (e) {
+            // ignore missing read only function
         }
         if (required) {
             // don't mark checkboxes as required
@@ -690,17 +697,10 @@ var Forms;
     }
     Forms.normalize = normalize;
 })(Forms || (Forms = {}));
-
 /**
  * @module Forms
  */
-/// <reference path="../../includes.ts"/>
 /// <reference path="mappingRegistry.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Forms;
 (function (Forms) {
     /**
@@ -818,9 +818,10 @@ var Forms;
     var TextInput = (function (_super) {
         __extends(TextInput, _super);
         function TextInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "text";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "text";
+            return _this;
         }
         /*public getControlGroup(config1, config2, id) {
           return super.getControlGroup(config1, config2, id);
@@ -849,9 +850,10 @@ var Forms;
     var HiddenText = (function (_super) {
         __extends(HiddenText, _super);
         function HiddenText($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "hidden";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "hidden";
+            return _this;
         }
         HiddenText.prototype.getControlGroup = function (config1, config2, id) {
             var group = _super.prototype.getControlGroup.call(this, config1, config2, id);
@@ -869,9 +871,10 @@ var Forms;
     var PasswordInput = (function (_super) {
         __extends(PasswordInput, _super);
         function PasswordInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
-            this.type = "password";
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            _this.type = "password";
+            return _this;
         }
         return PasswordInput;
     }(TextInput));
@@ -879,8 +882,9 @@ var Forms;
     var CustomInput = (function (_super) {
         __extends(CustomInput, _super);
         function CustomInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         CustomInput.prototype.getInput = function (config, arg, id, modelName) {
             var template = arg.formtemplate;
@@ -903,8 +907,9 @@ var Forms;
     var SelectInput = (function (_super) {
         __extends(SelectInput, _super);
         function SelectInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         SelectInput.prototype.getInput = function (config, arg, id, modelName) {
             if (config.isReadOnly()) {
@@ -952,8 +957,9 @@ var Forms;
     var NumberInput = (function (_super) {
         __extends(NumberInput, _super);
         function NumberInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         NumberInput.prototype.getInput = function (config, arg, id, modelName) {
             if (config.isReadOnly()) {
@@ -979,17 +985,17 @@ var Forms;
             // lets coerce any string values to numbers so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                function onModelChange() {
-                    var value = Core.pathGet(scope, modelName);
-                    if (value && angular.isString(value)) {
-                        var numberValue = Number(value);
-                        Core.pathSet(scope, modelName, numberValue);
-                    }
-                }
-                scope.$watch(modelName, onModelChange);
-                onModelChange();
+                scope.$watch(modelName, this.onModelChange);
+                this.onModelChange(scope, modelName);
             }
             return rc;
+        };
+        NumberInput.prototype.onModelChange = function (scope, modelName) {
+            var value = Core.pathGet(scope, modelName);
+            if (value && angular.isString(value)) {
+                var numberValue = Number(value);
+                Core.pathSet(scope, modelName, numberValue);
+            }
         };
         return NumberInput;
     }(InputBase));
@@ -1001,10 +1007,12 @@ var Forms;
     var StringArrayInput = (function (_super) {
         __extends(StringArrayInput, _super);
         function StringArrayInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         StringArrayInput.prototype.getInput = function (config, arg, id, modelName) {
+            var _this = this;
             var rowScopeName = "_" + id;
             var ngRepeat = rowScopeName + ' in ' + modelName;
             var readOnlyWidget = '{{' + rowScopeName + '}}';
@@ -1035,19 +1043,12 @@ var Forms;
                 var itemKeys = methodPrefix + "keys";
                 var addMethod = methodPrefix + "add";
                 var removeMethod = methodPrefix + "remove";
-                // we maintain a separate object of all the keys (indices) of the array
-                // and use that to lookup the values
-                function updateKeys() {
-                    var value = Core.pathGet(scope, modelName);
-                    scope[itemKeys] = value ? Object.keys(value) : [];
-                    scope.$emit("hawtio.form.modelChange", modelName, value);
-                }
-                updateKeys();
+                this.updateKeys(scope, modelName, itemKeys);
                 scope[addMethod] = function () {
                     var value = Core.pathGet(scope, modelName) || [];
                     value.push("");
                     Core.pathSet(scope, modelName, value);
-                    updateKeys();
+                    _this.updateKeys(scope, modelName, itemKeys);
                 };
                 scope[removeMethod] = function (idx) {
                     var value = Core.pathGet(scope, modelName) || [];
@@ -1055,7 +1056,7 @@ var Forms;
                         value.splice(idx, 1);
                     }
                     Core.pathSet(scope, modelName, value);
-                    updateKeys();
+                    _this.updateKeys(scope, modelName, itemKeys);
                 };
                 // the expression for an item value
                 var itemId = modelName + "[" + rowScopeName + "]";
@@ -1074,14 +1075,22 @@ var Forms;
                 return markup;
             }
         };
+        // we maintain a separate object of all the keys (indices) of the array
+        // and use that to lookup the values
+        StringArrayInput.prototype.updateKeys = function (scope, modelName, itemKeys) {
+            var value = Core.pathGet(scope, modelName);
+            scope[itemKeys] = value ? Object.keys(value) : [];
+            scope.$emit("hawtio.form.modelChange", modelName, value);
+        };
         return StringArrayInput;
     }(InputBase));
     Forms.StringArrayInput = StringArrayInput;
     var ArrayInput = (function (_super) {
         __extends(ArrayInput, _super);
         function ArrayInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         ArrayInput.prototype.doLink = function (scope, element, attrs) {
             var config = new InputBaseConfig;
@@ -1147,8 +1156,9 @@ var Forms;
     var BooleanInput = (function (_super) {
         __extends(BooleanInput, _super);
         function BooleanInput($compile) {
-            _super.call(this, $compile);
-            this.$compile = $compile;
+            var _this = _super.call(this, $compile) || this;
+            _this.$compile = $compile;
+            return _this;
         }
         BooleanInput.prototype.getInput = function (config, arg, id, modelName) {
             var rc = $('<input class="hawtio-checkbox" type="checkbox">');
@@ -1165,32 +1175,28 @@ var Forms;
             // lets coerce any string values to boolean so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                function onModelChange() {
-                    var value = Core.pathGet(scope, modelName);
-                    if (value && "true" === value) {
-                        //console.log("coercing String to boolean for " + modelName);
-                        Core.pathSet(scope, modelName, true);
-                    }
-                }
-                scope.$watch(modelName, onModelChange);
-                onModelChange();
+                scope.$watch(modelName, this.onModelChange);
+                this.onModelChange(scope, modelName);
             }
             return rc;
+        };
+        BooleanInput.prototype.onModelChange = function (scope, modelName) {
+            var value = Core.pathGet(scope, modelName);
+            if (value && "true" === value) {
+                //console.log("coercing String to boolean for " + modelName);
+                Core.pathSet(scope, modelName, true);
+            }
         };
         return BooleanInput;
     }(InputBase));
     Forms.BooleanInput = BooleanInput;
 })(Forms || (Forms = {}));
-
-/// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
     Forms.pluginName = 'hawtio-forms';
     Forms.templateUrl = 'plugins/forms/html/';
     Forms.log = Logger.get(Forms.pluginName);
 })(Forms || (Forms = {}));
-
-/// <reference path="../../includes.ts"/>
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 var Forms;
@@ -1553,7 +1559,6 @@ var Forms;
     }());
     Forms.SimpleForm = SimpleForm;
 })(Forms || (Forms = {}));
-
 ///<reference path="formHelpers.ts"/>
 var Forms;
 (function (Forms) {
@@ -1665,9 +1670,9 @@ var Forms;
                 angular.forEach(scope.config.selectedItems, function (selected) {
                     var id = selected["_id"];
                     if (angular.isArray(data)) {
-                        data = data.remove(function (value) { return _.isEqual(value, selected); });
+                        data = data.filter(function (value) { return !_.isEqual(value, selected); });
                         delete selected["_id"];
-                        data = data.remove(function (value) { return _.isEqual(value, selected); });
+                        data = data.filter(function (value) { return !_.isEqual(value, selected); });
                     }
                     else {
                         delete selected["_id"];
@@ -1916,7 +1921,6 @@ var Forms;
     }());
     Forms.InputTable = InputTable;
 })(Forms || (Forms = {}));
-
 var Forms;
 (function (Forms) {
     var SubmitForm = (function () {
@@ -1941,7 +1945,6 @@ var Forms;
     }());
     Forms.SubmitForm = SubmitForm;
 })(Forms || (Forms = {}));
-
 var Forms;
 (function (Forms) {
     var ResetForm = (function () {
@@ -1969,7 +1972,6 @@ var Forms;
     }());
     Forms.ResetForm = ResetForm;
 })(Forms || (Forms = {}));
-
 /// <reference path="formHelpers.ts"/>
 /// <reference path="simpleFormDirective.ts"/>
 /// <reference path="inputTableDirective.ts"/>
@@ -2039,10 +2041,9 @@ var Forms;
         }]);
     hawtioPluginLoader.addModule(Forms.pluginName);
 })(Forms || (Forms = {}));
-
-/// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
+    // add some type interfaces for hawtio-form's config
     /**
      * Factory method to create a FormElement object
      * @returns {FormElement}
@@ -2079,7 +2080,6 @@ var Forms;
     }
     Forms.createFormGridConfiguration = createFormGridConfiguration;
 })(Forms || (Forms = {}));
-
 /// <reference path="formPlugin.ts"/>
 /// <reference path="formInterfaces.ts"/>
 var Forms;
@@ -2215,7 +2215,6 @@ var Forms;
             };
         }]);
 })(Forms || (Forms = {}));
-
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 /// <reference path="formPlugin.ts"/>
@@ -2240,6 +2239,7 @@ var Forms;
                         }
                         catch (e) {
                             Forms.log.debug("failed to delete key: ", key, " from entity: ", scope.entity);
+                            // nothing to do
                         }
                     };
                     scope.addItem = function (newItem) {
@@ -2262,28 +2262,26 @@ var Forms;
             };
         }]);
 })(Forms || (Forms = {}));
-
-/// <reference path="../../includes.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
     /**
      * Enum for form mode attribute
      */
+    var FormMode;
     (function (FormMode) {
         FormMode[FormMode["VIEW"] = 0] = "VIEW";
         FormMode[FormMode["EDIT"] = 1] = "EDIT";
-    })(HawtioForms.FormMode || (HawtioForms.FormMode = {}));
-    var FormMode = HawtioForms.FormMode;
+    })(FormMode = HawtioForms.FormMode || (HawtioForms.FormMode = {}));
     /**
      * Enum for the overall form style
      */
+    var FormStyle;
     (function (FormStyle) {
         FormStyle[FormStyle["STANDARD"] = 0] = "STANDARD";
         FormStyle[FormStyle["INLINE"] = 1] = "INLINE";
         FormStyle[FormStyle["HORIZONTAL"] = 2] = "HORIZONTAL";
         FormStyle[FormStyle["UNWRAPPED"] = 3] = "UNWRAPPED";
-    })(HawtioForms.FormStyle || (HawtioForms.FormStyle = {}));
-    var FormStyle = HawtioForms.FormStyle;
+    })(FormStyle = HawtioForms.FormStyle || (HawtioForms.FormStyle = {}));
     function createFormConfiguration(options) {
         var answer = options || { properties: {} };
         _.defaults(answer, {
@@ -2294,8 +2292,6 @@ var HawtioForms;
     }
     HawtioForms.createFormConfiguration = createFormConfiguration;
 })(HawtioForms || (HawtioForms = {}));
-
-/// <reference path="../../includes.ts"/>
 /// <reference path="forms2Interfaces.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2740,7 +2736,6 @@ var HawtioForms;
     }
     HawtioForms.initConfig = initConfig;
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Helpers.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2750,7 +2745,6 @@ var HawtioForms;
     });
     hawtioPluginLoader.addModule(HawtioForms.pluginName);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2777,7 +2771,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -2933,7 +2926,7 @@ var HawtioForms;
                         s.config = config;
                         s.entity = entity;
                         function initSchema(schema) {
-                            var answer = _.clone(schema, true);
+                            var answer = _.cloneDeep(schema);
                             answer.style = HawtioForms.FormStyle.STANDARD;
                             if ('$items' in answer.properties) {
                                 answer.properties.$items['label-attributes'] = {
@@ -3032,7 +3025,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3335,7 +3327,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3518,7 +3509,6 @@ var HawtioForms;
             };
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3592,7 +3582,7 @@ var HawtioForms;
                     return schemaMap[name];
                 },
                 cloneSchema: function (name) {
-                    return _.clone(schemaMap[name], true);
+                    return _.cloneDeep(schemaMap[name]);
                 },
                 removeSchema: function (name) {
                     var answer = undefined;
@@ -3614,7 +3604,6 @@ var HawtioForms;
             return registry;
         }]);
 })(HawtioForms || (HawtioForms = {}));
-
 /// <reference path="forms2Plugin.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3683,31 +3672,192 @@ var HawtioForms;
         }]);
 })(HawtioForms || (HawtioForms = {}));
 
-angular.module("hawtio-forms-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("plugins/forms2/html/array.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div ng-hide=\"{{control.noLabel}}\" class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-array\"></div>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/arrayItemModal.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{header}}</h3>\n</div>\n<div class=\"modal-body\">\n  <div ng-show=\"description\" ng-bind-html=\"description\"></div>\n  <div hawtio-form-2=\"schema\" entity=\"newEntity\"></div>\n</div>\n<div class=\"modal-footer\">\n  <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n  <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n</div>\n");
-$templateCache.put("plugins/forms2/html/checkbox-horizontal.html","<div class=\"form-group\">\n  <div class=\"col-sm-offset-2 col-sm-10\">\n    <div class=\"checkbox\">\n      <label>\n        <input ng-disabled=\"config.mode == 0\" type=\"checkbox\" ng-model=\"{{model}}\" name=\"{{name}}\"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class=\"help-block\">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/checkbox.html","<div class=\"form-group\">\n  <div class=\"checkbox\">\n    <label>\n      <input ng-disabled=\"config.mode == 0\" type=\"checkbox\" ng-model=\"{{model}}\" name=\"{{name}}\"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/form-horizontal.html","<form ng-disabled=\"config.mode == 0\" class=\"hawtio-form-2 form-horizontal\" name=\"{{name}}\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
-$templateCache.put("plugins/forms2/html/form-inline.html","<form class=\"hawtio-form-2 hawtio-form-2-inline\" name=\"{{name}}\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
-$templateCache.put("plugins/forms2/html/form-standard.html","<form class=\"hawtio-form-2 hawtio-form-2-standard\" name=\"{{name}}\">\n  <fieldset>\n    <legend ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend\">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n");
-$templateCache.put("plugins/forms2/html/form-unwrapped.html","<div class=\"hawtio-form-2 hawtio-form-2-unwrapped\">\n  <h4 ng-show=\"config.label || config.description\" ng-hide=\"config.hideLegend || config.label == \'false\'\">{{config.label || config.description}}</h4>\n\n</div>\n");
-$templateCache.put("plugins/forms2/html/form2Map.html","<div>\n\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Array.html","<div>\n  <script type=\"text/ng-template\" id=\"header.html\">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type=\"text/ng-template\" id=\"emptyHeader.html\">\n    <th></th>\n  </script>\n  <script type=\"text/ng-template\" id=\"newItemHeader.html\">\n    <th class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createNewRow()\">\n        <i class=\"fa fa-plus green\" ></i>\n      </button>\n    </th>\n  </script>\n  <script type=\"text/ng-template\" id=\"arrayRowTemplate.html\">\n    <tr></tr>\n  </script>\n  <script type=\"text/ng-template\" id=\"deleteRow.html\">\n    <td class=\"align-right\">\n      <button ng-hide=\"config.mode == 0\" class=\'editRow\'><i class=\"fa fa-pencil yellow\"></i></button>\n      <button ng-hide=\"config.mode == 0\" class=\'deleteRow\'><i class=\"fa fa-minus red\"></i></button>\n    </td>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n");
-$templateCache.put("plugins/forms2/html/forms2Directive.html","<div>\n  <script type=\"text/ng-template\" id=\"wizardParent.html\">\n    <div>\n      <div class=\"wizardParent\" ng-switch=\"getCurrentPageId()\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardButtons.html\">\n    <div class=\"wizardButtons align-right\">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class=\"btn btn-default back\" ng-click=\"back()\" ng-hide=\"atFront()\">{{buttons.back}}</button>\n      <button class=\"btn btn-primary next\" ng-click=\"next()\" ng-hide=\"atBack()\">{{buttons.next}}</button>\n      <button class=\"btn btn-primary finish\" ng-click=\"onFinish()\" ng-show=\"atBack()\">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"wizardPage.html\">\n    <div class=\"wizardPage\">\n      <h3></h3>\n      <div class=\"wizardPageBody\">\n      </div>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabElement.html\">\n    <div class=\"tabbable hawtio-form-tabs\"></div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"tabPage.html\">\n    <div class=\"tab-pane\"></div>\n  </script>\n</div>\n");
-$templateCache.put("plugins/forms2/html/forms2Map.html","<div>\n  <script type=\"text/ng-template\" id=\"mapItemModal.html\">\n    <div class=\"modal-header\">\n      <h3 class=\"modal-title\">{{header}}</h3>\n    </div>\n    <div class=\"modal-body\">\n      <div class=\"row\">\n        <div ng-show=\"description\" ng-bind-html=\"description\"></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"keySchema\" entity=\"newKeyEntity\"></div>\n        </div>\n        <div class=\"col-md-6\">\n          <div hawtio-form-2=\"valueSchema\" entity=\"newValueEntity\"></div>\n        </div>\n      </div>\n    </div>\n    <div class=\"modal-footer\">\n      <button class=\"btn btn-primary\" ng-click=\"ok()\">OK</button>\n      <button class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</button>\n    </div>\n  </script>\n  <script type=\"text/ng-template\" id=\"table.html\">\n    <table class=\"table table-striped\">\n      <thead>\n        <tr>\n          <th>\n            Key\n          </th>\n          <th>\n            Value\n          </th>\n          <th class=\"align-right\">\n            <button ng-hide=\"config.mode == 0\" class=\"button button-success\" ng-click=\"createRow()\">\n              <i class=\"fa fa-plus green\" ></i>\n            </button>\n          </th>\n        </tr>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n  <script type=\"text/ng-template\" id=\"mapRowTemplate.html\">\n    <tr>\n      <td>\n        <div class=\"inline form-map-key\" hawtio-form-2=\"keySchema\" entity=\"keys[\'{{key}}\']\"></div>\n      </td>\n      <td>\n        <div class=\"inline form-map-value\" hawtio-form-2=\"valueSchema\" entity=\"values[\'{{key}}\']\"></div>\n      </td>\n      <td class=\"align-right\">\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-edit button button-warning\" ng-click=\"editRow(\'{{key}}\')\">\n          <i class=\"fa fa-pencil yellow\"></i>\n        </button>\n        <button ng-hide=\"config.mode == 0\" class=\"form-map-remove button button-danger\" ng-click=\"deleteRow(\'{{key}}\')\">\n          <i class=\"fa fa-remove red\"></i>\n        </button>\n      </td>\n    </tr>\n  </script>\n\n</div>\n");
-$templateCache.put("plugins/forms2/html/hidden.html","<div class=\"form-group\" ng-hide=\"true\">\n  <input type=\"hidden\" ng-model=\"{{model}}\" name=\"{{name}}\">\n</div>\n");
-$templateCache.put("plugins/forms2/html/map.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"row\"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class=\"row\">\n      <div class=\"inline-map\"></div>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/object.html","<div class=\"row\">\n  <div class=\"clearfix col-md-12\">\n    <div class=\"inline-object\"></div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/optionArray.html","<option>{{value}}</option>\n");
-$templateCache.put("plugins/forms2/html/optionConfigObject.html","<option value=\"{{value}}\">{{label}}</option>\n");
-$templateCache.put("plugins/forms2/html/optionObject.html","<option value=\"{{value}}\">{{key}}</option>\n");
-$templateCache.put("plugins/forms2/html/radio-group-member.html","<label>\n  <input type=\"radio\" name=\"\" value=\"\">\n</label>\n");
-$templateCache.put("plugins/forms2/html/radio-top-level.html","<div class=\"radio\">\n</div>\n");
-$templateCache.put("plugins/forms2/html/select-horizontal.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <select ng-disabled=\"config.mode == 0\" hawtio-combobox class=\"form-control\" ng-model=\"{{model}}\" name=\"{{name}}\"></select>\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/select.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <select ng-disabled=\"config.mode == 0\" hawtio-combobox class=\"form-control\" ng-model=\"{{model}}\" name=\"{{name}}\"></select>\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
-$templateCache.put("plugins/forms2/html/standard-horizontal-input.html","<div class=\"form-group\">\n  <label ng-hide=\"{{control.noLabel}}\" class=\"col-sm-2 control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <div class=\"col-sm-10\">\n    <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\" name=\"{{name}}\">\n    <p class=\"help-block\">{{control.description}}</p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/standard-input.html","<div class=\"form-group\">\n  <label ng-hide=\"{{control.noLabel}}\" class=\"control-label\">{{control.label || maybeHumanize(name)}}</label>\n  <input ng-disabled=\"config.mode == 0\" type=\"\" class=\"form-control\" placeholder=\"{{control.placeholder}}\" ng-model=\"{{model}}\" name=\"{{name}}\">\n  <p class=\"help-block\">{{control.description}}</p>\n</div>\n");
-$templateCache.put("plugins/forms2/html/static-horizontal-text.html","<div class=\"form-group\">\n  <label class=\"col-sm-2 control-label\">{{control.label}}</label>\n  <div class=\"col-sm-10\">\n    <p ng-hide=\"{{model}}\" class=\"form-control-static\">{{control.description}}</p>\n    <p ng-show=\"{{model}}\" class=\"form-control-static\" ng-bind=\"{{model}}\"></p>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms2/html/static-text.html","<div class=\"form-group\">\n  <label class=\"control-label\">{{control.label}}</label>\n  <p ng-hide=\"{{model}}\" class=\"form-control-static\">{{control.description}}</p>\n  <p ng-show=\"{{model}}\" class=\"form-control-static\" ng-bind=\"{{model}}\"></p>\n</div>\n");
-$templateCache.put("plugins/forms/html/formGrid.html","<div>\n\n  <script type=\"text/ng-template\" id=\"heroUnitTemplate.html\">\n    <div class=\"hero-unit\">\n      <h5>No Items Added</h5>\n      <p><a href=\"\" ng-click=\"addThing()\">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"headerCellTemplate.html\">\n    <th>{{label}}</th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"emptyHeaderCellTemplate.html\">\n    <th></th>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"deleteRowTemplate.html\">\n    <td ng-click=\"removeThing({{index}})\" class=\"align-center\">\n      <i class=\"icon-remove red mouse-pointer\"></i>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"cellNumberTemplate.html\">\n    <td>\n      <editable-property ng-model=\"{{row}}\"\n                         type=\"{{type}}\"\n                         property=\"{{key}}\" min=\"{{min}}\" max=\"{{max}}\"></editable-property>\n    </td>\n  </script>\n\n  <script type=\"text/ng-template\" id=\"rowTemplate.html\">\n    <tr></tr>\n  </script>\n\n  <div ng-show=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12 nodata\">\n    </div>\n  </div>\n  <div ng-hide=\"configuration.rows.length == 0\" class=\"row-fluid\">\n    <div class=\"span12\">\n      <h3 ng-show=\"configuration.heading\">{{getHeading()}}</h3>\n      <table class=\"table table-striped\">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click=\"addThing()\" class=\"centered mouse-pointer\">\n      <i class=\"icon-plus green\"></i><span ng-show=\"configuration.rowName\"> Add {{_.startCase(configuration.rowName)}}</span>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("plugins/forms/html/formMapDirective.html","<div class=\"control-group\">\n  <label class=\"control-label\" for=\"keyValueList\">{{data[name].label || name | humanize}}:</label>\n  <div class=\"controls\">\n    <ul id=\"keyValueList\" class=\"zebra-list\">\n      <li ng-repeat=\"(key, value) in entity[name]\">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class=\"pull-right icon-remove red mouse-pointer\" ng-click=\"deleteKey(key)\"></i>\n      </li>\n      <li>\n        <button class=\"btn btn-success\"  ng-click=\"showForm = true\" ng-hide=\"showForm\"><i class=\"icon-plus\"></i></button>\n        <div class=\"well\" ng-show=\"showForm\">\n          <form class=\"form-horizontal\">\n            <fieldset>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Key:</label>\n                <div class=\"controls\">\n                  <input id=\"newItemKey\" type=\"text\" ng-model=\"newItem.key\">\n                </div>\n              </div>\n              <div class=\"control-group\">\n                <label class=\"control-label\" for=\"newItemKey\">Value:</label>\n                <div id=\"valueInput\" class=\"controls\">\n                  <input id=\"newItemValue\" type=\"text\" ng-model=\"newItem.value\">\n                </div>\n              </div>\n              <p>\n              <input type=\"submit\" class=\"btn btn-success pull-right\" ng-disabled=\"!newItem.key && !newItem.value\" ng-click=\"addItem(newItem)\" value=\"Add\">\n              <span class=\"pull-right\">&nbsp;</span>\n              <button class=\"btn pull-right\" ng-click=\"showForm = false\">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-forms-templates");
+angular.module('hawtio-forms-templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('plugins/forms/html/formGrid.html','<div>\n\n  <script type="text/ng-template" id="heroUnitTemplate.html">\n    <div class="hero-unit">\n      <h5>No Items Added</h5>\n      <p><a href="" ng-click="addThing()">Add an item</a> to the table</p>\n    </div>\n  </script>\n\n  <script type="text/ng-template" id="headerCellTemplate.html">\n    <th>{{label}}</th>\n  </script>\n\n  <script type="text/ng-template" id="emptyHeaderCellTemplate.html">\n    <th></th>\n  </script>\n\n  <script type="text/ng-template" id="deleteRowTemplate.html">\n    <td ng-click="removeThing({{index}})" class="align-center">\n      <i class="icon-remove red mouse-pointer"></i>\n    </td>\n  </script>\n\n  <script type="text/ng-template" id="cellTemplate.html">\n    <td>\n      <editable-property ng-model="{{row}}"\n                         type="{{type}}"\n                         property="{{key}}"></editable-property>\n    </td>\n  </script>\n\n  <script type="text/ng-template" id="cellNumberTemplate.html">\n    <td>\n      <editable-property ng-model="{{row}}"\n                         type="{{type}}"\n                         property="{{key}}" min="{{min}}" max="{{max}}"></editable-property>\n    </td>\n  </script>\n\n  <script type="text/ng-template" id="rowTemplate.html">\n    <tr></tr>\n  </script>\n\n  <div ng-show="configuration.rows.length == 0" class="row-fluid">\n    <div class="span12 nodata">\n    </div>\n  </div>\n  <div ng-hide="configuration.rows.length == 0" class="row-fluid">\n    <div class="span12">\n      <h3 ng-show="configuration.heading">{{getHeading()}}</h3>\n      <table class="table table-striped">\n        <thead>\n        </thead>\n        <tbody>\n        </tbody>\n      </table>\n    </div>\n    <div ng-click="addThing()" class="centered mouse-pointer">\n      <i class="icon-plus green"></i><span ng-show="configuration.rowName"> Add {{_.startCase(configuration.rowName)}}</span>\n    </div>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms/html/formMapDirective.html','<div class="control-group">\n  <label class="control-label" for="keyValueList">{{data[name].label || name | humanize}}:</label>\n  <div class="controls">\n    <ul id="keyValueList" class="zebra-list">\n      <li ng-repeat="(key, value) in entity[name]">\n        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}\n        <i class="pull-right icon-remove red mouse-pointer" ng-click="deleteKey(key)"></i>\n      </li>\n      <li>\n        <button class="btn btn-success"  ng-click="showForm = true" ng-hide="showForm"><i class="icon-plus"></i></button>\n        <div class="well" ng-show="showForm">\n          <form class="form-horizontal">\n            <fieldset>\n              <div class="control-group">\n                <label class="control-label" for="newItemKey">Key:</label>\n                <div class="controls">\n                  <input id="newItemKey" type="text" ng-model="newItem.key">\n                </div>\n              </div>\n              <div class="control-group">\n                <label class="control-label" for="newItemKey">Value:</label>\n                <div id="valueInput" class="controls">\n                  <input id="newItemValue" type="text" ng-model="newItem.value">\n                </div>\n              </div>\n              <p>\n              <input type="submit" class="btn btn-success pull-right" ng-disabled="!newItem.key && !newItem.value" ng-click="addItem(newItem)" value="Add">\n              <span class="pull-right">&nbsp;</span>\n              <button class="btn pull-right" ng-click="showForm = false">Cancel</button>\n              </p>\n            </fieldset>\n          </form>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/array.html','<div class="row">\n  <div class="clearfix col-md-12">\n    <div ng-hide="{{control.noLabel}}" class="row"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class="row">\n      <div class="inline-array"></div>\n    </div>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/arrayItemModal.html','<div class="modal-header">\n  <h3 class="modal-title">{{header}}</h3>\n</div>\n<div class="modal-body">\n  <div ng-show="description" ng-bind-html="description"></div>\n  <div hawtio-form-2="schema" entity="newEntity"></div>\n</div>\n<div class="modal-footer">\n  <button class="btn btn-primary" ng-click="ok()">OK</button>\n  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>\n</div>\n');
+$templateCache.put('plugins/forms2/html/checkbox-horizontal.html','<div class="form-group">\n  <div class="col-sm-offset-2 col-sm-10">\n    <div class="checkbox">\n      <label>\n        <input ng-disabled="config.mode == 0" type="checkbox" ng-model="{{model}}" name="{{name}}"> {{control.label || maybeHumanize(name)}}\n      </label>\n      <p class="help-block">{{control.description}}</p>\n    </div>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/checkbox.html','<div class="form-group">\n  <div class="checkbox">\n    <label>\n      <input ng-disabled="config.mode == 0" type="checkbox" ng-model="{{model}}" name="{{name}}"> {{control.label || maybeHumanize(name)}}\n    </label>\n    <p class="help-block">{{control.description}}</p>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/form-horizontal.html','<form ng-disabled="config.mode == 0" class="hawtio-form-2 form-horizontal" name="{{name}}">\n  <fieldset>\n    <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n');
+$templateCache.put('plugins/forms2/html/form-inline.html','<form class="hawtio-form-2 hawtio-form-2-inline" name="{{name}}">\n  <fieldset>\n    <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n');
+$templateCache.put('plugins/forms2/html/form-standard.html','<form class="hawtio-form-2 hawtio-form-2-standard" name="{{name}}">\n  <fieldset>\n    <legend ng-show="config.label || config.description" ng-hide="config.hideLegend">{{config.label || config.description}}</legend>\n  </fieldset>\n</form>\n');
+$templateCache.put('plugins/forms2/html/form-unwrapped.html','<div class="hawtio-form-2 hawtio-form-2-unwrapped">\n  <h4 ng-show="config.label || config.description" ng-hide="config.hideLegend || config.label == \'false\'">{{config.label || config.description}}</h4>\n\n</div>\n');
+$templateCache.put('plugins/forms2/html/form2Map.html','<div>\n\n</div>\n');
+$templateCache.put('plugins/forms2/html/forms2Array.html','<div>\n  <script type="text/ng-template" id="header.html">\n    <th>{{control.label || name}}</th>\n  </script>\n  <script type="text/ng-template" id="emptyHeader.html">\n    <th></th>\n  </script>\n  <script type="text/ng-template" id="newItemHeader.html">\n    <th class="align-right">\n      <button ng-hide="config.mode == 0" class="button button-success" ng-click="createNewRow()">\n        <i class="fa fa-plus green" ></i>\n      </button>\n    </th>\n  </script>\n  <script type="text/ng-template" id="arrayRowTemplate.html">\n    <tr></tr>\n  </script>\n  <script type="text/ng-template" id="deleteRow.html">\n    <td class="align-right">\n      <button ng-hide="config.mode == 0" class=\'editRow\'><i class="fa fa-pencil yellow"></i></button>\n      <button ng-hide="config.mode == 0" class=\'deleteRow\'><i class="fa fa-minus red"></i></button>\n    </td>\n  </script>\n  <script type="text/ng-template" id="table.html">\n    <table class="table table-striped">\n      <thead>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n</div> \n');
+$templateCache.put('plugins/forms2/html/forms2Directive.html','<div>\n  <script type="text/ng-template" id="wizardParent.html">\n    <div>\n      <div class="wizardParent" ng-switch="getCurrentPageId()">\n      </div>\n    </div>\n  </script>\n\n  <script type="text/ng-template" id="wizardButtons.html">\n    <div class="wizardButtons align-right">\n      <span>{{currentPageIndex + 1}} / {{pageIds.length}}</span>\n      <button class="btn btn-default back" ng-click="back()" ng-hide="atFront()">{{buttons.back}}</button>\n      <button class="btn btn-primary next" ng-click="next()" ng-hide="atBack()">{{buttons.next}}</button>\n      <button class="btn btn-primary finish" ng-click="onFinish()" ng-show="atBack()">{{buttons.finish}}</button>\n    </div>\n  </script>\n\n  <script type="text/ng-template" id="wizardPage.html">\n    <div class="wizardPage">\n      <h3></h3>\n      <div class="wizardPageBody">\n      </div>\n    </div>\n  </script>\n\n  <script type="text/ng-template" id="tabElement.html">\n    <div class="tabbable hawtio-form-tabs"></div>\n  </script>\n\n  <script type="text/ng-template" id="tabPage.html">\n    <div class="tab-pane"></div>\n  </script>\n</div>\n');
+$templateCache.put('plugins/forms2/html/forms2Map.html','<div>\n  <script type="text/ng-template" id="mapItemModal.html">\n    <div class="modal-header">\n      <h3 class="modal-title">{{header}}</h3>\n    </div>\n    <div class="modal-body">\n      <div class="row">\n        <div ng-show="description" ng-bind-html="description"></div>\n      </div>\n      <div class="row">\n        <div class="col-md-6">\n          <div hawtio-form-2="keySchema" entity="newKeyEntity"></div>\n        </div>\n        <div class="col-md-6">\n          <div hawtio-form-2="valueSchema" entity="newValueEntity"></div>\n        </div>\n      </div>\n    </div>\n    <div class="modal-footer">\n      <button class="btn btn-primary" ng-click="ok()">OK</button>\n      <button class="btn btn-warning" ng-click="cancel()">Cancel</button>\n    </div>\n  </script>\n  <script type="text/ng-template" id="table.html">\n    <table class="table table-striped">\n      <thead>\n        <tr>\n          <th>\n            Key\n          </th>\n          <th>\n            Value\n          </th>\n          <th class="align-right">\n            <button ng-hide="config.mode == 0" class="button button-success" ng-click="createRow()">\n              <i class="fa fa-plus green" ></i>\n            </button>\n          </th>\n        </tr>\n      </thead>\n      <tbody>\n      </tbody>\n    </table>\n  </script>\n  <script type="text/ng-template" id="mapRowTemplate.html">\n    <tr>\n      <td>\n        <div class="inline form-map-key" hawtio-form-2="keySchema" entity="keys[\'{{key}}\']"></div>\n      </td>\n      <td>\n        <div class="inline form-map-value" hawtio-form-2="valueSchema" entity="values[\'{{key}}\']"></div>\n      </td>\n      <td class="align-right">\n        <button ng-hide="config.mode == 0" class="form-map-edit button button-warning" ng-click="editRow(\'{{key}}\')">\n          <i class="fa fa-pencil yellow"></i>\n        </button>\n        <button ng-hide="config.mode == 0" class="form-map-remove button button-danger" ng-click="deleteRow(\'{{key}}\')">\n          <i class="fa fa-remove red"></i>\n        </button>\n      </td>\n    </tr>\n  </script>\n\n</div>\n');
+$templateCache.put('plugins/forms2/html/hidden.html','<div class="form-group" ng-hide="true">\n  <input type="hidden" ng-model="{{model}}" name="{{name}}">\n</div>\n');
+$templateCache.put('plugins/forms2/html/map.html','<div class="row">\n  <div class="clearfix col-md-12">\n    <div class="row"><h4>{{control.label || maybeHumanize(name)}}</h4></div>\n    <div class="row">\n      <div class="inline-map"></div>\n    </div>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/object.html','<div class="row">\n  <div class="clearfix col-md-12">\n    <div class="inline-object"></div>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/optionArray.html','<option>{{value}}</option>\n');
+$templateCache.put('plugins/forms2/html/optionConfigObject.html','<option value="{{value}}">{{label}}</option>\n');
+$templateCache.put('plugins/forms2/html/optionObject.html','<option value="{{value}}">{{key}}</option>\n');
+$templateCache.put('plugins/forms2/html/radio-group-member.html','<label>\n  <input type="radio" name="" value="">\n</label>\n');
+$templateCache.put('plugins/forms2/html/radio-top-level.html','<div class="radio">\n</div>\n');
+$templateCache.put('plugins/forms2/html/select-horizontal.html','<div class="form-group">\n  <label class="col-sm-2 control-label">{{control.label || maybeHumanize(name)}}</label>\n  <div class="col-sm-10">\n    <select ng-disabled="config.mode == 0" hawtio-combobox class="form-control" ng-model="{{model}}" name="{{name}}"></select>\n    <p class="help-block">{{control.description}}</p>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/select.html','<div class="form-group">\n  <label class="control-label">{{control.label || maybeHumanize(name)}}</label>\n  <select ng-disabled="config.mode == 0" hawtio-combobox class="form-control" ng-model="{{model}}" name="{{name}}"></select>\n  <p class="help-block">{{control.description}}</p>\n</div>\n');
+$templateCache.put('plugins/forms2/html/standard-horizontal-input.html','<div class="form-group">\n  <label ng-hide="{{control.noLabel}}" class="col-sm-2 control-label">{{control.label || maybeHumanize(name)}}</label>\n  <div class="col-sm-10">\n    <input ng-disabled="config.mode == 0" type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}" name="{{name}}">\n    <p class="help-block">{{control.description}}</p>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/standard-input.html','<div class="form-group">\n  <label ng-hide="{{control.noLabel}}" class="control-label">{{control.label || maybeHumanize(name)}}</label>\n  <input ng-disabled="config.mode == 0" type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}" name="{{name}}">\n  <p class="help-block">{{control.description}}</p>\n</div>\n');
+$templateCache.put('plugins/forms2/html/static-horizontal-text.html','<div class="form-group">\n  <label class="col-sm-2 control-label">{{control.label}}</label>\n  <div class="col-sm-10">\n    <p ng-hide="{{model}}" class="form-control-static">{{control.description}}</p>\n    <p ng-show="{{model}}" class="form-control-static" ng-bind="{{model}}"></p>\n  </div>\n</div>\n');
+$templateCache.put('plugins/forms2/html/static-text.html','<div class="form-group">\n  <label class="control-label">{{control.label}}</label>\n  <p ng-hide="{{model}}" class="form-control-static">{{control.description}}</p>\n  <p ng-show="{{model}}" class="form-control-static" ng-bind="{{model}}"></p>\n</div>\n');}]); hawtioPluginLoader.addModule("hawtio-forms-templates");
+/*
+ * Javascript Diff Algorithm
+ *  By John Resig (http://ejohn.org/)
+ *  Modified by Chu Alan "sprite"
+ *
+ * Released under the MIT license.
+ *
+ * More Info:
+ *  http://ejohn.org/projects/javascript-diff-algorithm/
+ */
+
+function escapeJSDiff(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+}
+
+function diffString( o, n ) {
+  o = o.replace(/\s+$/, '');
+  n = n.replace(/\s+$/, '');
+
+  var out = diff(o == "" ? [] : o.split(/\s+/), n == "" ? [] : n.split(/\s+/) );
+  var str = "";
+
+  var oSpace = o.match(/\s+/g);
+  if (oSpace == null) {
+    oSpace = ["\n"];
+  } else {
+    oSpace.push("\n");
+  }
+  var nSpace = n.match(/\s+/g);
+  if (nSpace == null) {
+    nSpace = ["\n"];
+  } else {
+    nSpace.push("\n");
+  }
+
+  if (out.n.length == 0) {
+      for (var i = 0; i < out.o.length; i++) {
+        str += '<del>' + escapeJSDiff(out.o[i]) + oSpace[i] + "</del>";
+      }
+  } else {
+    if (out.n[0].text == null) {
+      for (n = 0; n < out.o.length && out.o[n].text == null; n++) {
+        str += '<del>' + escapeJSDiff(out.o[n]) + oSpace[n] + "</del>";
+      }
+    }
+
+    for ( var i = 0; i < out.n.length; i++ ) {
+      if (out.n[i].text == null) {
+        str += '<ins>' + escapeJSDiff(out.n[i]) + nSpace[i] + "</ins>";
+      } else {
+        var pre = "";
+
+        for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++ ) {
+          pre += '<del>' + escapeJSDiff(out.o[n]) + oSpace[n] + "</del>";
+        }
+        str += " " + out.n[i].text + nSpace[i] + pre;
+      }
+    }
+  }
+  
+  return str;
+}
+
+function randomColor() {
+    return "rgb(" + (Math.random() * 100) + "%, " + 
+                    (Math.random() * 100) + "%, " + 
+                    (Math.random() * 100) + "%)";
+}
+function diffString2( o, n ) {
+  o = o.replace(/\s+$/, '');
+  n = n.replace(/\s+$/, '');
+
+  var out = diff(o == "" ? [] : o.split(/\s+/), n == "" ? [] : n.split(/\s+/) );
+
+  var oSpace = o.match(/\s+/g);
+  if (oSpace == null) {
+    oSpace = ["\n"];
+  } else {
+    oSpace.push("\n");
+  }
+  var nSpace = n.match(/\s+/g);
+  if (nSpace == null) {
+    nSpace = ["\n"];
+  } else {
+    nSpace.push("\n");
+  }
+
+  var os = "";
+  var colors = new Array();
+  for (var i = 0; i < out.o.length; i++) {
+      colors[i] = randomColor();
+
+      if (out.o[i].text != null) {
+          os += '<span style="background-color: ' +colors[i]+ '">' + 
+                escapeJSDiff(out.o[i].text) + oSpace[i] + "</span>";
+      } else {
+          os += "<del>" + escapeJSDiff(out.o[i]) + oSpace[i] + "</del>";
+      }
+  }
+
+  var ns = "";
+  for (var i = 0; i < out.n.length; i++) {
+      if (out.n[i].text != null) {
+          ns += '<span style="background-color: ' +colors[out.n[i].row]+ '">' + 
+                escapeJSDiff(out.n[i].text) + nSpace[i] + "</span>";
+      } else {
+          ns += "<ins>" + escapeJSDiff(out.n[i]) + nSpace[i] + "</ins>";
+      }
+  }
+
+  return { o : os , n : ns };
+}
+
+function diff( o, n ) {
+  var ns = new Object();
+  var os = new Object();
+  
+  for ( var i = 0; i < n.length; i++ ) {
+    if ( ns[ n[i] ] == null )
+      ns[ n[i] ] = { rows: new Array(), o: null };
+    ns[ n[i] ].rows.push( i );
+  }
+  
+  for ( var i = 0; i < o.length; i++ ) {
+    if ( os[ o[i] ] == null )
+      os[ o[i] ] = { rows: new Array(), n: null };
+    os[ o[i] ].rows.push( i );
+  }
+  
+  for ( var i in ns ) {
+    if ( ns[i].rows.length == 1 && typeof(os[i]) != "undefined" && os[i].rows.length == 1 ) {
+      n[ ns[i].rows[0] ] = { text: n[ ns[i].rows[0] ], row: os[i].rows[0] };
+      o[ os[i].rows[0] ] = { text: o[ os[i].rows[0] ], row: ns[i].rows[0] };
+    }
+  }
+  
+  for ( var i = 0; i < n.length - 1; i++ ) {
+    if ( n[i].text != null && n[i+1].text == null && n[i].row + 1 < o.length && o[ n[i].row + 1 ].text == null && 
+         n[i+1] == o[ n[i].row + 1 ] ) {
+      n[i+1] = { text: n[i+1], row: n[i].row + 1 };
+      o[n[i].row+1] = { text: o[n[i].row+1], row: i + 1 };
+    }
+  }
+  
+  for ( var i = n.length - 1; i > 0; i-- ) {
+    if ( n[i].text != null && n[i-1].text == null && n[i].row > 0 && o[ n[i].row - 1 ].text == null && 
+         n[i-1] == o[ n[i].row - 1 ] ) {
+      n[i-1] = { text: n[i-1], row: n[i].row - 1 };
+      o[n[i].row-1] = { text: o[n[i].row-1], row: i - 1 };
+    }
+  }
+  
+  return { o: o, n: n };
+}
+
