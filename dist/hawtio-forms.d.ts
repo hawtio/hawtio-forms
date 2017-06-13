@@ -1,5 +1,161 @@
-/// <reference path="libs/hawtio-ui/defs.d.ts" />
+/// <reference types="angular" />
+declare module HawtioForms {
+    interface AttributeMap {
+        [key: string]: string;
+    }
+    interface FormSelectors {
+        [key: string]: (el: any) => void;
+    }
+    /**
+     * Element in a FormConfiguration's 'properties' attribute
+     */
+    interface FormElement {
+        type: string;
+        tooltip?: string;
+        label?: string;
+        hidden?: boolean;
+        javaType?: string;
+        value?: any;
+        default?: any;
+        enum?: any;
+        items?: any;
+        'input-attributes'?: AttributeMap;
+        'control-group-attributes'?: AttributeMap;
+        'label-attributes'?: AttributeMap;
+        formTemplate?: string;
+        selectors?: FormSelectors;
+        [key: string]: any;
+    }
+    /**
+     * Type for the FormConfiguration's 'properties' attribute
+     */
+    interface FormProperties {
+        [name: string]: FormElement;
+    }
+    /**
+     * Type for the FormConfiguration's 'tabs' attribute
+     */
+    interface FormTabs {
+        [name: string]: Array<string>;
+    }
+    /**
+     * Enum for form mode attribute
+     */
+    enum FormMode {
+        VIEW = 0,
+        EDIT = 1,
+    }
+    /**
+     * Enum for the overall form style
+     */
+    enum FormStyle {
+        STANDARD = 0,
+        INLINE = 1,
+        HORIZONTAL = 2,
+        UNWRAPPED = 3,
+    }
+    interface FormWizardPage {
+        title?: string;
+        controls: Array<string>;
+    }
+    interface FormWizardPages {
+        pages: FormWizardPage;
+    }
+    /**
+     * Interface that describes the configuration object for hawtio forms
+     */
+    interface FormConfiguration {
+        id?: string;
+        type?: string;
+        mode?: FormMode;
+        style?: FormStyle;
+        disableHumanizeLabel?: boolean;
+        ignorePrefixInLabel?: boolean;
+        properties: FormProperties;
+        tabs?: FormTabs;
+        wizard?: FormWizardPages;
+        controls?: Array<string>;
+        label?: string;
+        debug?: boolean;
+        [key: string]: any;
+    }
+    function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
+    interface ControlMappingRegistry {
+        hasMapping(name: string): boolean;
+        addMapping(name: string, controlType: string): any;
+        getMapping(name: string): string;
+        removeMapping(name: string): string;
+        iterate(iter: (controlType: string, name: string) => void): any;
+    }
+    interface SchemaRegistry {
+        addSchema(name: string, schema: FormConfiguration): any;
+        getSchema(name: string): FormConfiguration;
+        cloneSchema(name: string): FormConfiguration;
+        removeSchema(name: string): FormConfiguration;
+        iterate(iter: (FormConfiguration, string) => void): any;
+        addListener(name: string, callback: (nme: string, schema: any) => void): any;
+        removeListener(name: string): any;
+    }
+}
+declare module HawtioForms {
+    var pluginName: string;
+    var templatePath: string;
+    var log: Logging.Logger;
+    class Constants {
+        static readonly FORM_STANDARD: string;
+        static readonly FORM_INLINE: string;
+        static readonly FORM_UNWRAPPED: string;
+        static readonly FORM_HORIZONTAL: string;
+        static readonly STANDARD_HORIZONTAL_INPUT: string;
+        static readonly STANDARD_INPUT: string;
+        static readonly STATIC_HORIZONTAL_TEXT: string;
+        static readonly STATIC_TEXT: string;
+        static readonly SELECT_HORIZONTAL: string;
+        static readonly SELECT: string;
+        static readonly OPTION_ARRAY: string;
+        static readonly OPTION_OBJECT: string;
+        static readonly OPTION_CONFIG_OBJECT: string;
+        static readonly CHECKBOX_HORIZONTAL: string;
+        static readonly CHECKBOX: string;
+        static readonly OBJECT: string;
+        static readonly ARRAY: string;
+        static readonly MAP: string;
+        static readonly HIDDEN: string;
+    }
+    function addPostInterpolateAction(context: any, name: any, func: (el: any) => any): void;
+    function addPreCompileAction(context: any, name: any, func: () => void): void;
+    function getFormMain(context: any, config: FormConfiguration): string;
+    function getStandardTemplate(context: any, config: FormConfiguration, control: FormElement, type: string): string;
+    function applyElementConfig(context: any, config: FormConfiguration, control: FormElement, template: string, type?: string): string;
+    function getStaticTextTemplate(context: any, config: FormConfiguration): string;
+    function setSelectOptions(isArray: boolean, propName: string, select: any): void;
+    function getSelectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function getCheckboxTemplate(context: any, config: FormConfiguration, control: FormElement): string;
+    function getObjectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function getMapTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function getArrayTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function lookupTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
+    function getTemplate(context: any, config: FormConfiguration, name: any, control: FormElement): string;
+    function interpolateTemplate(context: any, config: FormConfiguration, name: any, control: FormElement, template: string, model: string): string;
+    function createMaybeHumanize(context: any): (value: any) => any;
+    function initConfig(context: any, config: FormConfiguration, lookup?: boolean): FormConfiguration;
+}
+declare module HawtioForms {
+    var _module: angular.IModule;
+}
+declare module HawtioForms {
+}
+declare module HawtioForms {
+}
 declare var diffString: any;
+declare module HawtioForms {
+}
+declare module HawtioForms {
+}
+declare module HawtioForms {
+}
+declare module HawtioForms {
+}
 /**
  * @module Forms
  */
@@ -181,6 +337,7 @@ declare module Forms {
         $compile: any;
         constructor($compile: any);
         getInput(config: any, arg: any, id: any, modelName: any): JQuery;
+        private onModelChange(scope, modelName);
     }
     /**
      * Generates a list of strings which can be added / edited / removed
@@ -190,6 +347,7 @@ declare module Forms {
         $compile: any;
         constructor($compile: any);
         getInput(config: any, arg: any, id: any, modelName: any): JQuery;
+        private updateKeys(scope, modelName, itemKeys);
     }
     class ArrayInput extends InputBase {
         $compile: any;
@@ -200,6 +358,7 @@ declare module Forms {
         $compile: any;
         constructor($compile: any);
         getInput(config: any, arg: any, id: any, modelName: any): JQuery;
+        private onModelChange(scope, modelName);
     }
 }
 declare module Forms {
@@ -314,7 +473,7 @@ declare module Forms {
     }
 }
 declare module Forms {
-    var _module: ng.IModule;
+    var _module: angular.IModule;
 }
 declare module Forms {
     /**
@@ -398,160 +557,4 @@ declare module Forms {
 declare module Forms {
 }
 declare module Forms {
-}
-declare module HawtioForms {
-    interface AttributeMap {
-        [key: string]: string;
-    }
-    interface FormSelectors {
-        [key: string]: (el: any) => void;
-    }
-    /**
-     * Element in a FormConfiguration's 'properties' attribute
-     */
-    interface FormElement {
-        type: string;
-        tooltip?: string;
-        label?: string;
-        hidden?: boolean;
-        javaType?: string;
-        value?: any;
-        default?: any;
-        enum?: any;
-        items?: any;
-        'input-attributes'?: AttributeMap;
-        'control-group-attributes'?: AttributeMap;
-        'label-attributes'?: AttributeMap;
-        formTemplate?: string;
-        selectors?: FormSelectors;
-        [key: string]: any;
-    }
-    /**
-     * Type for the FormConfiguration's 'properties' attribute
-     */
-    interface FormProperties {
-        [name: string]: FormElement;
-    }
-    /**
-     * Type for the FormConfiguration's 'tabs' attribute
-     */
-    interface FormTabs {
-        [name: string]: Array<string>;
-    }
-    /**
-     * Enum for form mode attribute
-     */
-    enum FormMode {
-        VIEW = 0,
-        EDIT = 1,
-    }
-    /**
-     * Enum for the overall form style
-     */
-    enum FormStyle {
-        STANDARD = 0,
-        INLINE = 1,
-        HORIZONTAL = 2,
-        UNWRAPPED = 3,
-    }
-    interface FormWizardPage {
-        title?: string;
-        controls: Array<string>;
-    }
-    interface FormWizardPages {
-        pages: FormWizardPage;
-    }
-    /**
-     * Interface that describes the configuration object for hawtio forms
-     */
-    interface FormConfiguration {
-        id?: string;
-        type?: string;
-        mode?: FormMode;
-        style?: FormStyle;
-        disableHumanizeLabel?: boolean;
-        ignorePrefixInLabel?: boolean;
-        properties: FormProperties;
-        tabs?: FormTabs;
-        wizard?: FormWizardPages;
-        controls?: Array<string>;
-        label?: string;
-        debug?: boolean;
-        [key: string]: any;
-    }
-    function createFormConfiguration(options?: FormConfiguration): FormConfiguration;
-    interface ControlMappingRegistry {
-        hasMapping(name: string): boolean;
-        addMapping(name: string, controlType: string): any;
-        getMapping(name: string): string;
-        removeMapping(name: string): string;
-        iterate(iter: (controlType: string, name: string) => void): any;
-    }
-    interface SchemaRegistry {
-        addSchema(name: string, schema: FormConfiguration): any;
-        getSchema(name: string): FormConfiguration;
-        cloneSchema(name: string): FormConfiguration;
-        removeSchema(name: string): FormConfiguration;
-        iterate(iter: (FormConfiguration, string) => void): any;
-        addListener(name: string, callback: (nme: string, schema: any) => void): any;
-        removeListener(name: string): any;
-    }
-}
-declare module HawtioForms {
-    var pluginName: string;
-    var templatePath: string;
-    var log: Logging.Logger;
-    class Constants {
-        static readonly FORM_STANDARD: string;
-        static readonly FORM_INLINE: string;
-        static readonly FORM_UNWRAPPED: string;
-        static readonly FORM_HORIZONTAL: string;
-        static readonly STANDARD_HORIZONTAL_INPUT: string;
-        static readonly STANDARD_INPUT: string;
-        static readonly STATIC_HORIZONTAL_TEXT: string;
-        static readonly STATIC_TEXT: string;
-        static readonly SELECT_HORIZONTAL: string;
-        static readonly SELECT: string;
-        static readonly OPTION_ARRAY: string;
-        static readonly OPTION_OBJECT: string;
-        static readonly OPTION_CONFIG_OBJECT: string;
-        static readonly CHECKBOX_HORIZONTAL: string;
-        static readonly CHECKBOX: string;
-        static readonly OBJECT: string;
-        static readonly ARRAY: string;
-        static readonly MAP: string;
-        static readonly HIDDEN: string;
-    }
-    function addPostInterpolateAction(context: any, name: any, func: (el: any) => any): void;
-    function addPreCompileAction(context: any, name: any, func: () => void): void;
-    function getFormMain(context: any, config: FormConfiguration): string;
-    function getStandardTemplate(context: any, config: FormConfiguration, control: FormElement, type: string): string;
-    function applyElementConfig(context: any, config: FormConfiguration, control: FormElement, template: string, type?: string): string;
-    function getStaticTextTemplate(context: any, config: FormConfiguration): string;
-    function setSelectOptions(isArray: boolean, propName: string, select: any): void;
-    function getSelectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
-    function getCheckboxTemplate(context: any, config: FormConfiguration, control: FormElement): string;
-    function getObjectTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
-    function getMapTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
-    function getArrayTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
-    function lookupTemplate(context: any, config: FormConfiguration, name: string, control: FormElement): string;
-    function getTemplate(context: any, config: FormConfiguration, name: any, control: FormElement): string;
-    function interpolateTemplate(context: any, config: FormConfiguration, name: any, control: FormElement, template: string, model: string): string;
-    function createMaybeHumanize(context: any): (value: any) => any;
-    function initConfig(context: any, config: FormConfiguration, lookup?: boolean): FormConfiguration;
-}
-declare module HawtioForms {
-    var _module: ng.IModule;
-}
-declare module HawtioForms {
-}
-declare module HawtioForms {
-}
-declare module HawtioForms {
-}
-declare module HawtioForms {
-}
-declare module HawtioForms {
-}
-declare module HawtioForms {
 }

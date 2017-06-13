@@ -153,10 +153,10 @@ module Forms {
       }
 
       if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-        input.attr('ignore-prefix-in-label', true);
+        input.attr('ignore-prefix-in-label', 'true');
       }
       if (disableHumanizeLabel || property.disableHumanizeLabel) {
-        input.attr('disable-humanize-label', true);
+        input.attr('disable-humanize-label', 'true');
       }
       input.attr('name', id);
     }

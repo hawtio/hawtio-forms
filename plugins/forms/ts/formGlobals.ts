@@ -1,4 +1,3 @@
-/// <reference path="../../includes.ts"/>
 module Forms {
 
   export var pluginName = 'hawtio-forms';

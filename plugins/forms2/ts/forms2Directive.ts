@@ -1,4 +1,7 @@
 /// <reference path="forms2Plugin.ts"/>
+
+declare var diffString:any;
+
 module HawtioForms {
   var directiveName = 'hawtioForm2'
   _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', ($compile, $templateCache, $interpolate, schemas:SchemaRegistry, mappings) => {
@@ -22,7 +25,7 @@ module HawtioForms {
             scope.diff = diffString(configCache || '', stringified || '');
             configCache = stringified;
           }
-          updateConfig(config);
+          updateConfig(<FormConfiguration>config);
         }, true);
         function updateConfig(config:FormConfiguration) {
           // track how many times this function fires

@@ -1,7 +1,6 @@
 machine:
-  node:
-    version: 4.2.2
-  services:
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 branches:
   ignore:
@@ -9,15 +8,15 @@ branches:
 
 dependencies:
   pre:
-    - npm install -g bower gulp
-    - npm install
-    - bower install
+    - yarn global add gulp
   override:
-    - gulp build
+    - yarn run install:dev
+  cache_directories:
+    - ~/.cache/yarn
 
 test:
   override:
-    - echo yes
+    - yarn test
 
 deployment:
   website:
@@ -28,5 +27,3 @@ deployment:
       - git config --global user.name "circleci"
       - gulp site
       - gulp deploy
-
-

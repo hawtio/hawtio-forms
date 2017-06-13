@@ -86,7 +86,7 @@ module HawtioForms {
             $compile: $compile,
             directiveName: directiveName
           };
-          var config = initConfig(context, _.cloneDeep(newConfig), false);
+          var config = <any> initConfig(context, _.cloneDeep(<FormConfiguration>newConfig), false);
           context.config = config;
           context.maybeHumanize = createMaybeHumanize(context);
           if (!scope.entity) {

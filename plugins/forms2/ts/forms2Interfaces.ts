@@ -1,4 +1,3 @@
-/// <reference path="../../includes.ts"/>
 module HawtioForms {
   /*
    * Map of name/value pairs that get mapped to element attributes

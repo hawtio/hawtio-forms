@@ -1,7 +1,6 @@
 /**
  * @module Forms
  */
-/// <reference path="../../includes.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 
 module Forms {
@@ -315,17 +314,18 @@ module Forms {
       // lets coerce any string values to numbers so that they work properly with the UI
       var scope = config.scope;
       if (scope) {
-        const onModelChange = function() {
-          var value = Core.pathGet(scope, modelName);
-          if (value && angular.isString(value))  {
-            var numberValue = Number(value);
-            Core.pathSet(scope, modelName, numberValue);
-          }
-        }
-        scope.$watch(modelName, onModelChange);
-        onModelChange();
+        scope.$watch(modelName, this.onModelChange);
+        this.onModelChange(scope, modelName);
       }
       return rc;
+    }
+
+    private onModelChange(scope, modelName) {
+      var value = Core.pathGet(scope, modelName);
+      if (value && angular.isString(value))  {
+        var numberValue = Number(value);
+        Core.pathSet(scope, modelName, numberValue);
+      }
     }
   }
 
@@ -375,21 +375,13 @@ module Forms {
         var addMethod = methodPrefix + "add";
         var removeMethod = methodPrefix + "remove";
 
-        // we maintain a separate object of all the keys (indices) of the array
-        // and use that to lookup the values
-        const updateKeys = function() {
-          var value = Core.pathGet(scope, modelName);
-          scope[itemKeys] = value ? Object.keys(value) : [];
-          scope.$emit("hawtio.form.modelChange", modelName, value);
-        }
-
-        updateKeys();
+        this.updateKeys(scope, modelName, itemKeys);
 
         scope[addMethod] = () => {
           var value = Core.pathGet(scope, modelName) || [];
           value.push("");
           Core.pathSet(scope, modelName, value);
-          updateKeys();
+          this.updateKeys(scope, modelName, itemKeys);
         };
         scope[removeMethod] = (idx) => {
           var value = Core.pathGet(scope, modelName) || [];
@@ -397,7 +389,7 @@ module Forms {
             value.splice(idx, 1);
           }
           Core.pathSet(scope, modelName, value);
-          updateKeys();
+          this.updateKeys(scope, modelName, itemKeys);
         };
 
         // the expression for an item value
@@ -419,6 +411,15 @@ module Forms {
       }
 
     }
+
+    // we maintain a separate object of all the keys (indices) of the array
+    // and use that to lookup the values
+    private updateKeys(scope, modelName, itemKeys) {
+      var value = Core.pathGet(scope, modelName);
+      scope[itemKeys] = value ? Object.keys(value) : [];
+      scope.$emit("hawtio.form.modelChange", modelName, value);
+    }
+    
   }
 
   export class ArrayInput extends InputBase {
@@ -520,17 +521,18 @@ module Forms {
       // lets coerce any string values to boolean so that they work properly with the UI
       var scope = config.scope;
       if (scope) {
-        const onModelChange = function() {
-          var value = Core.pathGet(scope, modelName);
-          if (value && "true" === value)  {
-            //console.log("coercing String to boolean for " + modelName);
-            Core.pathSet(scope, modelName, true);
-          }
-        }
-        scope.$watch(modelName, onModelChange);
-        onModelChange();
+        scope.$watch(modelName, this.onModelChange);
+        this.onModelChange(scope, modelName);
       }
       return rc;
+    }
+
+    private onModelChange(scope, modelName) {
+      var value = Core.pathGet(scope, modelName);
+      if (value && "true" === value)  {
+        //console.log("coercing String to boolean for " + modelName);
+        Core.pathSet(scope, modelName, true);
+      }
     }
 
   }

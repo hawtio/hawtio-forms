@@ -68,9 +68,9 @@ module HawtioForms {
       getSchema: (name: string):any => {
         return schemaMap[name];
       },
-
-      cloneSchema: (name: string): FormConfiguration => _.cloneDeep(schemaMap[name]),
-
+      cloneSchema: (name: string):FormConfiguration => {
+        return _.cloneDeep(schemaMap[name]);
+      },
       removeSchema: (name:string):any => {
         var answer = <any> undefined;
         if (name in schemaMap) {

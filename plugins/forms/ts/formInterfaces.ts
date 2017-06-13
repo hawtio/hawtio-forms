@@ -1,4 +1,3 @@
-/// <reference path="../../includes.ts"/>
 module Forms {
 
   // add some type interfaces for hawtio-form's config
