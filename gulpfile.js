@@ -136,16 +136,16 @@ gulp.task('site', ['build', 'build-example'], function() {
   gulp.src('index.html')
     .pipe(plugins.rename('404.html'))
     .pipe(gulp.dest('site'));
-  gulp.src(['README.md', 'index.html', 'css/**', 'images/**', 'img/**', 'libs/**/*.js', 'libs/**/*.css', 'libs/**/*.swf', 'libs/**/*.woff','libs/**/*.woff2', 'libs/**/*.ttf', 'libs/**/*.map', 'dist/**'], {base: '.'})
+  gulp.src(['README.md', 'index.html', 'css/**', 'images/**', 'img/**', 'node_modules/**/*.js', 'node_modules/**/*.css', 'node_modules/**/*.swf', 'node_modules/**/*.woff','node_modules/**/*.woff2', 'node_modules/**/*.ttf', 'node_modules/**/*.map', 'dist/**'], {base: '.'})
     .pipe(gulp.dest('site'));
 
-  var dirs = fs.readdirSync('./libs');
+  var dirs = fs.readdirSync('./node_modules');
   dirs.forEach(function(dir) {
-    var path = './libs/' + dir + "/img";
+    var path = './node_modules/' + dir + "/img";
     try {
       if (fs.statSync(path).isDirectory()) {
         console.log("found image dir: " + path);
-        var pattern = 'libs/' + dir + "/img/**";
+        var pattern = 'node_modules/' + dir + "/img/**";
         gulp.src([pattern]).pipe(gulp.dest('site/img'));
       }
     } catch (e) {
