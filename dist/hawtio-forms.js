@@ -8,8 +8,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/// <reference path="../libs/hawtio-ui/defs.d.ts"/>
-/// <reference path="../../includes.ts"/>
 /**
  * @module Forms
  */
@@ -398,10 +396,10 @@ var Forms;
                 input.attr('data', configScopeName);
             }
             if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-                input.attr('ignore-prefix-in-label', true);
+                input.attr('ignore-prefix-in-label', 'true');
             }
             if (disableHumanizeLabel || property.disableHumanizeLabel) {
-                input.attr('disable-humanize-label', true);
+                input.attr('disable-humanize-label', 'true');
             }
             input.attr('name', id);
         }
@@ -702,7 +700,6 @@ var Forms;
 /**
  * @module Forms
  */
-/// <reference path="../../includes.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 var Forms;
 (function (Forms) {
@@ -988,17 +985,17 @@ var Forms;
             // lets coerce any string values to numbers so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                var onModelChange = function () {
-                    var value = Core.pathGet(scope, modelName);
-                    if (value && angular.isString(value)) {
-                        var numberValue = Number(value);
-                        Core.pathSet(scope, modelName, numberValue);
-                    }
-                };
-                scope.$watch(modelName, onModelChange);
-                onModelChange();
+                scope.$watch(modelName, this.onModelChange);
+                this.onModelChange(scope, modelName);
             }
             return rc;
+        };
+        NumberInput.prototype.onModelChange = function (scope, modelName) {
+            var value = Core.pathGet(scope, modelName);
+            if (value && angular.isString(value)) {
+                var numberValue = Number(value);
+                Core.pathSet(scope, modelName, numberValue);
+            }
         };
         return NumberInput;
     }(InputBase));
@@ -1015,6 +1012,7 @@ var Forms;
             return _this;
         }
         StringArrayInput.prototype.getInput = function (config, arg, id, modelName) {
+            var _this = this;
             var rowScopeName = "_" + id;
             var ngRepeat = rowScopeName + ' in ' + modelName;
             var readOnlyWidget = '{{' + rowScopeName + '}}';
@@ -1045,19 +1043,12 @@ var Forms;
                 var itemKeys = methodPrefix + "keys";
                 var addMethod = methodPrefix + "add";
                 var removeMethod = methodPrefix + "remove";
-                // we maintain a separate object of all the keys (indices) of the array
-                // and use that to lookup the values
-                var updateKeys_1 = function () {
-                    var value = Core.pathGet(scope, modelName);
-                    scope[itemKeys] = value ? Object.keys(value) : [];
-                    scope.$emit("hawtio.form.modelChange", modelName, value);
-                };
-                updateKeys_1();
+                this.updateKeys(scope, modelName, itemKeys);
                 scope[addMethod] = function () {
                     var value = Core.pathGet(scope, modelName) || [];
                     value.push("");
                     Core.pathSet(scope, modelName, value);
-                    updateKeys_1();
+                    _this.updateKeys(scope, modelName, itemKeys);
                 };
                 scope[removeMethod] = function (idx) {
                     var value = Core.pathGet(scope, modelName) || [];
@@ -1065,7 +1056,7 @@ var Forms;
                         value.splice(idx, 1);
                     }
                     Core.pathSet(scope, modelName, value);
-                    updateKeys_1();
+                    _this.updateKeys(scope, modelName, itemKeys);
                 };
                 // the expression for an item value
                 var itemId = modelName + "[" + rowScopeName + "]";
@@ -1083,6 +1074,13 @@ var Forms;
                 markup.after(angular.element('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
                 return markup;
             }
+        };
+        // we maintain a separate object of all the keys (indices) of the array
+        // and use that to lookup the values
+        StringArrayInput.prototype.updateKeys = function (scope, modelName, itemKeys) {
+            var value = Core.pathGet(scope, modelName);
+            scope[itemKeys] = value ? Object.keys(value) : [];
+            scope.$emit("hawtio.form.modelChange", modelName, value);
         };
         return StringArrayInput;
     }(InputBase));
@@ -1177,30 +1175,28 @@ var Forms;
             // lets coerce any string values to boolean so that they work properly with the UI
             var scope = config.scope;
             if (scope) {
-                var onModelChange = function () {
-                    var value = Core.pathGet(scope, modelName);
-                    if (value && "true" === value) {
-                        //console.log("coercing String to boolean for " + modelName);
-                        Core.pathSet(scope, modelName, true);
-                    }
-                };
-                scope.$watch(modelName, onModelChange);
-                onModelChange();
+                scope.$watch(modelName, this.onModelChange);
+                this.onModelChange(scope, modelName);
             }
             return rc;
+        };
+        BooleanInput.prototype.onModelChange = function (scope, modelName) {
+            var value = Core.pathGet(scope, modelName);
+            if (value && "true" === value) {
+                //console.log("coercing String to boolean for " + modelName);
+                Core.pathSet(scope, modelName, true);
+            }
         };
         return BooleanInput;
     }(InputBase));
     Forms.BooleanInput = BooleanInput;
 })(Forms || (Forms = {}));
-/// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
     Forms.pluginName = 'hawtio-forms';
     Forms.templateUrl = 'plugins/forms/html/';
     Forms.log = Logger.get(Forms.pluginName);
 })(Forms || (Forms = {}));
-/// <reference path="../../includes.ts"/>
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 var Forms;
@@ -1674,9 +1670,9 @@ var Forms;
                 angular.forEach(scope.config.selectedItems, function (selected) {
                     var id = selected["_id"];
                     if (angular.isArray(data)) {
-                        data = _.remove(data, function (value) { return _.isEqual(value, selected); });
+                        data = data.filter(function (value) { return !_.isEqual(value, selected); });
                         delete selected["_id"];
-                        data = _.remove(data, function (value) { return _.isEqual(value, selected); });
+                        data = data.filter(function (value) { return !_.isEqual(value, selected); });
                     }
                     else {
                         delete selected["_id"];
@@ -2045,7 +2041,6 @@ var Forms;
         }]);
     hawtioPluginLoader.addModule(Forms.pluginName);
 })(Forms || (Forms = {}));
-/// <reference path="../../includes.ts"/>
 var Forms;
 (function (Forms) {
     // add some type interfaces for hawtio-form's config
@@ -2267,7 +2262,6 @@ var Forms;
             };
         }]);
 })(Forms || (Forms = {}));
-/// <reference path="../../includes.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
     /**
@@ -2298,7 +2292,6 @@ var HawtioForms;
     }
     HawtioForms.createFormConfiguration = createFormConfiguration;
 })(HawtioForms || (HawtioForms = {}));
-/// <reference path="../../includes.ts"/>
 /// <reference path="forms2Interfaces.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
@@ -3588,7 +3581,9 @@ var HawtioForms;
                 getSchema: function (name) {
                     return schemaMap[name];
                 },
-                cloneSchema: function (name) { return _.cloneDeep(schemaMap[name]); },
+                cloneSchema: function (name) {
+                    return _.cloneDeep(schemaMap[name]);
+                },
                 removeSchema: function (name) {
                     var answer = undefined;
                     if (name in schemaMap) {
@@ -3705,3 +3700,164 @@ $templateCache.put('plugins/forms2/html/standard-horizontal-input.html','<div cl
 $templateCache.put('plugins/forms2/html/standard-input.html','<div class="form-group">\n  <label ng-hide="{{control.noLabel}}" class="control-label">{{control.label || maybeHumanize(name)}}</label>\n  <input ng-disabled="config.mode == 0" type="" class="form-control" placeholder="{{control.placeholder}}" ng-model="{{model}}" name="{{name}}">\n  <p class="help-block">{{control.description}}</p>\n</div>\n');
 $templateCache.put('plugins/forms2/html/static-horizontal-text.html','<div class="form-group">\n  <label class="col-sm-2 control-label">{{control.label}}</label>\n  <div class="col-sm-10">\n    <p ng-hide="{{model}}" class="form-control-static">{{control.description}}</p>\n    <p ng-show="{{model}}" class="form-control-static" ng-bind="{{model}}"></p>\n  </div>\n</div>\n');
 $templateCache.put('plugins/forms2/html/static-text.html','<div class="form-group">\n  <label class="control-label">{{control.label}}</label>\n  <p ng-hide="{{model}}" class="form-control-static">{{control.description}}</p>\n  <p ng-show="{{model}}" class="form-control-static" ng-bind="{{model}}"></p>\n</div>\n');}]); hawtioPluginLoader.addModule("hawtio-forms-templates");
+/*
+ * Javascript Diff Algorithm
+ *  By John Resig (http://ejohn.org/)
+ *  Modified by Chu Alan "sprite"
+ *
+ * Released under the MIT license.
+ *
+ * More Info:
+ *  http://ejohn.org/projects/javascript-diff-algorithm/
+ */
+
+function escapeJSDiff(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+}
+
+function diffString( o, n ) {
+  o = o.replace(/\s+$/, '');
+  n = n.replace(/\s+$/, '');
+
+  var out = diff(o == "" ? [] : o.split(/\s+/), n == "" ? [] : n.split(/\s+/) );
+  var str = "";
+
+  var oSpace = o.match(/\s+/g);
+  if (oSpace == null) {
+    oSpace = ["\n"];
+  } else {
+    oSpace.push("\n");
+  }
+  var nSpace = n.match(/\s+/g);
+  if (nSpace == null) {
+    nSpace = ["\n"];
+  } else {
+    nSpace.push("\n");
+  }
+
+  if (out.n.length == 0) {
+      for (var i = 0; i < out.o.length; i++) {
+        str += '<del>' + escapeJSDiff(out.o[i]) + oSpace[i] + "</del>";
+      }
+  } else {
+    if (out.n[0].text == null) {
+      for (n = 0; n < out.o.length && out.o[n].text == null; n++) {
+        str += '<del>' + escapeJSDiff(out.o[n]) + oSpace[n] + "</del>";
+      }
+    }
+
+    for ( var i = 0; i < out.n.length; i++ ) {
+      if (out.n[i].text == null) {
+        str += '<ins>' + escapeJSDiff(out.n[i]) + nSpace[i] + "</ins>";
+      } else {
+        var pre = "";
+
+        for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++ ) {
+          pre += '<del>' + escapeJSDiff(out.o[n]) + oSpace[n] + "</del>";
+        }
+        str += " " + out.n[i].text + nSpace[i] + pre;
+      }
+    }
+  }
+  
+  return str;
+}
+
+function randomColor() {
+    return "rgb(" + (Math.random() * 100) + "%, " + 
+                    (Math.random() * 100) + "%, " + 
+                    (Math.random() * 100) + "%)";
+}
+function diffString2( o, n ) {
+  o = o.replace(/\s+$/, '');
+  n = n.replace(/\s+$/, '');
+
+  var out = diff(o == "" ? [] : o.split(/\s+/), n == "" ? [] : n.split(/\s+/) );
+
+  var oSpace = o.match(/\s+/g);
+  if (oSpace == null) {
+    oSpace = ["\n"];
+  } else {
+    oSpace.push("\n");
+  }
+  var nSpace = n.match(/\s+/g);
+  if (nSpace == null) {
+    nSpace = ["\n"];
+  } else {
+    nSpace.push("\n");
+  }
+
+  var os = "";
+  var colors = new Array();
+  for (var i = 0; i < out.o.length; i++) {
+      colors[i] = randomColor();
+
+      if (out.o[i].text != null) {
+          os += '<span style="background-color: ' +colors[i]+ '">' + 
+                escapeJSDiff(out.o[i].text) + oSpace[i] + "</span>";
+      } else {
+          os += "<del>" + escapeJSDiff(out.o[i]) + oSpace[i] + "</del>";
+      }
+  }
+
+  var ns = "";
+  for (var i = 0; i < out.n.length; i++) {
+      if (out.n[i].text != null) {
+          ns += '<span style="background-color: ' +colors[out.n[i].row]+ '">' + 
+                escapeJSDiff(out.n[i].text) + nSpace[i] + "</span>";
+      } else {
+          ns += "<ins>" + escapeJSDiff(out.n[i]) + nSpace[i] + "</ins>";
+      }
+  }
+
+  return { o : os , n : ns };
+}
+
+function diff( o, n ) {
+  var ns = new Object();
+  var os = new Object();
+  
+  for ( var i = 0; i < n.length; i++ ) {
+    if ( ns[ n[i] ] == null )
+      ns[ n[i] ] = { rows: new Array(), o: null };
+    ns[ n[i] ].rows.push( i );
+  }
+  
+  for ( var i = 0; i < o.length; i++ ) {
+    if ( os[ o[i] ] == null )
+      os[ o[i] ] = { rows: new Array(), n: null };
+    os[ o[i] ].rows.push( i );
+  }
+  
+  for ( var i in ns ) {
+    if ( ns[i].rows.length == 1 && typeof(os[i]) != "undefined" && os[i].rows.length == 1 ) {
+      n[ ns[i].rows[0] ] = { text: n[ ns[i].rows[0] ], row: os[i].rows[0] };
+      o[ os[i].rows[0] ] = { text: o[ os[i].rows[0] ], row: ns[i].rows[0] };
+    }
+  }
+  
+  for ( var i = 0; i < n.length - 1; i++ ) {
+    if ( n[i].text != null && n[i+1].text == null && n[i].row + 1 < o.length && o[ n[i].row + 1 ].text == null && 
+         n[i+1] == o[ n[i].row + 1 ] ) {
+      n[i+1] = { text: n[i+1], row: n[i].row + 1 };
+      o[n[i].row+1] = { text: o[n[i].row+1], row: i + 1 };
+    }
+  }
+  
+  for ( var i = n.length - 1; i > 0; i-- ) {
+    if ( n[i].text != null && n[i-1].text == null && n[i].row > 0 && o[ n[i].row - 1 ].text == null && 
+         n[i-1] == o[ n[i].row - 1 ] ) {
+      n[i-1] = { text: n[i-1], row: n[i].row - 1 };
+      o[n[i].row-1] = { text: o[n[i].row-1], row: i - 1 };
+    }
+  }
+  
+  return { o: o, n: n };
+}
+
