@@ -8,6 +8,8 @@ branches:
 
 dependencies:
   pre:
+    - rm -rf ~/.yarn
+    - npm install --global yarn
     - yarn global add gulp
   override:
     - yarn run install:dev
