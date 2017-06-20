@@ -129,9 +129,7 @@ gulp.task('reload', function() {
 });
 
 gulp.task('site', ['build', 'build-example'], function() {
-  gulp.src('website/.gitignore')
-    .pipe(gulp.dest('site'));
-  gulp.src('website/*')
+  gulp.src('website/*', { dot: true })
     .pipe(gulp.dest('site'));
   gulp.src('index.html')
     .pipe(plugins.rename('404.html'))
@@ -155,7 +153,7 @@ gulp.task('site', ['build', 'build-example'], function() {
 });
 
 gulp.task('deploy', ['build', 'build-example', 'site'], function() {
-  return gulp.src(['site/**', 'site/**/*.*', 'site/*.*'], { base: 'site' })
+  return gulp.src(['site/**', 'site/**/*.*', 'site/*.*'], { base: 'site', dot: true })
     .pipe(plugins.debug({title: 'deploy'}))
     .pipe(plugins.ghPages({
       message: "[ci skip] Update site"
