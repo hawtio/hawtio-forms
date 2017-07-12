@@ -13,8 +13,8 @@
     "test": "gulp build-example"
   },
   "dependencies": {
-    "@hawtio/core-dts": "^3.0.12",
-    "@hawtio/ui": "^3.0.25"
+    "@hawtio/core-dts": "~3.0.12",
+    "@hawtio/ui": "~3.0.25"
   },
   "devDependencies": {
     "del": "^3.0.0",
@@ -44,5 +44,8 @@
     "type": "git",
     "url": "https://github.com/hawtio/hawtio-forms.git"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  }
 }

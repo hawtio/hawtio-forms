@@ -8,6 +8,12 @@
   dependencies:
     "@types/jquery" "^2.0.46"
 
+"@hawtio/core-dts@~3.0.12":
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.15.tgz#7d9ab2c728e6da6ada125f09933c240aff1ef5f8"
+  dependencies:
+    "@types/jquery" "^2.0.46"
+
 "@hawtio/core-navigation@^3.0.14":
   version "3.0.15"
   resolved "https://registry.yarnpkg.com/@hawtio/core-navigation/-/core-navigation-3.0.15.tgz#01a21fa64f978d9ef08f2155f16866339a8bf81e"
@@ -38,9 +44,9 @@
     "@types/angular" "^1.6.18"
     angular-route "^1.6.4"
 
-"@hawtio/ui@^3.0.25":
-  version "3.0.26"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.0.26.tgz#edcab0530c45b4b26ad405ec5e986fb044b9505a"
+"@hawtio/ui@~3.0.25":
+  version "3.0.29"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.0.29.tgz#a08538a7e4485f5fe468684ccb1d15986e13c7ab"
   dependencies:
     "@hawtio/core" "^3.0.10"
     "@hawtio/core-dts" "^3.0.12"
