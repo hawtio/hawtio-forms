@@ -9,7 +9,8 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "install:dev": "yarn install --flat --prod && yarn install",
+    "install:dev": "yarn install --flat --prod && yarn install --production=false",
+    "upgrade:dev": "yarn upgrade && yarn run install:dev",
     "test": "gulp build-example"
   },
   "dependencies": {
@@ -38,7 +39,10 @@
     "yargs": "^8.0.1"
   },
   "resolutions": {
-    "jquery": "2.2.4"
+    "jquery": "2.2.4",
+    "@types/jquery": "2.0.48",
+    "datatables.net": "1.10.15",
+    "moment": "2.18.1"
   },
   "repository": {
     "type": "git",
