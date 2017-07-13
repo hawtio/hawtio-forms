@@ -1,6 +1,6 @@
 {
   "name": "@hawtio/forms",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "main": "dist/hawtio-forms.js",
   "types": "dist/hawtio-forms.d.ts",
   "files": [
