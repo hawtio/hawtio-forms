@@ -107,5 +107,13 @@ module Forms {
     };
   }
 
+  export interface HawtioFormScope extends ng.IScope {
+    addItem;
+    deleteKey;
+    entity;
+    name;
+    newItem;
+    showForm;
+  }
 
 }

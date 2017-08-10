@@ -117,4 +117,36 @@ module HawtioForms {
     addListener(name: string, callback: (nme:string, schema: any) => void);
     removeListener(name: string);
   }
+
+  export interface HawtioFormScope extends ng.IScope {
+    entity;
+    config;
+    keySchema;
+    valueSchema;
+    editRow;
+    deleteRow;
+    createRow;
+    diff;
+    configChanges;
+    name;
+    maybeHumanize;
+    pageIds;
+    onFinish;
+    buttons;
+    isValid;
+    isDisabled;
+    isBackDisabled;
+    currentPageIndex;
+    gotoPage;
+    onCancel;
+    onChange;
+    getCurrentPageId;
+    atFront;
+    atBack;
+    next;
+    back;
+    createNewRow;
+    watch;
+  }
+
 }

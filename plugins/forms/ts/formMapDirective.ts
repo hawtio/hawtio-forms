@@ -1,6 +1,8 @@
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 /// <reference path="formPlugin.ts"/>
+/// <reference path="formInterfaces.ts"/>
+
 module Forms {
 
   var mapDirective = _module.directive("hawtioFormMap", [() => {
@@ -15,7 +17,7 @@ module Forms {
         data: '=',
         name: '@'
       },
-      link: (scope, element, attr) => {
+      link: (scope: HawtioFormScope, element, attr) => {
         scope.deleteKey = (key) => {
           try {
             delete scope.entity[scope.name]["" + key];
@@ -46,4 +48,5 @@ module Forms {
       }
     };
   }]);
+
 }

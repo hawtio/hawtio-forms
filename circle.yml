@@ -12,7 +12,7 @@ dependencies:
     - npm install --global yarn
     - yarn global add gulp
   override:
-    - yarn run install:dev
+    - yarn install
   cache_directories:
     - ~/.cache/yarn
 

@@ -14,7 +14,7 @@ module HawtioForms {
         entity: '=?',
         name: '@?'
       },
-      link: (scope, element, attrs) => {
+      link: (scope: HawtioFormScope, element, attrs) => {
         var configCache:string = '';
         var configChanges = 0;
         scope.$watch('config', (config: FormConfiguration) => {
@@ -64,7 +64,7 @@ module HawtioForms {
             return;
           }
           // create our child scope here
-          var s = context.scope = scope.$new();
+          var s = context.scope = <HawtioFormScope>scope.$new();
           s.config = config;
           s.name = scope.name || 'hawtio-form';
           // s.entity = entity;

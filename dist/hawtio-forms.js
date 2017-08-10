@@ -2218,6 +2218,7 @@ var Forms;
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
 /// <reference path="formPlugin.ts"/>
+/// <reference path="formInterfaces.ts"/>
 var Forms;
 (function (Forms) {
     var mapDirective = Forms._module.directive("hawtioFormMap", [function () {
@@ -3328,6 +3329,7 @@ var HawtioForms;
         }]);
 })(HawtioForms || (HawtioForms = {}));
 /// <reference path="forms2Plugin.ts"/>
+/// <reference path="forms2Interfaces.ts"/>
 var HawtioForms;
 (function (HawtioForms) {
     var directiveName = "hawtioForms2Map";

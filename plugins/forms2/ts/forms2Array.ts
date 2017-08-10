@@ -106,7 +106,7 @@ module HawtioForms {
         config: '=' + directiveName,
         entity: '=?'
       },
-      link: (scope, element, attrs) => {
+      link: (scope: HawtioFormScope, element, attrs) => {
         scope.$watch('config', (newConfig: FormConfiguration) => {
           var context = {
             postInterpolateActions: {},
@@ -154,7 +154,7 @@ module HawtioForms {
           }
           var table = angular.element($templateCache.get("table.html"));
           var header = buildTableHeader(context, table, columnSchema);
-          var s = scope.$new();
+          var s = <HawtioFormScope>scope.$new();
 
           config.columnSchema = columnSchema;
 

@@ -1,4 +1,6 @@
 /// <reference path="forms2Plugin.ts"/>
+/// <reference path="forms2Interfaces.ts"/>
+
 module HawtioForms {
   var directiveName = "hawtioForms2Map";
 
@@ -70,7 +72,7 @@ module HawtioForms {
         config: '=' + directiveName,
         entity: '=?'
       },
-      link: (scope, element, attrs) => {
+      link: (scope: HawtioFormScope, element, attrs) => {
         scope.$watch('config', (newConfig: FormConfiguration) => {
           var context = {
             postInterpolateActions: {},
@@ -106,7 +108,7 @@ module HawtioForms {
           }
           var entity = scope.entity;
           // log.debug("In map, config: ", config, " entity: ", entity);
-          var s = scope.$new();
+          var s = <HawtioFormScope>scope.$new();
           context.s = s;
           var keySchema = findSchema('key', config.items.key.type, config.items.key);
           var valueSchema = findSchema('value', config.items.value.type, config.items.value);
