@@ -396,6 +396,14 @@ declare module Forms {
         noDataTemplate: string;
     }
     function createFormGridConfiguration(): FormGridConfiguration;
+    interface HawtioFormScope extends ng.IScope {
+        addItem: any;
+        deleteKey: any;
+        entity: any;
+        name: any;
+        newItem: any;
+        showForm: any;
+    }
 }
 declare module Forms {
 }
@@ -497,6 +505,36 @@ declare module HawtioForms {
         iterate(iter: (FormConfiguration, string) => void): any;
         addListener(name: string, callback: (nme: string, schema: any) => void): any;
         removeListener(name: string): any;
+    }
+    interface HawtioFormScope extends ng.IScope {
+        entity: any;
+        config: any;
+        keySchema: any;
+        valueSchema: any;
+        editRow: any;
+        deleteRow: any;
+        createRow: any;
+        diff: any;
+        configChanges: any;
+        name: any;
+        maybeHumanize: any;
+        pageIds: any;
+        onFinish: any;
+        buttons: any;
+        isValid: any;
+        isDisabled: any;
+        isBackDisabled: any;
+        currentPageIndex: any;
+        gotoPage: any;
+        onCancel: any;
+        onChange: any;
+        getCurrentPageId: any;
+        atFront: any;
+        atBack: any;
+        next: any;
+        back: any;
+        createNewRow: any;
+        watch: any;
     }
 }
 declare module HawtioForms {

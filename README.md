@@ -34,20 +34,13 @@ cd hawtio-forms
 ### Install project dependencies
 
 ```
-yarn install:dev
+yarn install
 ```
 
 ### Run the demo web application
 
 ```
-gulp
-```
-
-### Change the default proxy port
-
-To proxy to a local JVM running on a different port than `8282` specify the `--port` CLI arguement to gulp:
-```
-gulp --port=8181
+yarn start
 ```
 
 ## Usage
@@ -250,13 +243,3 @@ In the above the label for **foo.value** would just show _value_ rather than _fo
 To use a custom control use the **formTemplate** entry on a property to define the AngularJS partial to be used to render the form control. This lets you use any AngularJS directive or widget.
 
 For example if you search for **formTemplate** in the [code generated Camel json schema file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/lib/camelModel.js#L120) you will see how the **description** property uses a _textarea_
-
-## Output build to a different directory
-
-When developing this plugin in a dependent console you can change the output directory where the compiled .js and .css go.  Just use the 'out' flag to set a different output directory, for example:
-
-```
-gulp watch --out=../fabric8-console/libs/hawtio-forms/dist/
-```
-
-Whenever the build completes the compiled .js file will be put into the target directory.  Don't forget to first do a `gulp build` without this flag before committing changes!
