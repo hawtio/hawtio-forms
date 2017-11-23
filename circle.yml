@@ -1,6 +1,8 @@
 machine:
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+  node:
+    version: v8.2.0
 
 branches:
   ignore:
