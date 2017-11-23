@@ -706,7 +706,7 @@ var Forms;
     /**
      * @class InputBaseConfig
       */
-    var InputBaseConfig = (function () {
+    var InputBaseConfig = /** @class */ (function () {
         function InputBaseConfig() {
             this.name = 'input';
             this.type = '';
@@ -752,7 +752,7 @@ var Forms;
         return InputBaseConfig;
     }());
     Forms.InputBaseConfig = InputBaseConfig;
-    var InputBase = (function () {
+    var InputBase = /** @class */ (function () {
         function InputBase($compile) {
             var _this = this;
             this.$compile = $compile;
@@ -815,7 +815,7 @@ var Forms;
         return InputBase;
     }());
     Forms.InputBase = InputBase;
-    var TextInput = (function (_super) {
+    var TextInput = /** @class */ (function (_super) {
         __extends(TextInput, _super);
         function TextInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -847,7 +847,7 @@ var Forms;
         return TextInput;
     }(InputBase));
     Forms.TextInput = TextInput;
-    var HiddenText = (function (_super) {
+    var HiddenText = /** @class */ (function (_super) {
         __extends(HiddenText, _super);
         function HiddenText($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -868,7 +868,7 @@ var Forms;
         return HiddenText;
     }(TextInput));
     Forms.HiddenText = HiddenText;
-    var PasswordInput = (function (_super) {
+    var PasswordInput = /** @class */ (function (_super) {
         __extends(PasswordInput, _super);
         function PasswordInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -879,7 +879,7 @@ var Forms;
         return PasswordInput;
     }(TextInput));
     Forms.PasswordInput = PasswordInput;
-    var CustomInput = (function (_super) {
+    var CustomInput = /** @class */ (function (_super) {
         __extends(CustomInput, _super);
         function CustomInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -904,7 +904,7 @@ var Forms;
         return CustomInput;
     }(InputBase));
     Forms.CustomInput = CustomInput;
-    var SelectInput = (function (_super) {
+    var SelectInput = /** @class */ (function (_super) {
         __extends(SelectInput, _super);
         function SelectInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -954,7 +954,7 @@ var Forms;
         return SelectInput;
     }(InputBase));
     Forms.SelectInput = SelectInput;
-    var NumberInput = (function (_super) {
+    var NumberInput = /** @class */ (function (_super) {
         __extends(NumberInput, _super);
         function NumberInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -1004,7 +1004,7 @@ var Forms;
      * Generates a list of strings which can be added / edited / removed
      * @class StringArrayInput
      */
-    var StringArrayInput = (function (_super) {
+    var StringArrayInput = /** @class */ (function (_super) {
         __extends(StringArrayInput, _super);
         function StringArrayInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -1085,7 +1085,7 @@ var Forms;
         return StringArrayInput;
     }(InputBase));
     Forms.StringArrayInput = StringArrayInput;
-    var ArrayInput = (function (_super) {
+    var ArrayInput = /** @class */ (function (_super) {
         __extends(ArrayInput, _super);
         function ArrayInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -1153,7 +1153,7 @@ var Forms;
         return ArrayInput;
     }(InputBase));
     Forms.ArrayInput = ArrayInput;
-    var BooleanInput = (function (_super) {
+    var BooleanInput = /** @class */ (function (_super) {
         __extends(BooleanInput, _super);
         function BooleanInput($compile) {
             var _this = _super.call(this, $compile) || this;
@@ -1201,7 +1201,7 @@ var Forms;
 /// <reference path="mappingRegistry.ts"/>
 var Forms;
 (function (Forms) {
-    var SimpleFormConfig = (function () {
+    var SimpleFormConfig = /** @class */ (function () {
         function SimpleFormConfig() {
             this.name = 'form';
             this.method = 'post';
@@ -1241,7 +1241,7 @@ var Forms;
         return SimpleFormConfig;
     }());
     Forms.SimpleFormConfig = SimpleFormConfig;
-    var SimpleForm = (function () {
+    var SimpleForm = /** @class */ (function () {
         function SimpleForm($compile) {
             var _this = this;
             this.$compile = $compile;
@@ -1562,7 +1562,7 @@ var Forms;
 ///<reference path="formHelpers.ts"/>
 var Forms;
 (function (Forms) {
-    var InputTableConfig = (function () {
+    var InputTableConfig = /** @class */ (function () {
         function InputTableConfig() {
             this.name = 'form';
             this.method = 'post';
@@ -1600,7 +1600,7 @@ var Forms;
         return InputTableConfig;
     }());
     Forms.InputTableConfig = InputTableConfig;
-    var InputTable = (function () {
+    var InputTable = /** @class */ (function () {
         function InputTable($compile) {
             var _this = this;
             this.$compile = $compile;
@@ -1923,7 +1923,7 @@ var Forms;
 })(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
-    var SubmitForm = (function () {
+    var SubmitForm = /** @class */ (function () {
         function SubmitForm() {
             var _this = this;
             this.restrict = 'A';
@@ -1947,7 +1947,7 @@ var Forms;
 })(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
-    var ResetForm = (function () {
+    var ResetForm = /** @class */ (function () {
         function ResetForm() {
             var _this = this;
             this.restrict = 'A';
@@ -2299,7 +2299,7 @@ var HawtioForms;
     HawtioForms.pluginName = 'hawtio-forms2';
     HawtioForms.templatePath = 'plugins/forms2/html';
     HawtioForms.log = Logger.get(HawtioForms.pluginName);
-    var Constants = (function () {
+    var Constants = /** @class */ (function () {
         function Constants() {
         }
         Object.defineProperty(Constants, "FORM_STANDARD", {
