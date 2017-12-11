@@ -1,4 +1,4 @@
-module Forms {
+namespace Forms {
 
   export class ResetForm {
     public restrict = 'A';

@@ -1,7 +1,7 @@
 /// <reference path="forms2Plugin.ts"/>
 /// <reference path="forms2Interfaces.ts"/>
 
-module HawtioForms {
+namespace HawtioForms {
   var directiveName = "hawtioForms2Map";
 
   _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', '$uibModal', ($compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, $interpolate:ng.IInterpolateService, schemas:SchemaRegistry, mappings:ControlMappingRegistry, $uibModal) => {

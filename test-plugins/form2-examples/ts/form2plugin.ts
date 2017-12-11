@@ -1,7 +1,7 @@
 /// <reference path="../../includes.ts"/>
 /// <reference path="schema.ts"/>
 
-module Forms2Tests {
+namespace Forms2Tests {
   var pluginName = 'hawtio-forms2-tests';
   var log:Logging.Logger = Logger.get(pluginName);
   var tp = 'test-plugins/form2-examples/html';

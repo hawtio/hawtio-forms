@@ -3,7 +3,7 @@
 /// <reference path="formPlugin.ts"/>
 /// <reference path="formInterfaces.ts"/>
 
-module Forms {
+namespace Forms {
 
   var mapDirective = _module.directive("hawtioFormMap", [() => {
     return {

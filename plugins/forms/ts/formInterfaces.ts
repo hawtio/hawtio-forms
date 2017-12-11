@@ -1,4 +1,4 @@
-module Forms {
+namespace Forms {
 
   // add some type interfaces for hawtio-form's config
 

@@ -2,7 +2,7 @@
  * @module Forms
  */
 ///<reference path="formHelpers.ts"/>
-module Forms {
+namespace Forms {
 
   /**
    * Create a DOM widget tree for the given set of form configuration data.

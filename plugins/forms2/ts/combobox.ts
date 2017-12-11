@@ -1,5 +1,5 @@
 /// <reference path="forms2Plugin.ts"/>
-module HawtioForms {
+namespace HawtioForms {
 
     _module.directive('hawtioCombobox', [() => {
       return {

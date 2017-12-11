@@ -1,5 +1,5 @@
 /// <reference path="forms2Helpers.ts"/>
-module HawtioForms {
+namespace HawtioForms {
 
   export var _module = angular.module(pluginName, []);
 

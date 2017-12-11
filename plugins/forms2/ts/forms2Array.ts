@@ -1,5 +1,5 @@
 /// <reference path="forms2Plugin.ts"/>
-module HawtioForms {
+namespace HawtioForms {
   var directiveName = "hawtioForms2Array";
 
   function clearBody(context, table) {

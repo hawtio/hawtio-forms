@@ -1,4 +1,4 @@
-module Forms {
+namespace Forms {
 
   export class SubmitForm {
     public restrict = 'A';

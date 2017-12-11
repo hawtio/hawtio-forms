@@ -1,4 +1,4 @@
-module Forms {
+namespace Forms {
 
   export var pluginName = 'hawtio-forms';
   export var templateUrl = 'plugins/forms/html/';

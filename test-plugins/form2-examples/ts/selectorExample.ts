@@ -1,6 +1,6 @@
 /// <reference path="form2Plugin.ts"/>
 
-module Forms2Tests {
+namespace Forms2Tests {
 
   var log = Logger.get('forms2-selector-example');
 

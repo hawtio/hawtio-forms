@@ -1,5 +1,5 @@
 ///<reference path="formHelpers.ts"/>
-module Forms {
+namespace Forms {
 
   export class InputTableConfig {
 

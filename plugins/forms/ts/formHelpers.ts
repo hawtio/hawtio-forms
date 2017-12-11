@@ -1,7 +1,7 @@
 /**
  * @module Forms
  */
-module Forms {
+namespace Forms {
 
   export var log:Logging.Logger = Logger.get("Forms");
 

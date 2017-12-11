@@ -1,6 +1,6 @@
 /// <reference path="../../includes.ts"/>
 
-module Forms1Tests {
+namespace Forms1Tests {
   var pluginName = 'hawtio-forms1-tests';
   var log:Logging.Logger = Logger.get(pluginName);
   var tp = 'test-plugins/form1-examples/html';

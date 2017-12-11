@@ -2,7 +2,7 @@
 /**
  * @module Forms
  */
-declare module Forms {
+declare namespace Forms {
     var log: Logging.Logger;
     /**
      * Default any values in the schema on the entity if they are not already present
@@ -73,7 +73,7 @@ declare module Forms {
 /**
  * @module Forms
  */
-declare module Forms {
+declare namespace Forms {
     /**
      * Create a DOM widget tree for the given set of form configuration data.
      *
@@ -97,7 +97,7 @@ declare module Forms {
 /**
  * @module Forms
  */
-declare module Forms {
+declare namespace Forms {
     /**
      * @class InputBaseConfig
       */
@@ -204,12 +204,12 @@ declare module Forms {
         private onModelChange(scope, modelName);
     }
 }
-declare module Forms {
+declare namespace Forms {
     var pluginName: string;
     var templateUrl: string;
     var log: Logging.Logger;
 }
-declare module Forms {
+declare namespace Forms {
     class SimpleFormConfig {
         name: string;
         method: string;
@@ -249,7 +249,7 @@ declare module Forms {
         private getLegend(config);
     }
 }
-declare module Forms {
+declare namespace Forms {
     class InputTableConfig {
         name: string;
         method: string;
@@ -297,7 +297,7 @@ declare module Forms {
         private getHelpSpan(config, arg, id);
     }
 }
-declare module Forms {
+declare namespace Forms {
     class SubmitForm {
         restrict: string;
         scope: boolean;
@@ -306,7 +306,7 @@ declare module Forms {
         private doLink(scope, element, attrs);
     }
 }
-declare module Forms {
+declare namespace Forms {
     class ResetForm {
         restrict: string;
         scope: boolean;
@@ -315,10 +315,10 @@ declare module Forms {
         private doLink(scope, element, attrs);
     }
 }
-declare module Forms {
+declare namespace Forms {
     var _module: angular.IModule;
 }
-declare module Forms {
+declare namespace Forms {
     /**
      * Map of name/value pairs that get mapped to element attributes
      */
@@ -405,11 +405,11 @@ declare module Forms {
         showForm: any;
     }
 }
-declare module Forms {
+declare namespace Forms {
 }
-declare module Forms {
+declare namespace Forms {
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
     interface AttributeMap {
         [key: string]: string;
     }
@@ -537,7 +537,7 @@ declare module HawtioForms {
         watch: any;
     }
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
     var pluginName: string;
     var templatePath: string;
     var log: Logging.Logger;
@@ -580,19 +580,19 @@ declare module HawtioForms {
     function createMaybeHumanize(context: any): (value: any) => any;
     function initConfig(context: any, config: FormConfiguration, lookup?: boolean): FormConfiguration;
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
     var _module: angular.IModule;
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
 }
 declare var diffString: any;
-declare module HawtioForms {
+declare namespace HawtioForms {
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
 }
-declare module HawtioForms {
+declare namespace HawtioForms {
 }

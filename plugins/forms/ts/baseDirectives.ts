@@ -3,7 +3,7 @@
  */
 /// <reference path="mappingRegistry.ts"/>
 
-module Forms {
+namespace Forms {
 
     /**
      * @class InputBaseConfig

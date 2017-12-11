@@ -1,6 +1,6 @@
 /// <reference path="formPlugin.ts"/>
 /// <reference path="formInterfaces.ts"/>
-module Forms {
+namespace Forms {
 
   interface FormGridScope extends ng.IScope {
     configuration: Forms.FormGridConfiguration;

@@ -1,6 +1,6 @@
 /// <reference path="formHelpers.ts"/>
 /// <reference path="mappingRegistry.ts"/>
-module Forms {
+namespace Forms {
 
   export class SimpleFormConfig {
 

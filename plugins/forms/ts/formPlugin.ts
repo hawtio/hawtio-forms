@@ -5,7 +5,7 @@
 /// <reference path="submitDirective.ts"/>
 /// <reference path="resetDirective.ts"/>
 /// <reference path="formGlobals.ts"/>
-module Forms {
+namespace Forms {
 
   export var _module = angular.module(Forms.pluginName, []);
 

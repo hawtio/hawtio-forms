@@ -1,6 +1,6 @@
 /// <reference path="forms2Plugin.ts"/>
 
-module HawtioForms {
+namespace HawtioForms {
   _module.factory('ControlMappingRegistry', [() => {
     var controlMap = {};
     var answer = {

@@ -2,7 +2,7 @@
 
 declare var diffString:any;
 
-module HawtioForms {
+namespace HawtioForms {
   var directiveName = 'hawtioForm2'
   _module.directive(directiveName, ['$compile', '$templateCache', '$interpolate', 'SchemaRegistry', 'ControlMappingRegistry', ($compile, $templateCache, $interpolate, schemas:SchemaRegistry, mappings) => {
     return {
