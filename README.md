@@ -1,3 +1,7 @@
+# DEPRECATED
+
+**This project is not being actively developed or maintained.**
+
 # hawtio-forms
 
 <a class="btn btn-primary" href="http://forms.hawt.io">Try a Demo</a> | <a class="btn btn-primary" href="https://vimeo.com/123441243">Watch the Video</a> | [![Circle CI](https://circleci.com/gh/hawtio/hawtio-forms.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-forms) 
