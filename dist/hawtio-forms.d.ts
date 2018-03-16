@@ -3,7 +3,6 @@
  * @module Forms
  */
 declare namespace Forms {
-    var log: Logging.Logger;
     /**
      * Default any values in the schema on the entity if they are not already present
      * @method defaultValues
@@ -205,9 +204,9 @@ declare namespace Forms {
     }
 }
 declare namespace Forms {
-    var pluginName: string;
-    var templateUrl: string;
-    var log: Logging.Logger;
+    const pluginName = "hawtio-forms";
+    const templateUrl = "plugins/forms/html/";
+    const log: Logging.Logger;
 }
 declare namespace Forms {
     class SimpleFormConfig {

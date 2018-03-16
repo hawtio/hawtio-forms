@@ -13,7 +13,6 @@ var __extends = (this && this.__extends) || (function () {
  */
 var Forms;
 (function (Forms) {
-    Forms.log = Logger.get("Forms");
     /**
      * Default any values in the schema on the entity if they are not already present
      * @method defaultValues
@@ -25,7 +24,7 @@ var Forms;
             angular.forEach(schema.properties, function (property, key) {
                 var defaultValue = property.default;
                 if (defaultValue && !entity[key]) {
-                    console.log("===== defaulting value " + defaultValue + " into entity[" + key + "]");
+                    Forms.log.debug("===== defaulting value", defaultValue, "into entity[" + key + "]");
                     entity[key] = defaultValue;
                 }
             });

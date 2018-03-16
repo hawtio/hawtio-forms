@@ -4070,7 +4070,7 @@ var Forms2Tests;
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
-    var log = Logger.get('forms2-array-example');
+    var log = Logger.get('example-forms2-array');
     Forms2Tests._module.controller("Forms2Tests.ArrayExample", ["$scope", "$templateCache", 'SchemaRegistry', function ($scope, $templateCache, SchemaRegistry) {
             var configStr = "\n    var config = {\n      properties: {\n        // A simple array of string values\n        \"Strings\": {\n          type: \"array\",\n          items: {\n            type: 'string'\n          }\n        },\n        // An array of object values of type \"MyThing\", defined below\n        \"Objects\": {\n          type: \"array\",\n          items: {\n            type: 'MyThing'\n          }\n        }\n      }\n    };\n\n    // We use a separate FormConfig for complex array items\n    var elementConfig = {\n      properties: {\n        \"FirstValue\": {\n          type: 'string',\n        },\n        \"SecondValue\": {\n          type: 'number',\n          default: 1,\n          'input-attributes': {\n            'max': 10,\n            'min': 1\n          }\n        }\n      }\n    };\n    // add this to the schema registry, SchemaRegistry is an angular service, so can be injected anywhere, in your module's 'run' function, another service etc.\n    SchemaRegistry.addSchema(\"MyThing\", elementConfig);\n\n    // let's fill in the model so the form looks more interesting\n    var model = {\n      'Strings': ['foo', 'bar'],\n      'Objects': [{ FirstValue: 'one', SecondValue: 7 }]\n    }\n\n    ";
             var config = {
@@ -4136,7 +4136,7 @@ var Forms2Tests;
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
-    var log = Logger.get('forms2-selector-example');
+    var log = Logger.get('example-forms2-selector');
     Forms2Tests._module.controller("Forms2Tests.SelectorExample", ["$scope", "$templateCache", function ($scope, $templateCache) {
             var configStr = "\n    var config = {\n      properties: {\n        \"Amount\": {\n          type: \"string\",\n          default: 2,\n          enum: {\n            \"One\": 1,\n            \"Two\": 2,\n            \"Three\": 3,\n            \"Four\": 4,\n            \"Five\": 5,\n            \"Six\": 6\n          },\n          selectors: {\n            select: (select) => {\n              select.css({ background: 'lightblue' });\n            }\n          }\n        },\n        \"Name\": {\n          type: \"string\",\n          selectors: {\n            '.control-label': (label) => {\n              label.css({ 'font-weight': 'bold' });\n            },\n            'el': (group) => {\n              group.attr({'ng-show': 'entity.Amount == 2'});\n            }\n          }\n        }\n      }\n    };\n\n    ";
             var config = {
@@ -4194,7 +4194,7 @@ var Forms2Tests;
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
-    var log = Logger.get('forms2-simple-example');
+    var log = Logger.get('example-forms2-simple');
     Forms2Tests._module.controller("Forms2Tests.SimpleExample", ["$scope", "$templateCache", function ($scope, $templateCache) {
             var configStr = "\n    var config = {\n      // Standard bootstrap form with the label and control stacked\n      style: HawtioForms.FormStyle.STANDARD,\n      // Controls are editable, can also set to 'VIEW' to just show values\n      mode: HawtioForms.FormMode.EDIT,\n      properties: {\n        \"Name\": {\n          type: \"string\",\n          // Most controls support setting arbitrary attributes via 'input-attributes'\n          'input-attributes': {\n            'placeholder': 'Enter some name'\n          }\n        },\n        \"Amount\": {\n          type: \"string\",\n          'default': 2,\n          // Add an object of name/value pairs to turn a field into a select box\n          enum: {\n            \"One\": 1,\n            \"Two\": 2,\n            \"Three\": 3,\n            \"Four\": 4,\n            \"Five\": 5,\n            \"Six\": 6\n          },\n          description: 'Pick some amount'\n        },\n        \"Number\": {\n          type: 'number',\n          'default': 5,\n          // it's also possible via 'input-attributes' to use html5 attributes like min/max\n          'input-attributes': {\n            'max': 10,\n            'min': 5\n          }\n\n        },\n        \"Maybe\": {\n          type: 'boolean',\n          // if you want to customize the label for a control, use 'label'\n          label: \"Maybe?\",\n          'default': true\n        }\n      }\n    };\n    ";
             var config = {
@@ -4264,7 +4264,7 @@ var Forms2Tests;
 /// <reference path="form2Plugin.ts"/>
 var Forms2Tests;
 (function (Forms2Tests) {
-    var log = Logger.get('forms2-typeahead-example');
+    var log = Logger.get('example-forms2-typeahead');
     Forms2Tests._module.controller("Forms2Tests.TypeaheadExample", ["$scope", "$templateCache", 'SchemaRegistry', '$q', '$timeout', function ($scope, $templateCache, SchemaRegistry, $q, $timeout) {
             var configStr = "\n    var config = {\n      properties: {\n        \"InputWithTypeahead\": {\n          type: \"string\",\n          getWords: () => {\n            return $q((resolve, reject) => {\n              setTimeout(() => {\n                resolve(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']);\n              }, 10)\n            })\n          } ,\n          \"input-attributes\": {\n            \"typeahead\": \"word for word in config.properties.InputWithTypeahead.getWords()\"\n          }\n        },\n        \"InputWithInlineTypeahead\": {\n          \"type\": \"text\",\n          \"typeaheadData\": [\n            \"one\",\n            \"two\",\n            \"three\",\n            \"four\",\n            \"five\",\n            \"six\",\n            \"seven\",\n            \"eight\",\n            \"nine\",\n            \"ten\"\n          ],\n          \"input-attributes\": {\n            \"typeahead\": \"number for number in config.properties.InputWithInlineTypeahead.typeaheadData\"\n          }\n        },\n      }\n    };\n    ";
             var config = {
