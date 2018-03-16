@@ -10,9 +10,9 @@ namespace Forms {
    * This will include either the standard AngularJS widgets or custom widgets
    */
   export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName,
-                               wrapInGroup = true, disableHumanizeLabel = false) {
-    var input:JQuery = null;
-    var group:JQuery = null;
+    wrapInGroup = true, disableHumanizeLabel = false) {
+    var input: JQuery = null;
+    var group: JQuery = null;
 
     function copyElementAttributes(element, propertyName) {
       var propertyAttributes = property[propertyName];
@@ -27,7 +27,7 @@ namespace Forms {
     }
     function copyAttributes() {
       copyElementAttributes(input, "input-attributes");
-      angular.forEach(property, function (value, key) {
+      angular.forEach(property, (value, key: string) => {
         if (angular.isString(value) && key.indexOf("$") < 0 && key !== "type") {
           var html = Core.escapeHtml(value);
           input.attr(key, html);
@@ -41,7 +41,7 @@ namespace Forms {
     var safeId = Forms.safeIdentifier(id);
 
     // mark as required
-    var required:boolean = property.required || false;
+    var required: boolean = property.required || false;
 
     var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
 
@@ -60,7 +60,7 @@ namespace Forms {
 
       input.attr('name', id);
 
-      var title = property.title ||  property.tooltip || property.label;
+      var title = property.title || property.tooltip || property.label;
       if (title) {
         input.attr('title', title);
       }
@@ -103,7 +103,7 @@ namespace Forms {
         // add logic to be able to hide empty values
         var showEmpty = config.showempty;
         if (angular.isDefined(showEmpty)) {
-          var attValue:string = "true";
+          var attValue: string = "true";
           if (showEmpty === "true" || showEmpty === "false") {
             attValue = showEmpty;
           } else if (angular.isString(id)) {
@@ -118,14 +118,14 @@ namespace Forms {
 
         var scope = config.scope;
         if (scope && modelName) {
-          var onModelChange = function(newValue) {
+          var onModelChange = function (newValue) {
             scope.$emit("hawtio.form.modelChange", modelName, newValue);
           };
           var fn = onModelChange;
           // allow custom converters
-          var converterFn:(scope, modelName) => void = options.valueConverter;
+          var converterFn: (scope, modelName) => void = options.valueConverter;
           if (converterFn) {
-            fn = function() {
+            fn = function () {
               converterFn(scope, modelName);
               var newValue = Core.pathGet(scope, modelName);
               onModelChange(newValue);
@@ -263,13 +263,13 @@ namespace Forms {
     if (!angular.isString(type)) {
       return null;
     }
-    var defaultValueConverter:(scope:any, modelName:string) => void = null;
+    var defaultValueConverter: (scope: any, modelName: string) => void = null;
     var defaultValue = property.default || property.defaultValue;
     if (defaultValue) {
       // lets add a default value
-      defaultValueConverter = (scope, modelName):void => {
+      defaultValueConverter = (scope, modelName): void => {
         var value = Core.pathGet(scope, modelName);
-        if (!value)  {
+        if (!value) {
           Core.pathSet(scope, modelName, defaultValue);
         }
       };
@@ -302,7 +302,7 @@ namespace Forms {
         // lets add a value conversion watcher...
         options.valueConverter = function (scope, modelName) {
           var value = getModelValueOrDefault(scope, modelName);
-          if (value && angular.isString(value))  {
+          if (value && angular.isString(value)) {
             var numberValue = Number(value);
             Core.pathSet(scope, modelName, numberValue);
           }
@@ -327,7 +327,7 @@ namespace Forms {
         // lets add a value conversion watcher...
         options.valueConverter = function (scope, modelName) {
           var value = getModelValueOrDefault(scope, modelName);
-          if (value && "true" === value)  {
+          if (value && "true" === value) {
             //console.log("coercing String to boolean for " + modelName);
             Core.pathSet(scope, modelName, true);
           }
@@ -349,7 +349,7 @@ namespace Forms {
     }
   }
 
-  export function mapType(type:String):String {
+  export function mapType(type: String): String {
     switch (type.toLowerCase()) {
       case "int":
       case "integer":
@@ -384,7 +384,7 @@ namespace Forms {
     }
   }
 
-  export function normalize(type, property:any, schema) {
+  export function normalize(type, property: any, schema) {
     type = Forms.resolveTypeNameAlias(type, schema);
     if (!type) {
       return "hawtio-form-text";
@@ -433,7 +433,7 @@ namespace Forms {
       case "java.util.iterator":
       case "java.util.set":
       case "object[]":
-        var items:any = property.items;
+        var items: any = property.items;
         if (items) {
           var typeName = items.type;
           if (typeName && typeName === "string") {

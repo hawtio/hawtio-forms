@@ -132,8 +132,8 @@ namespace Forms {
    * @param {String} property
    * @param {any} schema
    */
-  export function findArrayItemsSchema(property, schema):any {
-    var items:any = null;
+  export function findArrayItemsSchema(property, schema): any {
+    var items: any = null;
     if (property && schema) {
       items = property.items;
       if (items) {
@@ -202,7 +202,7 @@ namespace Forms {
       var elementConfig = config['properties'][id];
       // log.debug("elementConfig: ", elementConfig);
       if (elementConfig && 'control-attributes' in elementConfig) {
-        angular.forEach(elementConfig['control-attributes'], (value, key) => {
+        angular.forEach(elementConfig['control-attributes'], (value, key: string) => {
           rc.attr(key, value);
         });
       }

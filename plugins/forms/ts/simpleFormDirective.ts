@@ -14,17 +14,17 @@ namespace Forms {
     public schemaName = 'schema';
 
     // set to 'view' or 'create' for different modes
-    public mode:string = 'edit';
+    public mode: string = 'edit';
 
     // the definition of the form
-    public data:any = {};
-    public json:any = undefined;
+    public data: any = {};
+    public json: any = undefined;
 
     // the scope
-    public scope:any = null;
+    public scope: any = null;
 
     // the name to look up in the scope for the configuration data
-    public scopeName:string = null;
+    public scopeName: string = null;
 
     public properties = [];
     public action = '';
@@ -40,7 +40,7 @@ namespace Forms {
 
     public onsubmit = 'onSubmit';
 
-    public getMode():string {
+    public getMode(): string {
       return this.mode || "edit";
     }
 
@@ -62,7 +62,7 @@ namespace Forms {
     private attributeName = 'simpleForm';
 
     // see constructor for why this is here...
-    public link:(scope, element, attrs) => any;
+    public link: (scope, element, attrs) => any;
 
     constructor(public $compile) {
       // necessary to ensure 'this' is this object <sigh>
@@ -81,11 +81,11 @@ namespace Forms {
       var fullSchemaName = attrs["schema"];
       var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
 
-      var compiledNode:any = null;
-      var childScope:any = null;
-      var tabs:any = null;
-      var fieldset:any = null;
-      var schema:any = null;
+      var compiledNode: any = null;
+      var childScope: any = null;
+      var tabs: any = null;
+      var fieldset: any = null;
+      var schema: any = null;
       var configScopeName = attrs[this.attributeName] || attrs["data"];
 
       var firstControl = null;
@@ -155,7 +155,7 @@ namespace Forms {
                 array = [];
                 tabKeyToIdPropObject[tabkey] = array;
               }
-              array.push({id: id, property: property});
+              array.push({ id: id, property: property });
             });
 
             // now lets iterate through each tab...
@@ -277,7 +277,7 @@ namespace Forms {
         var tabkey = tabs.locations[id];
         if (!tabkey) {
           // lets try find a tab key using regular expressions
-          angular.forEach(tabs.locations, (value, key) => {
+          angular.forEach(tabs.locations, (value, key: string) => {
             if (!tabkey && key !== "*" && id.match(key)) {
               tabkey = value;
             }
@@ -290,7 +290,7 @@ namespace Forms {
       }
 
       function findTabOrderValue(id) {
-        var answer:any = null;
+        var answer: any = null;
         angular.forEach(schema.tabs, function (value, key) {
           value.forEach(function (val) {
             if (!answer && val !== "*" && id.match(val)) {
@@ -339,8 +339,8 @@ namespace Forms {
           adjustedProperty.title = property.title;
           adjustedProperty.required = property.required;
 
-          var input:JQuery = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
-          var input2:JQuery = Forms.createWidget(propTypeName, adjustedProperty, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+          var input: JQuery = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+          var input2: JQuery = Forms.createWidget(propTypeName, adjustedProperty, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
 
           // move the selectbox from input to input2 as we want it to be on the same line
           var selectWidget = input.find("select");
