@@ -2,7 +2,7 @@
 
 namespace Forms2Tests {
 
-  var log = Logger.get('forms2-array-example');
+  var log = Logger.get('example-forms2-array');
 
   _module.controller("Forms2Tests.ArrayExample", ["$scope", "$templateCache", 'SchemaRegistry', ($scope, $templateCache, SchemaRegistry) => {
 

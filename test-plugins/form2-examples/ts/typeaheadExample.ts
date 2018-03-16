@@ -2,7 +2,7 @@
 
 namespace Forms2Tests {
 
-  var log = Logger.get('forms2-typeahead-example');
+  var log = Logger.get('example-forms2-typeahead');
 
   _module.controller("Forms2Tests.TypeaheadExample", ["$scope", "$templateCache", 'SchemaRegistry', '$q', '$timeout', ($scope, $templateCache, SchemaRegistry, $q, $timeout) => {
 

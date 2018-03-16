@@ -2,7 +2,7 @@
 
 namespace Forms2Tests {
 
-  var log = Logger.get('forms2-simple-example');
+  var log = Logger.get('example-forms2-simple');
 
   _module.controller("Forms2Tests.SimpleExample", ["$scope", "$templateCache", ($scope, $templateCache) => {
 

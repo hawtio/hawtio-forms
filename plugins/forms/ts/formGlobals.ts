@@ -1,8 +1,8 @@
 namespace Forms {
 
-  export var pluginName = 'hawtio-forms';
-  export var templateUrl = 'plugins/forms/html/';
-  export var log:Logging.Logger = Logger.get(pluginName);
+  export const pluginName = 'hawtio-forms';
+  export const templateUrl = 'plugins/forms/html/';
+  export const log: Logging.Logger = Logger.get(pluginName);
 
 }
 

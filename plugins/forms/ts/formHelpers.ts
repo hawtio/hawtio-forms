@@ -3,8 +3,6 @@
  */
 namespace Forms {
 
-  export var log:Logging.Logger = Logger.get("Forms");
-
   /**
    * Default any values in the schema on the entity if they are not already present
    * @method defaultValues
@@ -16,7 +14,7 @@ namespace Forms {
       angular.forEach(schema.properties, (property, key) => {
         var defaultValue = property.default;
         if (defaultValue && !entity[key]) {
-          console.log("===== defaulting value "  + defaultValue + " into entity[" + key + "]");
+          log.debug("===== defaulting value", defaultValue, "into entity[" + key + "]");
           entity[key] = defaultValue;
         }
       })
