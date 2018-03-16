@@ -1,5 +1,11 @@
 ### Change Log
 
+#### 3.2.1
+
+* Canonicalise logger names based on `hawtio-[plugin name]-[sub component name]` format
+
+...
+
 #### 2.0.3
 * Move editor to hawtio-ui, add hawtio-ui as dependency
 
