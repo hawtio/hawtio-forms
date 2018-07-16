@@ -12,9 +12,9 @@
     "test": "gulp build-example"
   },
   "dependencies": {
-    "@hawtio/core": "~3.2.0",
+    "@hawtio/core": "~3.3.0",
     "@hawtio/core-dts": "~3.0.0",
-    "@hawtio/ui": "~3.2.0"
+    "@hawtio/ui": "~3.3.0"
   },
   "devDependencies": {
     "del": "^3.0.0",
@@ -128,6 +128,9 @@
     "angular-sanitize": "1.6.8",
     "angular-ui-bootstrap": "2.5.6",
     "bootstrap-datepicker": "1.7.1",
-    "@types/angular": "1.6.43"
+    "@types/angular": "1.6.43",
+    "@hawtio/core-dts": "3.1.0",
+    "angular-animate": "1.6.10",
+    "bootstrap-select": "1.12.4"
   }
 }
