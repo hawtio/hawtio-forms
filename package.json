@@ -12,7 +12,7 @@
     "test": "gulp build-example"
   },
   "dependencies": {
-    "@hawtio/ui": "^4.0.0"
+    "@hawtio/ui": "~4.1.0"
   },
   "devDependencies": {
     "del": "^3.0.0",
