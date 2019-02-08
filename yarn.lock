@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@~4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.2.0.tgz#336f59110f244489c89e6bc5520b5f0cc19cfebc"
-  integrity sha512-KTqkLjlmQzTkWg2yf/xOxyWXYmX+KO+8qJi3QYdQ892YrZPK9wnXiyayslg3dLTHFvOpKlWRe/GkZWO2e89tYA==
+"@hawtio/core@~4.3.0":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.3.2.tgz#a1f917582676e0b134c4802466def6e66e198c8b"
+  integrity sha512-uhbxR7qAK+LgCNIznbDg0M2CyKxnQ0JfuqjVlfog4v3M8UKgZ4vaquENYQ1RmyJuW+AVEixQVQLx/T3E+JtfYA==
   dependencies:
     "@hawtio/core-dts" "3.2.0"
     "@types/angular" "*"
@@ -22,11 +22,11 @@
     "@types/lodash" "^4.0.0"
     "@types/marked" "0.3.0"
     "@types/urijs" "1.15.34"
-    angular "~1.7.0"
-    angular-animate "~1.7.0"
+    angular "1.7.7"
+    angular-animate "1.7.7"
     angular-patternfly "^4.0.0"
-    angular-route "~1.7.0"
-    angular-sanitize "~1.7.0"
+    angular-route "1.7.7"
+    angular-sanitize "1.7.7"
     gulp-rename "~1.2.3"
     jquery "2.2.4"
     js-logger "1.4.1"
@@ -34,12 +34,12 @@
     marked "0.3.9"
     urijs "1.19.0"
 
-"@hawtio/ui@~4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.2.0.tgz#f60b55f79b5b54310251d88f33439966ef171fe9"
-  integrity sha512-77Y3zXEMXtqFK4YMtg6IiBgr6Amdat10Q6bYDw6GKnfyuZYHsNjdFjAHlHiZu1V2IK3j/kjVCssAfP5Qo4mzhA==
+"@hawtio/ui@~4.3.0":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.3.1.tgz#2eceeed352db75c26e0dcce51513f081ee7ffe27"
+  integrity sha512-7O+UgtUL0m0ipxv1sM6VgDOLrZAT0FOH5lmtWjLzuQNXfPNc/sbasu/Ue4QrJosRxpQNpWOuqnPKi6+oo8j0NQ==
   dependencies:
-    "@hawtio/core" "~4.2.0"
+    "@hawtio/core" "~4.3.0"
     "@types/bootstrap" "3.3.36"
     "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
@@ -380,10 +380,10 @@ align-text@^0.1.1, align-text@^0.1.3:
     longest "^1.0.1"
     repeat-string "^1.5.2"
 
-angular-animate@1.5.*, angular-animate@1.7.1, angular-animate@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.1.tgz#cc80ac4dc626f7223fa61495f0d0ed98cee90832"
-  integrity sha512-QY6g/G8TdUJlKW/t/rqLNvYBR6Ie8EXePaVjwrO2RCfUG5EIDY2XHar3oKGYAN+desVXgv/jVimhz9KU8v27nQ==
+angular-animate@1.5.*, angular-animate@1.7.7:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.7.tgz#5422909094a41cd7404937d8a8a960f30c4d9364"
+  integrity sha512-KLbU9gtgCyNSaMZKnNe9Yi6UTlDMN2EWyokQ06TG5fbDWOePm+kv2xqeUg1S2h+ZLjK0NnoVDIvwDhVQ+AWAag==
 
 angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
@@ -415,15 +415,15 @@ angular-patternfly@^4.0.0:
     jquery-ui-dist "~1.12.1"
     moment "~2.19.3"
 
-angular-route@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.1.tgz#8e2c1ce1d01b0d9b944692de7eba900b9a3ec451"
-  integrity sha512-UK4Ky6llpNMMMp4y+CJlg4rQFWz+mvt/0iGc6HHX6MbilkAp13vgwJ2kuAjb0qgRcn121FU9y4z8pt6fzjS/NQ==
+angular-route@1.7.7:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.7.tgz#0573c8efa87e735bcd4f64f6551a176faca3b6d1"
+  integrity sha512-nshsCti751h8GfvYQ2nlTbQnaY/q5zvxLctj78sS5SjB8iRDqNbT1NVNz8B/nDQUudjc7etE7xYaTdM8idzq6g==
 
-angular-sanitize@1.5.*, angular-sanitize@1.7.1, angular-sanitize@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.1.tgz#a181fa5bef5a05625e412a3d2a4c1c2f58bf7992"
-  integrity sha512-o5AQrIKzvmzhg9SBABK1BrTjm7wbnDAb0hoqDfz2512R8lKLYw18EyTjSLL9KHaGvRLrQ/+v0R6fvHuGvdRrQA==
+angular-sanitize@1.5.*, angular-sanitize@1.7.7:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.7.tgz#5852592ea885d48db1f2718a3ec7b6e3330950d6"
+  integrity sha512-DZ0kidLOOrq/mbqwKbeT2aSlT2Kdy25tZh5KcWOrRXx26imbhQfwbuncMYMFh7uPqfWySAI534+XhjnmhJ626Q==
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
@@ -435,10 +435,10 @@ angular-ui-bootstrap@2.3.x, angular-ui-bootstrap@2.5.6:
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.5.6.tgz#23937322ec641a6fbee16498cc32452aa199e7c5"
   integrity sha512-yzcHpPMLQl0232nDzm5P4iAFTFQ9dMw0QgFLuKYbDj9M0xJ62z0oudYD/Lvh1pWfRsukiytP4Xj6BHOSrSXP8A==
 
-angular@1.5.*, angular@1.7.1, angular@>=1.3.0, angular@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.1.tgz#274bd432e3c8b321f41c25c79e20d4f3b0fbaf79"
-  integrity sha512-7/ZSit5n1PXM3DGCJRJh9H2iErSqFhGEuzAil47JhcBFLcIR2vMFkD3S0IoJdBQCLQRIt23oH92IJZoMqyi5CQ==
+angular@1.5.*, angular@1.7.7, angular@>=1.3.0:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.7.tgz#26bd87693deadcbd5944610a7a0463fc79a18803"
+  integrity sha512-MH3JEGd8y/EkNCKJ8EV6Ch0j9X0rZTta/QVIDpBWaIdfh85/e5KO8+ZKgvWIb02MQuiS20pDFmMFlv4ZaLcLWg==
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -2634,7 +2634,7 @@ multipipe@^0.1.2:
   dependencies:
     duplexer2 "0.0.2"
 
-natives@^1.1.0, natives@~1.1.6:
+natives@1.1.6, natives@^1.1.0, natives@~1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.6.tgz#a603b4a498ab77173612b9ea1acdec4d980f00bb"
   integrity sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA==
