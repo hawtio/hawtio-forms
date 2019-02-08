@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@~4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.1.0.tgz#3940a86954991303f03793144281399032364702"
-  integrity sha512-11cI41ltbbuHVJq5MYqAN7cheI1/4/jmdTUp52zrklDwKKmlUbKjRZ2iMB34xM73nIk2lUqh06uykiy6M9t8gA==
+"@hawtio/core@~4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.2.0.tgz#336f59110f244489c89e6bc5520b5f0cc19cfebc"
+  integrity sha512-KTqkLjlmQzTkWg2yf/xOxyWXYmX+KO+8qJi3QYdQ892YrZPK9wnXiyayslg3dLTHFvOpKlWRe/GkZWO2e89tYA==
   dependencies:
     "@hawtio/core-dts" "3.2.0"
     "@types/angular" "*"
@@ -34,12 +34,12 @@
     marked "0.3.9"
     urijs "1.19.0"
 
-"@hawtio/ui@~4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.1.0.tgz#c7d26dfa8e54f7a8e418eb872074e1821cf2bb54"
-  integrity sha512-Us25o43VmUGswmLix1D8qLVzmAo6zvbOue0UWJ+X5cR3rC5JMqcwzy7aQy5i9+daKR0zsEMVlCUAI84satDqyQ==
+"@hawtio/ui@~4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.2.0.tgz#f60b55f79b5b54310251d88f33439966ef171fe9"
+  integrity sha512-77Y3zXEMXtqFK4YMtg6IiBgr6Amdat10Q6bYDw6GKnfyuZYHsNjdFjAHlHiZu1V2IK3j/kjVCssAfP5Qo4mzhA==
   dependencies:
-    "@hawtio/core" "~4.1.0"
+    "@hawtio/core" "~4.2.0"
     "@types/bootstrap" "3.3.36"
     "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
@@ -2157,7 +2157,12 @@ json-schema@0.2.3:
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
   integrity sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
 
-json-stable-stringify@^1.0.0, json-stable-stringify@^1.0.1:
+json-stable-stringify-without-jsonify@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
+  integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
+
+json-stable-stringify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.1.tgz#9a759d39c5f2ff503fd5300646ed445f88c4f9af"
   integrity sha1-mnWdOcXy/1A/1TAGRu1EX4jE+a8=
@@ -2629,10 +2634,10 @@ multipipe@^0.1.2:
   dependencies:
     duplexer2 "0.0.2"
 
-natives@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.0.tgz#e9ff841418a6b2ec7a495e939984f78f163e6e31"
-  integrity sha1-6f+EFBimsux6SV6TmYT3jxY+bjE=
+natives@^1.1.0, natives@~1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.6.tgz#a603b4a498ab77173612b9ea1acdec4d980f00bb"
+  integrity sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA==
 
 negotiator@0.5.3, negotiator@0.6.1:
   version "0.5.3"
@@ -3460,10 +3465,10 @@ textextensions@~1.0.0:
   resolved "https://registry.yarnpkg.com/textextensions/-/textextensions-1.0.2.tgz#65486393ee1f2bb039a60cbba05b0b68bd9501d2"
   integrity sha1-ZUhjk+4fK7A5pgy7oFsLaL2VAdI=
 
-through2-filter@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/through2-filter/-/through2-filter-2.0.0.tgz#60bc55a0dacb76085db1f9dae99ab43f83d622ec"
-  integrity sha1-YLxVoNrLdghdsfna6Zq0P4PWIuw=
+through2-filter@3.0.0, through2-filter@^2.0.0, through2-filter@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/through2-filter/-/through2-filter-3.0.0.tgz#700e786df2367c2c88cd8aa5be4cf9c1e7831254"
+  integrity sha512-jaRjI2WxN3W1V8/FMZ9HKIBXixtiqs3SQSX4/YGIiP3gL6djW48VoZq9tDqeCWs3MT8YY5wb/zli8VW8snY1CA==
   dependencies:
     through2 "~2.0.0"
     xtend "~4.0.0"
@@ -3781,10 +3786,10 @@ y18n@^3.2.1:
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.1.tgz#6d15fba884c08679c0d77e88e7759e811e07fa41"
   integrity sha1-bRX7qITAhnnA136I53WegR4H+kE=
 
-yallist@^3.0.2:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/yallist/-/yallist-3.0.3.tgz#b4b049e314be545e3ce802236d6cd22cd91c3de9"
-  integrity sha512-S+Zk8DEWE6oKpV+vI3qWkaK+jSbIK86pCwe2IF/xwIpQ8jEuxpw9NyaGjmp9+BoJv5FV2piqCDcoCtStppiq2A==
+yallist@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
+  integrity sha1-HBH5IY8HYImkfdUS+TxmmaaoHVI=
 
 yargs-parser@^7.0.0:
   version "7.0.0"

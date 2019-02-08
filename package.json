@@ -12,7 +12,7 @@
     "test": "gulp build-example"
   },
   "dependencies": {
-    "@hawtio/ui": "~4.1.0"
+    "@hawtio/ui": "~4.2.0"
   },
   "devDependencies": {
     "del": "^3.0.0",
@@ -30,6 +30,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-typescript": "^3.1.7",
+    "natives": "~1.1.6",
     "typescript": "^2.3.4",
     "underscore.string": "^3.0.0",
     "url-join": "^2.0.2",
@@ -126,6 +127,8 @@
     "gulp-rename": "1.2.3",
     "angular": "1.7.1",
     "angular-animate": "1.7.1",
-    "angular-sanitize": "1.7.1"
+    "angular-sanitize": "1.7.1",
+    "through2-filter": "3.0.0",
+    "natives": "1.1.6"
   }
 }
