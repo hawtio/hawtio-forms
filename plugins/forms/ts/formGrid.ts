@@ -76,7 +76,7 @@ namespace Forms {
           return angular.element($templateCache.get<string>('rowTemplate.html'));
         }
 
-        function buildTableBody(columns:Array<FormGridElement>, parent:ng.IAugmentedJQuery) {
+        function buildTableBody(columns:Array<FormGridElement>, parent:JQuery) {
           var rows = scope.configuration.rows;
           rows.forEach((row, index) => {
             var tr = newBodyRow();
